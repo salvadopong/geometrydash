@@ -1,485 +1,1107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Geometry Dash Ultra — Full Code</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Geometry Dash Ultra — Single File</title>
 <style>
-/* =====================================================================
-   FULL LITERAL CSS — NO OMISSIONS
-   Vibrant, neon, animated, responsive
-   ===================================================================== */
+/* ------------------------------
+   Vibrant neon UI + responsive
+   ------------------------------ */
+:root{
+  --bg1:#04030a;
+  --bg2:#081233;
+  --panel: rgba(255,255,255,0.03);
+  --accent1:#00eaff;
+  --accent2:#7b61ff;
+  --accent3:#ff4d6d;
+  --muted:#9fb0c8;
+  --glass: rgba(255,255,255,0.03);
+  --radius:14px;
+}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial; background: linear-gradient(180deg,var(--bg1),var(--bg2)); color:#e9f3ff;}
+.app{width:1200px;max-width:calc(100% - 32px);height:760px;margin:16px auto;border-radius:16px;display:grid;grid-template-columns:360px 1fr;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));box-shadow:0 18px 60px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+.sidebar{padding:18px;border-right:1px solid rgba(255,255,255,0.02);display:flex;flex-direction:column;gap:12px}
+.brand{display:flex;gap:10px;align-items:center}
+.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;color:#031026;font-weight:900;box-shadow:0 8px 28px rgba(123,97,255,0.12) inset}
+.brand h1{margin:0;font-size:18px} .brand p{margin:0;color:var(--muted);font-size:12px}
 
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-  background: #000;
-  color: #fff;
-}
+.controls{display:flex;flex-direction:column;gap:8px}
+.btn{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);background:transparent;color:inherit;cursor:pointer;font-weight:700;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.45)}
+.btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#021026;border:1px solid rgba(255,255,255,0.06)}
+.btn.ghost{background:var(--glass);color:var(--muted);border:1px solid rgba(255,255,255,0.03)}
 
-/* ---------------- MAIN MENU ---------------- */
-#mainMenu {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, #150030, #001a4d, #30004d);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 40px;
-  animation: menuBG 12s infinite alternate;
-}
-@keyframes menuBG {
-  0% { filter: hue-rotate(0deg); }
-  100% { filter: hue-rotate(360deg); }
-}
+.settings{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.02)}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+label{min-width:120px;color:var(--muted);font-size:13px}
+input[type="color"], input[type="range"], select, input[type="number"]{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:inherit}
 
-.menuBtn {
-  padding: 20px 50px;
-  font-size: 28px;
-  border-radius: 16px;
-  border: 4px solid #0ff;
-  background: rgba(0,255,255,0.1);
-  cursor: pointer;
-  color: #0ff;
-  text-shadow: 0 0 10px #0ff;
-  box-shadow: 0 0 20px #0ff inset;
-  transition: 0.2s;
-}
-.menuBtn:hover {
-  background: #0ff;
-  color: #000;
-  box-shadow: 0 0 40px #0ff;
-}
+/* main area */
+.main{display:flex;flex-direction:column;padding:18px;gap:12px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.title{font-size:16px;font-weight:800}
+.hud{display:flex;gap:10px;align-items:center}
 
-/* ---------------- GAME CANVAS ---------------- */
-#gameCanvas {
-  position: absolute;
-  left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
-  background: #111;
-  border: 5px solid #0ff;
-  box-shadow: 0 0 40px #0ff;
-}
+.play-area{flex:1;background:linear-gradient(180deg,#041427,#031022);border-radius:12px;border:1px solid rgba(255,255,255,0.02);position:relative;overflow:hidden;padding:12px;display:flex;align-items:center;justify-content:center}
+canvas#gameCanvas{background:linear-gradient(180deg,#06162a,#04101a);border-radius:8px;box-shadow: 0 8px 30px rgba(2,6,23,0.6) inset;border:1px solid rgba(255,255,255,0.02);max-width:100%;max-height:100%;display:block}
 
-/* ---------------- LEVEL SELECT ---------------- */
-#levelSelect {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 100px;
-  overflow-y: auto;
-}
+/* overlay panel */
+.overlay{position:absolute;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.overlay-card{pointer-events:auto;background:linear-gradient(180deg, rgba(2,6,23,0.9), rgba(2,6,23,0.95));padding:22px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 20px 60px rgba(2,6,23,0.6)}
 
-.levelCard {
-  width: 70%;
-  padding: 20px;
-  margin: 15px;
-  border: 3px solid #0ff;
-  border-radius: 12px;
-  background: rgba(0,255,255,0.1);
-  color: #0ff;
-  cursor: pointer;
-  font-size: 24px;
-  text-align: center;
-}
-.levelCard:hover {
-  background: #0ff;
-  color: #000;
-}
+/* smaller UI */
+.small{font-size:12px;color:var(--muted)}
+.editor{margin-top:12px;padding:12px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.02);display:flex;flex-direction:column;gap:8px}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.editor-list{height:160px;overflow:auto;padding:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border-radius:8px}
+.badge{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px 10px;border-radius:999px;font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:8px}
 
-/* ---------------- CUSTOMIZER ---------------- */
-#customizer {
-  position: absolute;
-  inset: 0;
-  display: none;
-  background: rgba(0,0,0,0.9);
-  color: #0ff;
-  padding-top: 80px;
-  text-align: center;
-}
-.customInput {
-  margin: 15px;
-  padding: 10px;
-  font-size: 20px;
-}
+/* menu screen (separate) */
+.menu-screen{position:fixed;left:0;top:0;right:0;bottom:0;background:linear-gradient(180deg, rgba(2,6,23,0.9), rgba(2,6,23,0.95));display:flex;align-items:center;justify-content:center;z-index:100}
+.menu-card{width:920px;max-width:94%;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:14px;padding:22px;display:flex;gap:18px;align-items:center;border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(0,0,0,0.6)}
+.menu-left{flex:1;display:flex;flex-direction:column;gap:8px}
+.menu-right{width:240px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.menu-title{font-size:26px;font-weight:900;letter-spacing:0.6px}
+.menu-sub{color:var(--muted);font-size:13px}
 
-/* ---------------- EDITOR ---------------- */
-#editor {
-  position: absolute;
-  inset: 0;
-  background: rgba(10,10,10,0.95);
-  display: none;
-  color: #0ff;
-}
+/* mobile jump button */
+#jumpButton{position:absolute;right:18px;bottom:18px;padding:18px;border-radius:999px;background:linear-gradient(90deg,var(--accent1),var(--accent2));border:1px solid rgba(255,255,255,0.06);font-weight:900;color:#031026;box-shadow:0 8px 40px rgba(123,97,255,0.12);display:none;z-index:80}
 
-#editorTools {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
+/* responsive */
+@media (max-width:980px){
+  .app{grid-template-columns:1fr;height:auto;max-height:calc(100vh - 24px)}
+  .sidebar{order:2}
+  .main{order:1}
+  #jumpButton{display:block}
 }
-.editorBtn {
-  padding: 10px 20px;
-  border: 2px solid #0ff;
-  color: #0ff;
-  background: rgba(0,255,255,0.1);
-  cursor: pointer;
-}
-.editorBtn:hover {
-  background: #0ff;
-  color: #000;
-}
-
-/* (CSS continues for ~350 lines: wave trail graphics, ship flames, glow pulses,
-    UFO bobbing anims, ball roll animations, editor grid, portal glow, etc.) */
-
 </style>
 </head>
 <body>
 
-<!-- =====================================================================
-     MAIN MENU
-     ===================================================================== -->
-<div id="mainMenu">
-  <h1 style="font-size:80px; text-shadow:0 0 40px #0ff;">GEOMETRY DASH ULTRA</h1>
-  <button class="menuBtn" onclick="openLevelSelect()">Play</button>
-  <button class="menuBtn" onclick="openCustomizer()">Customize</button>
-  <button class="menuBtn" onclick="openEditor()">Course Maker</button>
+<div class="app" id="app">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="brand">
+      <div class="logo">GD</div>
+      <div>
+        <h1>Geometry Dash Ultra</h1>
+        <p>5 levels · Course Maker · Music Sync</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn primary" id="openMenuBtn">Open Menu</button>
+      <button class="btn" id="playBtn">Play Selected Level</button>
+      <button class="btn ghost" id="openEditorBtn">Open Course Maker</button>
+      <button class="btn" id="exportBtn">Export Level JSON</button>
+    </div>
+
+    <div class="settings">
+      <div class="small">Character</div>
+      <div class="row"><label>Color</label><input type="color" id="charColor" value="#00eaff"></div>
+      <div class="row"><label>Size</label><input type="range" id="charSize" min="12" max="72" value="32"></div>
+
+      <div style="height:8px"></div>
+      <div class="small">Gameplay</div>
+      <div class="row"><label>Gravity</label><input type="range" id="gravityRange" min="0.2" max="3.0" step="0.05" value="1"></div>
+      <div class="row"><label>Speed (px/s)</label><input type="range" id="speedRange" min="100" max="680" step="10" value="280"></div>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <div class="small" style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between"><span>Best run:</span><b id="bestRun">—</b></div>
+      <div style="display:flex;justify-content:space-between"><span>Saved courses:</span><b id="savedCount">0</b></div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="title">Play Area</div>
+      <div class="hud">
+        <div class="badge">Level <span id="levelIdx">1</span>/5</div>
+        <div class="badge">Mode <span id="modeText">CUBE</span></div>
+      </div>
+    </div>
+
+    <div class="play-area" id="playArea">
+      <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+      <div class="overlay" id="overlay" style="display:none">
+        <div class="overlay-card" id="overlayCard">
+          <h2 id="overlayTitle">Paused</h2>
+          <div style="height:10px"></div>
+          <div id="overlayBody" class="small">Space OR Click to jump. R to restart. P to pause.</div>
+          <div style="height:10px"></div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="btn primary" id="resumeBtn">Resume</button>
+            <button class="btn" id="restartBtn">Restart</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <div style="flex:1">
+        <div class="editor" id="editor" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:700">Course Maker (Simplified)</div>
+            <div class="small">Click to place, right-click to delete</div>
+          </div>
+
+          <div class="editor-grid">
+            <div>
+              <div class="small">Tools</div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button class="btn ghost" id="toolBlock">Block</button>
+                <button class="btn ghost" id="toolSpike">Spike</button>
+                <button class="btn ghost" id="toolSlope">Slope</button>
+                <button class="btn ghost" id="toolSpeed">SpeedPad</button>
+                <button class="btn ghost" id="toolJump">JumpPad</button>
+                <button class="btn ghost" id="toolPortal">Portal</button>
+              </div>
+
+              <div style="height:8px"></div>
+              <div class="row"><label>Object color</label><input type="color" id="objColor" value="#7b61ff"></div>
+              <div class="row"><label>Width</label><input type="number" id="objW" value="80" min="8"></div>
+              <div class="row"><label>Height</label><input type="number" id="objH" value="40" min="4"></div>
+
+              <div style="height:8px"></div>
+              <div style="display:flex;gap:8px">
+                <button class="btn primary" id="addObjBtn">Add at Camera</button>
+                <button class="btn" id="clearObjsBtn">Clear</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="small">Objects in course</div>
+              <div class="editor-list" id="objectList"></div>
+
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button class="btn" id="saveCourseBtn">Save Course</button>
+                <select id="savedCourses" style="flex:1"><option value="-1">-- Select saved course --</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+            <button class="btn" id="commitToLevelBtn">Overwrite Level</button>
+            <button class="btn" id="closeEditorBtn">Close Editor</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="width:360px">
+        <div style="padding:12px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.02)">
+          <div style="font-weight:700">Level Info</div>
+          <div class="small" style="margin-top:6px">Select level and press Play. Editor simplified: single-click to place, right-click to remove.</div>
+          <div style="height:12px"></div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <select id="levelSelect" style="flex:1">
+              <option value="0">Level 1 — Neon Run</option>
+              <option value="1">Level 2 — Wave Flow</option>
+              <option value="2">Level 3 — UFO Drift</option>
+              <option value="3">Level 4 — Pulse Park</option>
+              <option value="4">Level 5 — Hyper Rush</option>
+            </select>
+            <button class="btn" id="editLevelBtn">Edit Level</button>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn primary" id="playPreviewBtn">Play</button>
+            <button class="btn" id="importBtn">Import</button>
+          </div>
+
+          <div style="height:8px"></div>
+          <div class="small">Controls: Space / Click / Touch to jump | R to reset | P to pause</div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div style="padding:12px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.02)">
+          <div style="font-weight:700">Audio & Effects</div>
+          <div style="height:8px"></div>
+          <div class="small">Upload music to sync visual pulses (analyser). Press Play Music after selecting a file.</div>
+          <input type="file" id="audioFile" accept="audio/*" style="width:100%;margin-top:8px"/>
+          <div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="playMusicBtn">Play Music</button><button class="btn" id="stopMusicBtn">Stop</button></div>
+          <div style="height:8px"></div>
+          <div class="small">Export/Import & Share</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" id="exportLevelBtn">Export Current Level</button>
+            <button class="btn" id="downloadAllBtn">Export All Courses</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
-<!-- =====================================================================
-     LEVEL SELECT
-     ===================================================================== -->
-<div id="levelSelect"></div>
+<button id="jumpButton">JUMP</button>
 
-<!-- =====================================================================
-     CUSTOMIZER
-     ===================================================================== -->
-<div id="customizer">
-  <h2>Customize Cube</h2>
-  <label>Cube Color: <input type="color" id="cubeColor" class="customInput"></label>
-  <label>Trail Color: <input type="color" id="trailColor" class="customInput"></label>
-  <button class="menuBtn" onclick="saveCustomization()">Save</button>
-  <button class="menuBtn" onclick="closeCustomizer()">Back</button>
-</div>
-
-<!-- =====================================================================
-     EDITOR
-     ===================================================================== -->
-<div id="editor">
-  <div id="editorTools">
-    <button class="editorBtn" onclick="editorTool='block'">Block</button>
-    <button class="editorBtn" onclick="editorTool='spike'">Spike</button>
-    <button class="editorBtn" onclick="editorTool='portalCube'">Cube Portal</button>
-    <button class="editorBtn" onclick="editorTool='portalUFO'">UFO Portal</button>
-    <button class="editorBtn" onclick="editorTool='portalWave'">Wave Portal</button>
-    <button class="editorBtn" onclick="saveLevel()">Save</button>
-    <button class="editorBtn" onclick="runEditorLevel()">Run</button>
-    <button class="editorBtn" onclick="closeEditor()">Exit</button>
+<!-- Menu Screen -->
+<div class="menu-screen" id="menuScreen" style="display:none">
+  <div class="menu-card">
+    <div class="menu-left">
+      <div class="menu-title">Geometry Dash Ultra</div>
+      <div class="menu-sub">Polished menu • Music sync • Modes • Mobile controls</div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn primary" id="menuPlayBtn">Play</button>
+        <button class="btn" id="menuEditorBtn">Course Maker</button>
+        <button class="btn" id="menuCustomBtn">Customize</button>
+      </div>
+    </div>
+    <div class="menu-right">
+      <div style="width:120px;height:120px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#031026">GD</div>
+      <div class="small" style="text-align:center">Single-file • Saveable levels</div>
+    </div>
   </div>
 </div>
 
-<!-- =====================================================================
-     GAME CANVAS
-     ===================================================================== -->
-<canvas id="gameCanvas" width="1000" height="480"></canvas>
-
 <script>
-/* =====================================================================
-   JAVASCRIPT — FULL GAME ENGINE — 800+ LINES
-   NO PLACEHOLDERS — FULL IMPLEMENTATION
-   ===================================================================== */
+/* -------------------------
+   Game engine JS (complete)
+   ------------------------- */
 
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-let cubeColor = localStorage.getItem("cubeColor") || "#00ffff";
-let trailColor = localStorage.getItem("trailColor") || "#ffffff";
+const LOG_W = 960;
+const LOG_H = 540;
 
-/* ---------------------------------------------------------------------
-   MENU SYSTEM
-   --------------------------------------------------------------------- */
-function hideAll() {
-  document.getElementById("mainMenu").style.display="none";
-  document.getElementById("levelSelect").style.display="none";
-  document.getElementById("customizer").style.display="none";
-  document.getElementById("editor").style.display="none";
+// HiDPI setup and responsive sizing (keeps internal logic at LOG_W x LOG_H)
+function resizeCanvas(){
+  const parent = canvas.parentElement;
+  const pw = parent.clientWidth - 24;
+  const ph = parent.clientHeight - 24;
+  const ratio = LOG_W / LOG_H;
+  let drawW = pw, drawH = pw / ratio;
+  if(drawH > ph){ drawH = ph; drawW = ph * ratio; }
+  canvas.style.width = drawW + 'px';
+  canvas.style.height = drawH + 'px';
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width = Math.round(LOG_W * dpr);
+  canvas.height = Math.round(LOG_H * dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
 }
-function openLevelSelect(){ hideAll(); const s=document.getElementById("levelSelect"); s.style.display="flex"; loadLevelCards(); }
-function openCustomizer(){ hideAll(); document.getElementById("customizer").style.display="block"; }
-function closeCustomizer(){ openLevelSelect(); }
-function openEditor(){ hideAll(); document.getElementById("editor").style.display="block"; startEditor(); }
-function closeEditor(){ openLevelSelect(); }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
-/* ---------------------------------------------------------------------
-   LEVEL SELECT
-   --------------------------------------------------------------------- */
-let levels=[];
-levels.push({ name:"Level 1 — Neon Run", data:[] });
-levels.push({ name:"Level 2 — Wave Hell", data:[] });
-levels.push({ name:"Level 3 — UFO City", data:[] });
-levels.push({ name:"Level 4 — Pulse Tower", data:[] });
-levels.push({ name:"Level 5 — Hyperspeed", data:[] });
+// Game state
+let running = false;
+let paused = false;
+let lastTime = performance.now();
+let cameraX = 0;
+let gravity = parseFloat(document.getElementById('gravityRange').value);
+let speedPx = parseFloat(document.getElementById('speedRange').value);
 
-function loadLevelCards(){
-  const box=document.getElementById("levelSelect");
-  box.innerHTML="";
-  levels.forEach((lvl,i)=>{
-    let c=document.createElement("div");
-    c.className="levelCard";
-    c.innerText=lvl.name;
-    c.onclick=()=>loadLevel(i);
-    box.appendChild(c);
+// character
+let charColor = document.getElementById('charColor').value;
+let charSize = parseInt(document.getElementById('charSize').value,10);
+let trailType = 'fade';
+let shadowToggle = 'on';
+
+let mode = 'cube'; // cube, ufo, wave, ship
+document.getElementById('modeText').innerText = mode.toUpperCase();
+
+// player object
+let player = {
+  x: 120,
+  y: LOG_H - 140,
+  w: charSize,
+  h: charSize,
+  vy: 0,
+  onGround: false,
+  rotation: 0
+};
+
+// trails & particles
+let trails = []; // {x,y,size,t}
+let particles = [];
+
+// audio + analyser for beat sync
+let audioCtx = null;
+let analyser = null;
+let audioSource = null;
+let audioBufferSource = null;
+let audioElement = null;
+let musicPlaying = false;
+let beatLevel = 0;
+
+// levels & editor
+let baseLevels = makeLevels();
+let levels = JSON.parse(JSON.stringify(baseLevels)); // deep copy
+let activeLevel = [];
+let currentLevelIdx = 0;
+
+// course maker buffer
+let editorOpen = false;
+let editorTool = 'block';
+let courseObjects = [];
+let savedCoursesKey = 'gd_courses_v2';
+let progressKey = 'gd_progress_v2';
+
+// UI references
+const overlay = document.getElementById('overlay');
+const overlayTitle = document.getElementById('overlayTitle');
+const overlayBody = document.getElementById('overlayBody');
+
+function makeLevels(){
+  const ground = LOG_H - 80;
+  return [
+    // Level 1 - Neon Run (tutorial)
+    [
+      {type:'block', x:420, y:ground-40, w:160, h:40, color:'#7b61ff'},
+      {type:'spike', x:620, y:ground-28, w:40, h:28, color:'#ff4d6d'},
+      {type:'portal', x:820, y:ground-100, w:48, h:80, mode:'ufo'}
+    ],
+    // Level 2 - Wave Flow
+    [
+      {type:'block', x:300, y:ground-40, w:80, h:40, color:'#60a5fa'},
+      {type:'portal', x:520, y:ground-100, w:48, h:80, mode:'wave'},
+      {type:'slope', x:680, y:ground-40, w:120, h:60, color:'#f97316'}
+    ],
+    // Level 3 - UFO Drift
+    [
+      {type:'block', x:360, y:ground-120, w:60, h:60, color:'#a78bfa'},
+      {type:'spike', x:500, y:ground-28, w:45, h:28, color:'#ff4d6d'},
+      {type:'portal', x:760, y:ground-100, w:48, h:80, mode:'cube'}
+    ],
+    // Level 4 - Pulse Park
+    [
+      {type:'speed', x:340, y:ground-20, w:80, h:20, color:'#34d399', boost:1.8},
+      {type:'jump', x:620, y:ground-20, w:80, h:20, color:'#ffd166', jump:-16},
+      {type:'spike', x:860, y:ground-28, w:44, h:28, color:'#ff4d6d'}
+    ],
+    // Level 5 - Hyper Rush
+    [
+      {type:'block', x:260, y:ground-140, w:120, h:120, color:'#ff8b8b'},
+      {type:'portal', x:520, y:ground-100, w:48, h:80, mode:'ship'},
+      {type:'slope', x:760, y:ground-60, w:160, h:80, color:'#7b61ff'}
+    ]
+  ];
+}
+
+// ---------- input (space + click + touch) ----------
+let keys = {};
+window.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (e.code === 'Space') { e.preventDefault(); playerJump(); }
+  if (e.code === 'KeyP') togglePause();
+  if (e.code === 'KeyR') restartLevel();
+});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// touch button
+const jumpButton = document.getElementById('jumpButton');
+jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); playerJump(); }, {passive:false});
+jumpButton.addEventListener('mousedown', e => { e.preventDefault(); playerJump(); });
+
+// click on canvas for jumps or editor placement
+canvas.addEventListener('mousedown', e => {
+  const rect = canvas.getBoundingClientRect();
+  const cx = (e.clientX - rect.left) * (LOG_W / rect.width) + cameraX;
+  const cy = (e.clientY - rect.top) * (LOG_H / rect.height);
+  if (editorOpen) {
+    handleEditorClick(e, cx, cy);
+  } else {
+    playerJump();
+  }
+});
+canvas.addEventListener('contextmenu', e => { // right click to delete in editor
+  if (!editorOpen) return;
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const cx = (e.clientX - rect.left) * (LOG_W / rect.width) + cameraX;
+  const cy = (e.clientY - rect.top) * (LOG_H / rect.height);
+  deleteObjectAt(cx, cy);
+});
+
+// ---------- UI bindings ----------
+document.getElementById('openMenuBtn').addEventListener('click', openMenu);
+document.getElementById('openEditorBtn').addEventListener('click', () => toggleEditor(true));
+document.getElementById('editLevelBtn').addEventListener('click', () => {
+  courseObjects = JSON.parse(JSON.stringify(levels[currentLevelIdx] || []));
+  toggleEditor(true);
+  renderObjectList();
+});
+document.getElementById('playBtn').addEventListener('click', () => startLevel(currentLevelIdx));
+document.getElementById('playPreviewBtn').addEventListener('click', () => startLevel(currentLevelIdx));
+document.getElementById('resumeBtn').addEventListener('click', () => togglePause(false));
+document.getElementById('restartBtn').addEventListener('click', () => { restartLevel(); togglePause(false); });
+document.getElementById('openMenuBtn').addEventListener('click', openMenu);
+
+document.getElementById('menuPlayBtn').addEventListener('click', () => { closeMenu(); startLevel(currentLevelIdx); });
+document.getElementById('menuEditorBtn').addEventListener('click', () => { closeMenu(); toggleEditor(true); });
+document.getElementById('menuCustomBtn').addEventListener('click', () => { closeMenu(); document.querySelector('.sidebar').scrollIntoView(); });
+
+document.getElementById('charColor').addEventListener('input', e => { charColor = e.target.value; });
+document.getElementById('charSize').addEventListener('input', e => { charSize = parseInt(e.target.value,10); player.w = player.h = charSize; });
+document.getElementById('gravityRange').addEventListener('input', e => { gravity = parseFloat(e.target.value); });
+document.getElementById('speedRange').addEventListener('input', e => { speedPx = parseFloat(e.target.value); });
+
+document.getElementById('toolBlock').addEventListener('click', ()=> setEditorTool('block'));
+document.getElementById('toolSpike').addEventListener('click', ()=> setEditorTool('spike'));
+document.getElementById('toolSlope').addEventListener('click', ()=> setEditorTool('slope'));
+document.getElementById('toolSpeed').addEventListener('click', ()=> setEditorTool('speed'));
+document.getElementById('toolJump').addEventListener('click', ()=> setEditorTool('jump'));
+document.getElementById('toolPortal').addEventListener('click', ()=> setEditorTool('portal'));
+
+document.getElementById('addObjBtn').addEventListener('click', ()=> addObjectAt(editorTool, cameraX + LOG_W/2, LOG_H - 160));
+document.getElementById('clearObjsBtn').addEventListener('click', ()=> { if(confirm('Clear all objects?')) { courseObjects=[]; renderObjectList(); }});
+document.getElementById('saveCourseBtn').addEventListener('click', saveCourse);
+document.getElementById('commitToLevelBtn').addEventListener('click', ()=> { if(confirm('Overwrite current level with editor objects?')){ levels[currentLevelIdx] = JSON.parse(JSON.stringify(courseObjects)); populateLevelSelect(); toggleEditor(false); }});
+document.getElementById('closeEditorBtn').addEventListener('click', ()=> toggleEditor(false));
+document.getElementById('exportLevelBtn').addEventListener('click', exportCurrentLevel);
+document.getElementById('downloadAllBtn').addEventListener('click', exportAllCourses);
+
+document.getElementById('audioFile').addEventListener('change', handleAudioFile);
+document.getElementById('playMusicBtn').addEventListener('click', startMusic);
+document.getElementById('stopMusicBtn').addEventListener('click', stopMusic);
+document.getElementById('exportBtn').addEventListener('click', exportCurrentLevel);
+document.getElementById('importBtn').addEventListener('click', importLevelFile);
+document.getElementById('menuScreen').style.display = 'none';
+document.getElementById('openMenuBtn').addEventListener('click', openMenu);
+document.getElementById('menuPlayBtn').addEventListener('click', ()=>{ closeMenu(); startLevel(currentLevelIdx); });
+
+document.getElementById('levelSelect').addEventListener('change', e => { currentLevelIdx = parseInt(e.target.value,10); document.getElementById('levelIdx').innerText = currentLevelIdx+1; });
+
+// populate saved courses select
+refreshSavedCoursesSelect();
+populateLevelSelect();
+
+// ---------- Editor functions ----------
+function setEditorTool(t){ editorTool = t; document.querySelectorAll('#editor .btn').forEach(b=>b.classList.remove('primary')); /* mark active button visually optional */ }
+function handleEditorClick(evt, worldX, worldY){
+  // single click places object
+  addObjectAt(editorTool, worldX, worldY);
+}
+function deleteObjectAt(wx, wy){
+  // find object under point, remove it
+  for(let i = courseObjects.length-1; i>=0; i--){
+    const o = courseObjects[i];
+    if(wx >= o.x && wx <= o.x + (o.w||60) && wy >= o.y && wy <= o.y + (o.h||40)){
+      courseObjects.splice(i,1);
+      renderObjectList();
+      break;
+    }
+  }
+}
+function addObjectAt(type, x, y){
+  const w = parseInt(document.getElementById('objW').value,10) || 60;
+  const h = parseInt(document.getElementById('objH').value,10) || 40;
+  const color = document.getElementById('objColor').value || '#7b61ff';
+  let obj = null;
+  if(type === 'block') obj = { type:'block', x: Math.round(x), y: Math.round(y), w:w, h:h, color:color };
+  if(type === 'spike') obj = { type:'spike', x: Math.round(x), y: Math.round(y), w:w, h:h, color:color };
+  if(type === 'slope') obj = { type:'slope', x: Math.round(x), y: Math.round(y), w:w, h:h, color:color };
+  if(type === 'speed') obj = { type:'speed', x: Math.round(x), y: Math.round(y), w:w, h:h, color:color, boost:1.6 };
+  if(type === 'jump') obj = { type:'jump', x: Math.round(x), y: Math.round(y), w:w, h:h, color:color, jump:-16 };
+  if(type === 'portal') obj = { type:'portal', x: Math.round(x), y: Math.round(y), w:48, h:80, color:'#00eaff', mode:'ufo' };
+  if(obj){ courseObjects.push(obj); renderObjectList(); }
+}
+function renderObjectList(){
+  const el = document.getElementById('objectList');
+  el.innerHTML = '';
+  courseObjects.forEach((o,i)=> {
+    const row = document.createElement('div');
+    row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center';
+    row.style.padding='8px'; row.style.borderRadius='8px'; row.style.background='rgba(255,255,255,0.01)'; row.style.marginBottom='6px';
+    row.innerHTML = `<div style="display:flex;gap:8px;align-items:center"><div style="width:12px;height:12px;background:${o.color||'#7b61ff'};border-radius:3px"></div><div class="small">${o.type} @ ${Math.round(o.x)}</div></div>`;
+    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='6px';
+    const run = document.createElement('button'); run.className='btn ghost'; run.textContent='Run'; run.onclick = ()=>{ levels.push(JSON.parse(JSON.stringify(courseObjects))); currentLevelIdx = levels.length-1; populateLevelSelect(); startLevel(currentLevelIdx);};
+    const del = document.createElement('button'); del.className='btn'; del.textContent='Del'; del.onclick = ()=>{ courseObjects.splice(i,1); renderObjectList(); };
+    actions.appendChild(run); actions.appendChild(del); row.appendChild(actions); el.appendChild(row);
   });
 }
 
-/* ---------------------------------------------------------------------
-   CUSTOMIZER
-   --------------------------------------------------------------------- */
-function saveCustomization(){
-  cubeColor=document.getElementById("cubeColor").value;
-  trailColor=document.getElementById("trailColor").value;
-  localStorage.setItem("cubeColor", cubeColor);
-  localStorage.setItem("trailColor", trailColor);
+function saveCourse(){
+  const arr = loadSavedCourses();
+  const name = prompt('Course name (optional)') || ('Course '+(arr.length+1));
+  arr.push({ name:name, data: courseObjects });
+  localStorage.setItem(savedCoursesKey, JSON.stringify(arr));
+  refreshSavedCoursesSelect();
+  alert('Course saved.');
 }
-
-/* ---------------------------------------------------------------------
-   GAME VARIABLES
-   --------------------------------------------------------------------- */
-let gameRunning=false;
-let cameraX=0;
-let mode="cube"; // cube, ufo, wave, ship, ball
-
-const cube={x:100,y:300,vy:0,size:40,onGround:false,angle:0};
-
-let obstacles=[];
-let particles=[];
-let editorTool="block";
-let currentLevelIndex=0;
-
-/* ---------------------------------------------------------------------
-   INPUT
-   --------------------------------------------------------------------- */
-window.addEventListener("keydown",e=>{
-  if(e.code==="Space") jump();
+function loadSavedCourses(){ try{ return JSON.parse(localStorage.getItem(savedCoursesKey) || '[]'); }catch(e){ return []; } }
+function refreshSavedCoursesSelect(){
+  const sel = document.getElementById('savedCourses');
+  sel.innerHTML = '<option value="-1">-- Select saved course --</option>';
+  const arr = loadSavedCourses();
+  document.getElementById('savedCount').innerText = arr.length;
+  arr.forEach((c,i)=>{ const o = document.createElement('option'); o.value = i; o.text = c.name || ('Course '+(i+1)); sel.appendChild(o); });
+}
+document.getElementById('savedCourses').addEventListener('change', e => {
+  const idx = parseInt(e.target.value,10);
+  if(idx >= 0){ const arr = loadSavedCourses(); courseObjects = JSON.parse(JSON.stringify(arr[idx].data || [])); renderObjectList(); }
 });
-canvas.addEventListener("mousedown",jump);
 
-function jump(){
-  if(!gameRunning) return;
-
-  if(mode==="cube"&& cube.onGround){ cube.vy=-15; cube.onGround=false; spawnJumpParticles(); }
-  if(mode==="ufo"){ cube.vy=-8; spawnJumpParticles(); }
-  if(mode==="wave") waveInput=1;
-}
-window.addEventListener("mouseup",()=>{ waveInput=0; });
-let waveInput=0;
-
-/* ---------------------------------------------------------------------
-   LOAD LEVEL
-   --------------------------------------------------------------------- */
-function loadLevel(i){
-  hideAll();
-  currentLevelIndex=i;
-  obstacles=JSON.parse(JSON.stringify(levels[i].data));
-  resetPlayer();
-  gameRunning=true;
-  requestAnimationFrame(loop);
-}
-
-function resetPlayer(){
-  cube.x=100;
-  cube.y=250;
-  cube.vy=0;
-  cube.onGround=false;
-  cameraX=0;
-  mode="cube";
-}
-
-/* ---------------------------------------------------------------------
-   PHYSICS + UPDATE
-   --------------------------------------------------------------------- */
-function loop(){
-  if(!gameRunning) return;
-
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // Background
-  drawBackground();
-
-  // Apply physics
-  updatePlayer();
-
-  // Draw obstacles
-  drawObstacles();
-
-  // Draw player
-  drawPlayer();
-
-  // Draw particles
-  updateParticles();
-
-  requestAnimationFrame(loop);
-}
-
-function updatePlayer(){
-  if(mode==="cube"){
-    cube.vy+=0.8;
-    cube.y+=cube.vy;
-    cube.angle+=0.2;
+// ---------- Level selection and export/import ----------
+function populateLevelSelect(){
+  const sel = document.getElementById('levelSelect');
+  sel.innerHTML = '';
+  for(let i=0;i<levels.length;i++){
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.text = (i<5?('Level '+(i+1)):'Custom '+(i+1)) + ' — ' + (levels[i].name || ('Level '+(i+1)));
+    sel.appendChild(opt);
   }
-
-  if(mode==="ufo"){
-    cube.vy+=0.6;
-    cube.y+=cube.vy;
-  }
-
-  if(mode==="wave"){
-    cube.y+= (waveInput? -6:6);
-  }
-
-  // Ground
-  if(cube.y+cube.size>450){ cube.y=450-cube.size; cube.vy=0; cube.onGround=true; }
-
-  cameraX+=6;
+  sel.value = currentLevelIdx;
+}
+function exportCurrentLevel(){
+  const data = levels[currentLevelIdx].data || [];
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'level-'+(currentLevelIdx+1)+'.json'; a.click(); URL.revokeObjectURL(url);
+}
+function exportAllCourses(){
+  const arr = loadSavedCourses();
+  const blob = new Blob([JSON.stringify(arr, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='saved-courses.json'; a.click(); URL.revokeObjectURL(url);
+}
+function importLevelFile(){
+  const fi = document.createElement('input'); fi.type='file'; fi.accept='.json,application/json';
+  fi.onchange = e => {
+    const f = e.target.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      try{
+        const data = JSON.parse(ev.target.result);
+        if(Array.isArray(data)){
+          levels.push({ name:'Imported', data:data });
+          populateLevelSelect();
+          alert('Imported level as custom level.');
+        } else alert('Invalid level JSON.');
+      }catch(err){ alert('Error parsing JSON'); }
+    };
+    r.readAsText(f);
+  };
+  fi.click();
 }
 
-/* ---------------------------------------------------------------------
-   OBSTACLES + PORTALS
-   --------------------------------------------------------------------- */
-function drawObstacles(){
-  for(let o of obstacles){
-    let x=o.x-cameraX;
-    if(x<-200||x>canvas.width+200) continue;
-
-    ctx.fillStyle=o.color||"#f00";
-
-    if(o.type==="block") ctx.fillRect(x,o.y,o.w,o.h);
-    if(o.type==="spike") drawSpike(x,o.y,o.w,o.h);
-    if(o.type.startsWith("portal")) drawPortal(x,o.y,o.mode);
-
-    checkCollision(o);
+// ---------- audio / beat sync ----------
+function handleAudioFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const url = URL.createObjectURL(file);
+  prepareAudio(url);
+}
+function prepareAudio(url){
+  stopMusic();
+  if(audioElement) { audioElement.src = url; return; }
+  audioElement = new Audio(url);
+  audioElement.loop = true;
+  audioElement.crossOrigin = 'anonymous';
+  try{
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+    const sourceNode = audioCtx.createMediaElementSource(audioElement);
+    sourceNode.connect(analyser);
+    analyser.connect(audioCtx.destination);
+  }catch(e){
+    console.warn('WebAudio not available:', e);
   }
 }
-
-function drawSpike(x,y,w,h){
-  ctx.beginPath();
-  ctx.moveTo(x,y+h);
-  ctx.lineTo(x+w/2,y);
-  ctx.lineTo(x+w,y+h);
-  ctx.fill();
+function startMusic(){
+  if(!audioElement){
+    alert('Choose an audio file first (sidebar).');
+    return;
+  }
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  audioElement.play().then(()=> {
+    musicPlaying = true;
+    if(!analyser && audioCtx){
+      try{ analyser = audioCtx.createAnalyser(); }catch(e){}
+    }
+    // start monitoring beat
+    beatMonitor();
+  }).catch(err => { console.warn('play error', err); });
+}
+function stopMusic(){
+  if(audioElement) { audioElement.pause(); audioElement.currentTime = 0; musicPlaying = false; }
 }
 
-function drawPortal(x,y,portalMode){
-  ctx.strokeStyle="#0ff";
-  ctx.lineWidth=6;
-  ctx.strokeRect(x,y,50,80);
-  if(Math.abs(x+25-cube.x)<20) mode=portalMode;
+// simple beat monitor reading low-frequency energy
+let beatThreshold = 160; // tweakable
+function beatMonitor(){
+  if(!analyser || !musicPlaying) { beatLevel = 0; return; }
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(data);
+  // sum low frequencies
+  let sum=0;
+  for(let i=0;i<32;i++) sum += data[i];
+  const avg = sum / 32;
+  beatLevel = avg; // use in rendering pulse
+  requestAnimationFrame(beatMonitor);
 }
 
-function checkCollision(o){
-  if(o.type==="block"){
-    if(rectHit(cube.x,cube.y,cube.size,cube.size,o.x-cameraX,o.y,o.w,o.h)){
-      if(cube.vy>0) cube.y=o.y-cube.size;
-      cube.vy=0;
-      cube.onGround=true;
+// ---------- Gameplay: start/restart/toggle ----------
+function startLevel(idx){
+  currentLevelIdx = idx || currentLevelIdx;
+  populateLevelSelect();
+  document.getElementById('levelIdx').innerText = currentLevelIdx+1;
+  cameraX = 0;
+  player.x = 120; player.y = LOG_H - 140; player.vy = 0; player.w = charSize; player.h = charSize; player.onGround=false;
+  activeLevel = JSON.parse(JSON.stringify(levels[currentLevelIdx].data || []));
+  running = true; paused = false; overlay.style.display='none';
+  lastTime = performance.now();
+  requestAnimationFrame(gameLoop);
+}
+function restartLevel(){
+  cameraX = 0;
+  player.x = 120; player.y = LOG_H - 140; player.vy = 0; player.onGround=false;
+  trails = []; particles = [];
+  paused = false; overlay.style.display='none';
+}
+function togglePause(f){
+  if(f === false) paused = false;
+  else if(f === true) paused = true;
+  else paused = !paused;
+  overlay.style.display = paused ? 'flex':'none';
+}
+
+// ---------- collisions & world logic ----------
+function rectOverlap(a,b){ return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
+
+function checkWorldCollisions(){
+  // return death or portal etc
+  for(const o of activeLevel){
+    const ox = o.x - cameraX;
+    const oy = o.y;
+    if(ox + o.w < -200 || ox > LOG_W + 200) continue;
+    // AABB for blocks, speed, jump
+    const a = { x:player.x, y:player.y, w:player.w, h:player.h };
+    const b = { x:ox, y:oy, w:o.w || 40, h:o.h || 40 };
+    if(o.type === 'block' || o.type === 'speed' || o.type === 'jump'){
+      if(rectOverlap(a,b)){
+        // landing check
+        if(player.vy > 0 && (player.y + player.h - player.vy) <= oy + 4){ // simple top collision
+          player.y = oy - player.h; player.vy = 0; player.onGround = true;
+          // special effects
+          if(o.type === 'speed'){ speedPx *= o.boost || 1.5; setTimeout(()=> speedPx = parseFloat(document.getElementById('speedRange').value), 350); spawnBoostParticles(); }
+          if(o.type === 'jump'){ player.vy = (o.jump || -14); spawnJumpParticles(); }
+        } else {
+          // side collision -> simple pushback
+          player.x -= 12;
+        }
+      }
+    } else if(o.type === 'spike'){
+      // spike triangle collision: approximate with rect for simplicity
+      if(rectOverlap(a,b)){
+        // death
+        running = false; paused = true;
+        overlay.style.display = 'flex';
+        overlayTitle.innerText = 'You Died';
+        overlayBody.innerText = 'Hit a spike. Press Restart.';
+      }
+    } else if(o.type === 'slope'){
+      // slope collision: approximate top surface as slanted from left to right
+      const localX = player.x - (o.x - cameraX);
+      if(localX >= 0 && localX <= o.w && player.x + player.w > (o.x - cameraX)){
+        const progress = localX / o.w;
+        const surfaceY = o.y + o.h - (progress * o.h); // descending slope
+        if(player.y + player.h > surfaceY - 2 && player.y < surfaceY + 30){
+          player.y = surfaceY - player.h;
+          player.vy = 0; player.onGround = true;
+        }
+      }
+    } else if(o.type === 'portal'){
+      // portal proximity check
+      if(Math.abs((o.x - cameraX) + o.w/2 - (player.x + player.w/2)) < 26){
+        // change mode
+        if(o.mode){ mode = o.mode; document.getElementById('modeText').innerText = mode.toUpperCase(); spawnPortalFlash(); }
+      }
     }
   }
 }
 
-function rectHit(ax,ay,aw,ah,bx,by,bw,bh){
-  return ax<bx+bw && ax+aw>bx && ay<by+bh && ay+ah>by;
-}
-
-/* ---------------------------------------------------------------------
-   PARTICLES
-   --------------------------------------------------------------------- */
-function spawnJumpParticles(){
-  for(let i=0;i<10;i++){
-    particles.push({x:cube.x+cube.size/2,y:cube.y+cube.size,vx:(Math.random()-0.5)*5,vy:-Math.random()*3,life:40});
+// ---------- player actions ----------
+function playerJump(){
+  if(!running) return;
+  if(mode === 'cube'){
+    if(player.onGround){
+      player.vy = -12 * gravity;
+      player.onGround = false;
+      spawnJumpParticles();
+    }
+  } else if(mode === 'ufo'){
+    player.vy = -6; spawnJumpParticles();
+  } else if(mode === 'wave'){
+    // wave uses upward burst
+    player.vy = -8; spawnJumpParticles();
+  } else if(mode === 'ship'){
+    player.vy = -6; spawnJumpParticles();
   }
 }
-function updateParticles(){
-  ctx.fillStyle=trailColor;
-  particles.forEach(p=>{
-    p.x+=p.vx;
-    p.y+=p.vy;
-    p.vy+=0.2;
-    p.life--;
-    ctx.globalAlpha=p.life/40;
-    ctx.fillRect(p.x-cameraX,p.y,4,4);
-  });
-  ctx.globalAlpha=1;
-  particles=particles.filter(p=>p.life>0);
+
+// ---------- particles ----------
+function spawnJumpParticles(){
+  for(let i=0;i<12;i++){
+    particles.push({ x: player.x + player.w/2 + (Math.random()-0.5)*16, y: player.y + player.h, vx:(Math.random()-0.5)*3, vy:-Math.random()*3-1, life:40, size:2 + Math.random()*3, color: '#fff' });
+  }
+}
+function spawnBoostParticles(){
+  for(let i=0;i<20;i++){
+    particles.push({ x: player.x + player.w/2 + (Math.random()-0.5)*32, y: player.y + player.h + 6, vx:(Math.random()-0.5)*6, vy:-Math.random()*2, life:40, size:2 + Math.random()*4, color:'#34d399' });
+  }
+}
+function spawnPortalFlash(){
+  for(let i=0;i<40;i++){
+    particles.push({ x: player.x + player.w/2 + (Math.random()-0.5)*80, y: player.y + player.h/2 + (Math.random()-0.5)*80, vx:(Math.random()-0.5)*6, vy:(Math.random()-0.5)*6, life:60, size:2 + Math.random()*6, color: '#00eaff' });
+  }
 }
 
-/* ---------------------------------------------------------------------
-   RENDER PLAYER
-   --------------------------------------------------------------------- */
-function drawPlayer(){
+// ---------- update & render ----------
+function update(dt){
+  // physics update
+  if(mode === 'cube' || mode === 'ship' || mode === 'ufo'){
+    player.vy += 1500 * gravity * dt * 0.001 * 0.6; // tuned
+    player.y += player.vy * dt * 60;
+  } else if(mode === 'wave'){
+    // wave auto-moves vertical based on sine+input
+    player.y += Math.sin(performance.now() * 0.006) * 1.2;
+    player.y += (keys['Space'] ? -3 : 3);
+  }
+
+  // world ground collision
+  const groundY = LOG_H - 80;
+  if(player.y + player.h > groundY){ player.y = groundY - player.h; player.vy = 0; player.onGround = true; }
+  else player.onGround = false;
+
+  // progress camera
+  cameraX += speedPx * dt;
+
+  // add trails
+  if(trailType !== 'none'){
+    trails.push({ x: player.x + player.w/2 + Math.random()*4 -2, y: player.y + player.h/2, size: player.w * 0.8, t: performance.now() });
+    if(trails.length > 140) trails.shift();
+  }
+
+  checkWorldCollisions();
+
+  // update particles
+  for(const p of particles){
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.12;
+    p.life -= 1;
+  }
+  particles = particles.filter(p => p.life > 0);
+}
+
+function draw(){
+  // clear
+  ctx.clearRect(0,0,LOG_W,LOG_H);
+
+  // apply subtle global bloom with composite
   ctx.save();
-  ctx.translate(cube.x-cameraX+cube.size/2,cube.y+cube.size/2);
-  ctx.rotate(cube.angle);
-  ctx.fillStyle=cubeColor;
-  ctx.fillRect(-cube.size/2,-cube.size/2,cube.size,cube.size);
+  // background gradient and visual pulse from beat level
+  const hue = Math.floor((beatLevel/256) * 200);
+  const g = ctx.createLinearGradient(0,0,0,LOG_H);
+  g.addColorStop(0, `hsl(${hue},80%,8%)`);
+  g.addColorStop(1, `hsl(${(hue+30)%360},80%,6%)`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,LOG_W,LOG_H);
+  ctx.restore();
+
+  // parallax decorative lines
+  for(let i=0;i<5;i++){
+    ctx.globalAlpha = 0.04 + i*0.02;
+    ctx.fillStyle = 'white';
+    const ox = ((cameraX*0.08*(i+1))% (LOG_W*2)) - LOG_W;
+    ctx.fillRect(ox, 60 + i*28, LOG_W/3, 4);
+  }
+  ctx.globalAlpha = 1;
+
+  // ground
+  ctx.fillStyle = '#02122a';
+  ctx.fillRect(0, LOG_H-80, LOG_W, 80);
+
+  // world objects with camera translation
+  ctx.save();
+  ctx.translate(-cameraX, 0);
+  for(const o of activeLevel) drawObject(o);
+  ctx.restore();
+
+  // trails
+  drawTrails();
+
+  // player (top)
+  drawPlayer();
+
+  // particles (above player)
+  for(const p of particles){
+    ctx.globalAlpha = Math.max(0, p.life / 60);
+    ctx.fillStyle = p.color || '#fff';
+    ctx.fillRect(p.x - cameraX, p.y, p.size, p.size);
+  }
+  ctx.globalAlpha = 1;
+
+  // HUD small
+  ctx.fillStyle = 'rgba(0,0,0,0.28)';
+  ctx.fillRect(8, 8, 180, 28);
+  ctx.fillStyle = '#e9f3ff';
+  ctx.font = '12px Inter, Arial';
+  ctx.fillText(`Level ${currentLevelIdx+1} · Mode ${mode.toUpperCase()} · Speed ${Math.round(speedPx)}px/s`, 14, 28);
+
+  // beat pulse effect overlay
+  if(beatLevel > 150){
+    ctx.save();
+    ctx.globalAlpha = Math.min(0.18, (beatLevel - 120) / 420);
+    ctx.fillStyle = '#00eaff';
+    ctx.fillRect(0,0,LOG_W,LOG_H);
+    ctx.restore();
+  }
+}
+
+function drawObject(o){
+  ctx.save();
+  ctx.fillStyle = o.color || '#7b61ff';
+  if(o.type === 'block'){
+    ctx.fillRect(o.x, o.y, o.w, o.h);
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fillRect(o.x, o.y, o.w, 3);
+  } else if(o.type === 'spike'){
+    const spikeCount = Math.max(1, Math.floor(o.w / 10));
+    const step = o.w / spikeCount;
+    for(let i=0;i<spikeCount;i++){
+      const sx = o.x + i*step;
+      ctx.beginPath();
+      ctx.moveTo(sx, o.y + o.h);
+      ctx.lineTo(sx + step/2, o.y);
+      ctx.lineTo(sx + step, o.y + o.h);
+      ctx.closePath();
+      ctx.fill();
+    }
+  } else if(o.type === 'slope'){
+    ctx.beginPath();
+    ctx.moveTo(o.x, o.y + o.h);
+    ctx.lineTo(o.x + o.w, o.y + o.h);
+    ctx.lineTo(o.x + o.w, o.y);
+    ctx.closePath();
+    ctx.fill();
+  } else if(o.type === 'speed' || o.type === 'jump'){
+    ctx.fillStyle = o.color || '#34d399';
+    ctx.fillRect(o.x, o.y, o.w, o.h);
+    ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(o.x, o.y, o.w, 3);
+  } else if(o.type === 'portal'){
+    // animated portal
+    const t = performance.now() * 0.005;
+    ctx.save();
+    ctx.translate(o.x + o.w/2, o.y + o.h/2);
+    ctx.rotate(t);
+    ctx.strokeStyle = o.color || '#00eaff';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(-o.w/2, -o.h/2, o.w, o.h);
+    ctx.restore();
+  }
   ctx.restore();
 }
 
-/* ---------------------------------------------------------------------
-   BACKGROUND EFFECTS
-   --------------------------------------------------------------------- */
-function drawBackground(){
-  let g=ctx.createLinearGradient(0,0,canvas.width,canvas.height);
-  g.addColorStop(0,"#001144");
-  g.addColorStop(1,"#550077");
-  ctx.fillStyle=g;
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+function drawTrails(){
+  const tNow = performance.now();
+  for(let i=0;i<trails.length;i++){
+    const t = trails[i];
+    const age = (tNow - t.t) / 800;
+    if(age > 1) continue;
+    ctx.globalAlpha = 1 - age;
+    ctx.fillStyle = charColor;
+    if(trailType === 'fade') ctx.fillRect(t.x - cameraX - t.size/2, t.y - t.size/2, t.size*0.8, t.size*0.8);
+    else ctx.fillRect(t.x - cameraX - 8, t.y - t.size/4, t.size*1.6, t.size*0.6);
+    ctx.globalAlpha = 1;
+  }
+  trails = trails.filter(t => (performance.now() - t.t) < 1200);
 }
 
-/* ---------------------------------------------------------------------
-   EDITOR LOGIC — FULL IMPLEMENTATION
-   --------------------------------------------------------------------- */
-function startEditor(){
-  obstacles=[];
-  editorLoop();
+function drawPlayer(){
+  ctx.save();
+  // shadow
+  if(shadowToggle === 'on'){
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.fillRect(player.x - cameraX + 6, player.y + player.h - 6, player.w, 6);
+  }
+  ctx.fillStyle = charColor;
+  ctx.fillRect(player.x - cameraX, player.y, player.w, player.h);
+
+  // bevel
+  ctx.strokeStyle = 'rgba(0,0,0,0.14)';
+  ctx.strokeRect(player.x - cameraX + 1, player.y + 1, player.w - 2, player.h - 2);
+  ctx.restore();
 }
 
-function editorLoop(){
-  if(document.getElementById("editor").style.display!="block") return;
-
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  drawBackground();
-
-  drawObstacles();
-
-  requestAnimationFrame(editorLoop);
+// ---------- main loop ----------
+let lastFrame = performance.now();
+function gameLoop(ts){
+  if(!running) return;
+  const dt = Math.min(32, ts - lastFrame) / 1000;
+  lastFrame = ts;
+  if(!paused){
+    update(dt);
+    draw();
+  }
+  requestAnimationFrame(gameLoop);
 }
 
-canvas.addEventListener("mousedown",e=>{
-  if(document.getElementById("editor").style.display!="block") return;
+// ---------- level complete / death detection handled in collisions ----------
+// level finish when camera passes farthest object
+function checkLevelFinish(){
+  const far = (activeLevel.length ? Math.max(...activeLevel.map(o => o.x + (o.w || 40))) : 1200);
+  if(cameraX > far + 300){
+    running = false; paused = true;
+    overlay.style.display = 'flex';
+    overlayTitle.innerText = 'Level Complete!';
+    overlayBody.innerText = `You finished level ${currentLevelIdx+1}.`;
+    // save progress best run
+    const prog = loadProgress(); prog.best = Math.max(prog.best||0, cameraX); saveProgress(prog);
+    document.getElementById('bestRun').innerText = Math.round(prog.best || 0);
+  }
+}
 
-  const rect=canvas.getBoundingClientRect();
-  let x=e.clientX-rect.left+cameraX;
-  let y=e.clientY-rect.top;
+// Hook checkLevelFinish into update
+const origUpdate = update;
+update = function(dt){
+  origUpdate(dt);
+  checkLevelFinish();
+};
 
-  if(editorTool==="block") obstacles.push({type:"block",x:x,y:y,w:60,h:60,color:"#0f0"});
-  if(editorTool==="spike") obstacles.push({type:"spike",x:x,y:y,w:40,h:40,color:"#f00"});
-  if(editorTool==="portalCube") obstacles.push({type:"portal",x:x,y:y,w:50,h:80,mode:"cube"});
-  if(editorTool==="portalUFO") obstacles.push({type:"portal",x:x,y:y,w:50,h:80,mode:"ufo"});
-  if(editorTool==="portalWave") obstacles.push({type:"portal",x:x,y:y,w:50,h:80,mode:"wave"});
+// ---------- persistence ----------
+function saveProgress(p){ localStorage.setItem(progressKey, JSON.stringify(p)); }
+function loadProgress(){ try{ return JSON.parse(localStorage.getItem(progressKey) || '{}'); }catch(e){ return {}; } }
+
+// ---------- menu functions ----------
+function openMenu(){ document.getElementById('menuScreen').style.display = 'flex'; }
+function closeMenu(){ document.getElementById('menuScreen').style.display = 'none'; }
+document.getElementById('openMenuBtn').addEventListener('click', openMenu);
+
+// ---------- editor toggle ----------
+function toggleEditor(open){
+  editorOpen = open !== undefined ? open : !editorOpen;
+  document.getElementById('editor').style.display = editorOpen ? 'block' : 'none';
+  if(editorOpen){ running = false; overlay.style.display='none'; } else { overlay.style.display='none'; }
+}
+
+// ---------- music beat pulse is handled by analyser loop (beatMonitor) ----------
+
+// ---------- initialization ----------
+function populateLevelSelect(){
+  const sel = document.getElementById('levelSelect');
+  sel.innerHTML = '';
+  for(let i=0;i<levels.length;i++){
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.text = (i<5?('Level '+(i+1)):('Custom '+(i+1))) + ' — ' + (levels[i].name || '');
+    sel.appendChild(opt);
+  }
+  sel.value = currentLevelIdx;
+}
+populateLevelSelect();
+
+function refreshSavedCoursesSelect(){ refreshSavedCoursesSelectInner(); }
+function refreshSavedCoursesSelectInner(){
+  const sel = document.getElementById('savedCourses');
+  sel.innerHTML = '<option value="-1">-- Select saved course --</option>';
+  const arr = loadSavedCourses();
+  document.getElementById('savedCount').innerText = arr.length;
+  arr.forEach((c,i)=> { const o=document.createElement('option'); o.value=i; o.text=c.name || ('Course '+(i+1)); sel.appendChild(o); });
+}
+
+// ---------- saved courses helpers ----------
+function loadSavedCoursesData(){ try{ return JSON.parse(localStorage.getItem(savedCoursesKey) || '[]'); }catch(e){ return []; } }
+function loadSavedCourses(){ return loadSavedCoursesData(); }
+
+// ---------- start default menu on load ----------
+setTimeout(()=> { document.getElementById('menuScreen').style.display = 'flex'; }, 200);
+document.getElementById('menuPlayBtn').addEventListener('click', ()=> { startLevel(0); closeMenu(); });
+
+// ---------- audio convenience: allow using URL input by pasting to audio element if needed ----------
+function prepareAudioElement(url){
+  if(audioElement){ audioElement.pause(); audioElement.src = url; audioElement.load(); return; }
+  audioElement = new Audio(url);
+  audioElement.loop = true;
+  audioElement.crossOrigin = 'anonymous';
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioSource) audioSource.disconnect();
+  audioSource = audioCtx.createMediaElementSource(audioElement);
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 512;
+  audioSource.connect(analyser);
+  analyser.connect(audioCtx.destination);
+}
+
+// ---------- utilities for export/import of the editor's course buffer ----------
+function exportCourseArray(arr, filename){
+  const blob = new Blob([JSON.stringify(arr, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename || 'course.json'; a.click(); URL.revokeObjectURL(url);
+}
+
+// ---------- helper for initial UI state ----------
+document.getElementById('charColor').value = charColor;
+document.getElementById('charSize').value = charSize;
+document.getElementById('gravityRange').value = gravity;
+document.getElementById('speedRange').value = speedPx;
+
+refreshSavedCoursesSelectInner();
+populateLevelSelect();
+document.getElementById('bestRun').innerText = Math.round((loadProgress().best) || 0);
+
+// ---------- small safety: ensure click-to-play audio is possible ----------
+document.getElementById('playMusicBtn').addEventListener('click', ()=> {
+  // if audio file not prepared: prompt
+  const fileSel = document.getElementById('audioFile');
+  if(fileSel.files && fileSel.files[0]){
+    const url = URL.createObjectURL(fileSel.files[0]);
+    prepareAudio(url);
+  } else if(!audioElement){
+    alert('Select an audio file in the sidebar to enable music sync.');
+    return;
+  }
+  // resume AudioContext on user gesture
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if(audioElement) audioElement.play().then(()=>{ musicPlaying = true; beatMonitor(); }).catch(()=>{});
 });
 
-function saveLevel(){ levels[currentLevelIndex].data=JSON.parse(JSON.stringify(obstacles)); }
-function runEditorLevel(){ loadLevel(currentLevelIndex); }
+// ---------- helper: import saved course from JSON file ----------
+document.getElementById('savedCourses').addEventListener('dblclick', ()=> {
+  const idx = parseInt(document.getElementById('savedCourses').value,10);
+  if(idx>=0){
+    const arr = loadSavedCoursesData();
+    courseObjects = JSON.parse(JSON.stringify(arr[idx].data));
+    renderObjectList();
+  }
+});
+
+// ---------- quick editor save to localStorage ----------
+function saveCourseToLocal(name){
+  const arr = loadSavedCoursesData();
+  arr.push({ name:name || ('Course '+(arr.length+1)), data: courseObjects });
+  localStorage.setItem(savedCoursesKey, JSON.stringify(arr));
+  refreshSavedCoursesSelectInner();
+}
+
+// ---------- simpler helpers for user actions ----------
+document.getElementById('saveCourseBtn').addEventListener('click', ()=> {
+  const name = prompt('Name this course (optional)') || undefined;
+  saveCourseToLocal(name);
+  alert('Saved.');
+});
+document.getElementById('exportLevelBtn').addEventListener('click', ()=> exportCurrentLevel());
+document.getElementById('downloadAllBtn').addEventListener('click', ()=> exportAllCourses());
+
+// ---------- right now everything is ready. If you want tuning: gravity/speed/visuals, tell me. ----------
 
 </script>
+
 </body>
 </html>
