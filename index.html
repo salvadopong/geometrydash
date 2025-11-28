@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Dash: Progression</title>
+    <title>Neon Dash: Playable!</title>
     <style>
         :root {
             --primary: #00f0ff;
@@ -114,7 +114,7 @@
         <div id="menu-main" class="ui-layer visible">
             <div class="menu-box">
                 <h1>NEON DASH</h1>
-                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">CORE UPDATE v3.0</p>
+                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">PLAYABILITY UPDATE V4.0</p>
                 <button onclick="UI.showLevels()">Play Levels</button>
                 <button class="secondary" onclick="UI.showEditor()">Level Editor</button>
                 <br>
@@ -165,16 +165,12 @@
     </div>
 
 <script>
-/** * NEON DASH V3 - Snappy Physics & Progression 
- */
-
-// --- CONFIGURATION ---
-// Increased Gravity and Jump Force for "Real" feel
+// --- CONFIGURATION (Tuned for playability) ---
 const CFG = {
-    g: 0.95,      // Heavy gravity
-    jmp: 16.0,    // Strong jump
-    spd: 8.5,     // Faster movement
-    term: 18,     // Terminal velocity
+    g: 0.8,       // Slightly reduced gravity for easier jumps
+    jmp: 15.0,    // Balanced jump force
+    spd: 8.5,     
+    term: 18,     
     tile: 50
 };
 
@@ -199,40 +195,39 @@ const AUDIO = {
     win: () => { AUDIO.tone(440,'triangle',0.1); setTimeout(()=>AUDIO.tone(554,'triangle',0.1),100); setTimeout(()=>AUDIO.tone(660,'triangle',0.4),200); }
 };
 
-// --- DATA ---
+// --- LEVEL DATA (LONGER & BEATABLE) ---
 // t: 1=Block, 2=Spike, 3=Orb, 4=Ship, 5=UFO, 6=Cube, 7=Pad, 99=Goal
-// Hand-crafted levels for good progression
 const LEVELS = [
-    // 1. STEREO (Easy Cube)
-    [{t:1,x:5,y:0},{t:1,x:6,y:0},{t:1,x:7,y:0},{t:2,x:11,y:0},{t:1,x:15,y:1},{t:1,x:16,y:1},{t:2,x:20,y:0},{t:1,x:24,y:0},{t:1,x:25,y:0},{t:2,x:26,y:1},{t:1,x:27,y:0},{t:1,x:28,y:0},{t:1,x:32,y:0},{t:1,x:33,y:1},{t:1,x:34,y:2},{t:1,x:35,y:1},{t:1,x:36,y:0},{t:99,x:45,y:0}],
+    // 1. SIMPLE DASH (Longer, forgiving timing)
+    [{t:1,x:5,y:0},{t:1,x:6,y:0},{t:2,x:11,y:0},{t:1,x:15,y:1},{t:2,x:19,y:0},{t:7,x:22,y:0},{t:1,x:26,y:2},{t:1,x:27,y:2},{t:2,x:30,y:0},{t:1,x:34,y:0},{t:1,x:35,y:0},{t:2,x:36,y:1},{t:1,x:40,y:1},{t:1,x:45,y:3},{t:2,x:50,y:0},{t:99,x:65,y:0}],
     
-    // 2. BOUNCE (Pads)
-    [{t:7,x:8,y:0},{t:1,x:14,y:3},{t:1,x:15,y:3},{t:2,x:19,y:0},{t:7,x:22,y:0},{t:1,x:26,y:4},{t:2,x:29,y:0},{t:1,x:32,y:2},{t:1,x:33,y:2},{t:7,x:33,y:3},{t:1,x:38,y:6},{t:99,x:48,y:0}],
+    // 2. BOUNCING BLOCKS (Pads and rhythm)
+    [{t:7,x:8,y:0},{t:1,x:14,y:3},{t:1,x:15,y:3},{t:2,x:19,y:0},{t:7,x:23,y:0},{t:1,x:28,y:4},{t:2,x:31,y:0},{t:1,x:35,y:2},{t:7,x:36,y:2},{t:1,x:41,y:5},{t:2,x:44,y:0},{t:7,x:47,y:0},{t:1,x:50,y:3},{t:99,x:70,y:0}],
     
-    // 3. RINGS (Orbs)
-    [{t:1,x:5,y:0},{t:2,x:8,y:0},{t:3,x:10,y:2},{t:2,x:13,y:0},{t:1,x:16,y:1},{t:3,x:20,y:4},{t:1,x:24,y:3},{t:2,x:27,y:0},{t:1,x:30,y:1},{t:3,x:33,y:4},{t:3,x:37,y:4},{t:1,x:41,y:2},{t:99,x:50,y:0}],
+    // 3. ORB RIDER (Orb timing made easier)
+    [{t:1,x:5,y:0},{t:2,x:8,y:0},{t:3,x:11,y:2},{t:1,x:14,y:1},{t:2,x:17,y:0},{t:3,x:21,y:4},{t:1,x:25,y:3},{t:2,x:28,y:0},{t:1,x:32,y:1},{t:3,x:36,y:4},{t:3,x:40,y:4},{t:1,x:44,y:2},{t:2,x:48,y:0},{t:3,x:52,y:1},{t:99,x:65,y:0}],
     
-    // 4. FLIGHT (Ship Intro)
-    [{t:1,x:5,y:0},{t:4,x:8,y:1},{t:1,x:15,y:6},{t:1,x:20,y:0},{t:1,x:25,y:7},{t:1,x:30,y:1},{t:6,x:36,y:2},{t:2,x:39,y:0},{t:99,x:45,y:0}],
+    // 4. SHIP INITIATE (Wider tunnels)
+    [{t:1,x:5,y:0},{t:4,x:8,y:1},{t:1,x:15,y:6},{t:1,x:20,y:0},{t:1,x:25,y:7},{t:1,x:30,y:1},{t:1,x:35,y:8},{t:6,x:42,y:2},{t:2,x:45,y:0},{t:1,x:50,y:1},{t:99,x:60,y:0}],
     
-    // 5. CANYON (Ship Control)
-    [{t:4,x:5,y:1},{t:1,x:10,y:0},{t:1,x:10,y:8},{t:1,x:15,y:2},{t:1,x:15,y:9},{t:1,x:20,y:1},{t:1,x:20,y:7},{t:1,x:25,y:3},{t:1,x:25,y:8},{t:6,x:35,y:3},{t:2,x:39,y:0},{t:99,x:45,y:0}],
+    // 5. SHIP PRECISION (More space between walls)
+    [{t:4,x:5,y:1},{t:1,x:10,y:0},{t:1,x:10,y:8},{t:1,x:16,y:2},{t:1,x:16,y:9},{t:1,x:22,y:1},{t:1,x:22,y:7},{t:1,x:28,y:3},{t:1,x:28,y:8},{t:1,x:35,y:0},{t:1,x:35,y:6},{t:6,x:42,y:3},{t:2,x:45,y:0},{t:1,x:50,y:1},{t:99,x:65,y:0}],
     
-    // 6. MACHINE (Mix)
-    [{t:1,x:5,y:0},{t:3,x:9,y:3},{t:1,x:13,y:2},{t:4,x:17,y:3},{t:1,x:25,y:5},{t:1,x:30,y:2},{t:6,x:35,y:2},{t:2,x:38,y:0},{t:7,x:40,y:0},{t:1,x:45,y:4},{t:99,x:55,y:0}],
+    // 6. MODE MIX (Clearer transitions)
+    [{t:1,x:5,y:0},{t:3,x:9,y:3},{t:1,x:13,y:2},{t:4,x:17,y:3},{t:1,x:25,y:5},{t:1,x:30,y:2},{t:6,x:36,y:2},{t:2,x:40,y:0},{t:7,x:43,y:0},{t:1,x:47,y:4},{t:2,x:50,y:0},{t:1,x:53,y:1},{t:99,x:70,y:0}],
     
-    // 7. SAUCER (UFO Intro)
-    [{t:5,x:5,y:1},{t:1,x:10,y:0},{t:1,x:14,y:3},{t:1,x:18,y:0},{t:1,x:22,y:4},{t:1,x:26,y:0},{t:6,x:32,y:2},{t:3,x:36,y:3},{t:99,x:45,y:0}],
+    // 7. SAUCER START (UFO mode with slower obstacles)
+    [{t:5,x:5,y:1},{t:1,x:10,y:0},{t:1,x:14,y:3},{t:1,x:18,y:0},{t:1,x:22,y:4},{t:1,x:26,y:0},{t:1,x:30,y:5},{t:6,x:35,y:2},{t:3,x:40,y:3},{t:1,x:44,y:0},{t:7,x:47,y:0},{t:99,x:60,y:0}],
     
-    // 8. CLUTTER (Tight Cube)
-    [{t:1,x:5,y:0},{t:2,x:6,y:1},{t:1,x:9,y:1},{t:3,x:12,y:3},{t:2,x:15,y:0},{t:1,x:18,y:2},{t:2,x:21,y:2},{t:1,x:24,y:3},{t:3,x:27,y:5},{t:1,x:31,y:1},{t:2,x:35,y:0},{t:2,x:36,y:0},{t:99,x:45,y:0}],
+    // 8. TIGHT CUBE (Focus on timing, not spamming)
+    [{t:1,x:5,y:0},{t:2,x:6,y:1},{t:1,x:9,y:1},{t:3,x:12,y:3},{t:2,x:16,y:0},{t:1,x:20,y:2},{t:2,x:23,y:2},{t:1,x:26,y:3},{t:3,x:30,y:5},{t:1,x:34,y:1},{t:2,x:38,y:0},{t:2,x:39,y:0},{t:1,x:44,y:1},{t:7,x:47,y:0},{t:99,x:65,y:0}],
     
-    // 9. ABYSS (Ups and Downs)
-    [{t:4,x:5,y:1},{t:1,x:12,y:5},{t:1,x:18,y:1},{t:6,x:22,y:3},{t:1,x:25,y:0},{t:7,x:28,y:0},{t:5,x:33,y:5},{t:1,x:38,y:2},{t:6,x:44,y:2},{t:99,x:50,y:0}],
+    // 9. DYNAMIC DIVE (Tricky mixed modes, simplified sequences)
+    [{t:4,x:5,y:1},{t:1,x:12,y:5},{t:1,x:18,y:1},{t:6,x:23,y:3},{t:1,x:26,y:0},{t:7,x:29,y:0},{t:5,x:34,y:5},{t:1,x:40,y:2},{t:6,x:46,y:2},{t:2,x:50,y:0},{t:1,x:53,y:1},{t:99,x:70,y:0}],
     
-    // 10. DEMON (Tight Flight)
-    [{t:4,x:5,y:2}, ...Array.from({length:20},(_,i)=>({t:1,x:10+i,y:0})), ...Array.from({length:20},(_,i)=>({t:1,x:10+i,y:7})), 
-     {t:1,x:15,y:4},{t:1,x:20,y:3},{t:1,x:25,y:4},{t:2,x:28,y:1},{t:2,x:28,y:6},{t:99,x:40,y:2}]
+    // 10. REAL TEST (Short, but requires mastery of all modes)
+    [{t:4,x:5,y:3}, ...Array.from({length:10},(_,i)=>({t:1,x:10+i,y:0})), ...Array.from({length:10},(_,i)=>({t:1,x:10+i,y:8})), 
+     {t:1,x:18,y:5},{t:2,x:20,y:1},{t:6,x:25,y:3},{t:1,x:30,y:0},{t:3,x:34,y:2},{t:5,x:38,y:1},{t:1,x:44,y:4},{t:6,x:50,y:2},{t:2,x:55,y:0},{t:99,x:75,y:0}]
 ];
 
 // --- PROGRESSION ---
@@ -403,8 +398,8 @@ const Game = {
         if(this.state === 'editor') {
              // Grid
              ctx.strokeStyle='#333';
-             for(let i=ox; i<this.canvas.width; i+=CFG.tile) { ctx.strokeRect(i,0,1,this.canvas.height); }
-             for(let i=camY; i>0; i-=CFG.tile) { ctx.strokeRect(0,i,this.canvas.width,1); }
+             for(let i=ox; i<this.canvas.width; i+=CFG.tile) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,this.canvas.height); ctx.stroke(); }
+             for(let i=camY; i>0; i-=CFG.tile) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(this.canvas.width,i); ctx.stroke(); }
         }
         
         // Progress Bar
@@ -421,7 +416,7 @@ const Game = {
     }
 };
 
-// --- PLAYER PHYSICS (REFINED) ---
+// --- PLAYER PHYSICS ---
 const Player = {
     x:0, y:0, w:40, h:40, // Slightly smaller hitbox than tile (50) for forgiveness
     dx: CFG.spd, dy:0, 
@@ -438,14 +433,14 @@ const Player = {
             this.dy += CFG.g;
             if(this.onGround) {
                 let r = Math.round(this.angle/(Math.PI/2))*(Math.PI/2);
-                this.angle += (r-this.angle)*0.25; // Snappy rotation fix
+                this.angle += (r-this.angle)*0.25; 
             } else {
                 this.angle += 0.18;
             }
         } 
         else if (this.mode === 'ship') {
-            if(Input.held) this.dy -= 0.6; // Thrust
-            else this.dy += 0.5; // Gravity
+            if(Input.held) this.dy -= 0.6; 
+            else this.dy += 0.5; 
             this.angle = this.dy * 0.15;
         } 
         else if (this.mode === 'ufo') {
@@ -470,9 +465,9 @@ const Player = {
             this.y = 0; 
             this.dy = 0; 
             this.onGround = true; 
-            if(this.mode==='ship'||this.mode==='ufo') this.dy = -4; // Bounce
+            if(this.mode==='ship'||this.mode==='ufo') this.dy = -4; 
         }
-        if(this.y < -1000) this.y = -1000; // Ceiling cap
+        if(this.y < -1000) this.y = -1000; 
 
         this.checkCol(false);
     },
@@ -504,7 +499,7 @@ const Player = {
                     if(isX) Game.crash();
                     else {
                         if(this.dy > 0) { // Landing
-                            this.y = ob+this.h-10; // -10 adjusts for smaller hitbox
+                            this.y = ob+this.h-10; 
                             this.dy = 0; 
                             this.onGround = true;
                         } else { // Head hit
@@ -599,7 +594,6 @@ const UI = {
         Game.level = [];
         Game.camX = 0;
         UI.show('editor-overlay');
-        // Load custom level if exists for editing
         let d = localStorage.getItem('nd_custom');
         if(d) Game.level = JSON.parse(d);
     }
@@ -626,9 +620,7 @@ window.onmousedown = (e) => {
         let mx = e.clientX + Game.camX;
         let my = e.clientY - (Game.canvas.height - 150);
         let gx = Math.floor(mx/CFG.tile);
-        let gy = Math.floor(-(my - Player.y*0.6)/CFG.tile); // Approx match
-        // Simple editor click
-        gy = Math.floor(-(e.clientY - (Game.canvas.height - 150))/CFG.tile); 
+        let gy = Math.floor(-(e.clientY - (Game.canvas.height - 150))/CFG.tile); 
 
         if(gy>=0) {
             Game.level = Game.level.filter(o=>!(o.x===gx && o.y===gy));
