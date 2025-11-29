@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Dash V16.0: Powerup Reset & Editor Toggle</title>
+    <title>Neon Dash V17.0: Import & Goal Fixes</title>
     <style>
+        /* FIX 1: @import must come first */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
         :root {
             --primary: #00f0ff;
             --secondary: #ff0055;
@@ -15,8 +18,7 @@
             --player-sec: #ff0055;
             --accent-green: #00ff00;
         }
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-
+        
         body {
             margin: 0; overflow: hidden; background-color: var(--bg);
             font-family: var(--font-main); color: white; user-select: none;
@@ -210,7 +212,7 @@
         <div id="menu-main" class="ui-layer visible">
             <div class="menu-box">
                 <h1>NEON DASH</h1>
-                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">V16.0</p>
+                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">V17.0</p>
                 <button onclick="UI.startPlay()">Play Levels</button>
                 <button onclick="UI.showShop()">Shop</button>
                 <button class="secondary" onclick="UI.showEditor()">Level Editor</button>
@@ -305,7 +307,7 @@ const CFG = {
     MINI_SCALE: 0.6, 
     MACRO_SCALE: 1.0, 
     maxHeight: -250, 
-    START_X: 30, // Reverted to normal start position
+    START_X: 30, 
     PAD_JUMP: -25, 
     TOTAL_LEVELS: 10, 
     LEVELS_PER_PAGE: 10, 
@@ -343,7 +345,7 @@ const SKINS = [
 ];
 
 // --- AUDIO (unchanged) ---
-const AUDIO = { /* ... (Audio logic unchanged) ... */
+const AUDIO = { 
     ctx: null, bgmLoop: false, currentBGM: null, 
     init: function() { 
         if(!this.ctx) this.ctx = new (window.AudioContext||window.webkitAudioContext)(); 
@@ -365,7 +367,7 @@ const AUDIO = { /* ... (Audio logic unchanged) ... */
     coin: () => AUDIO.tone(1000, 'sine', 0.05, 0.2, 1200),
     win: () => { AUDIO.tone(440,'triangle',0.1); setTimeout(()=>AUDIO.tone(554,'triangle',0.1),100); setTimeout(()=>AUDIO.tone(660,'triangle',0.4),200); },
     gravity: () => AUDIO.tone(500, 'sine', 0.1, 0.3, 200),
-    startBGM: function(freq) { /* ... (BGM logic unchanged) ... */
+    startBGM: function(freq) { 
         if (!this.ctx) return;
         this.currentBGM = { baseFreq: freq };
         if (this.bgmLoop) this.stopBGM(); 
@@ -466,6 +468,7 @@ const Game = {
     bgHue: 200, 
     bgSat: 15,  
     isMobile: window.innerWidth <= 768, 
+    goalX: 100000, // A very distant default goal
 
     init: function() {
         this.resize();
@@ -530,6 +533,10 @@ const Game = {
         document.getElementById('hud').style.display = 'block';
         AUDIO.startBGM(bgmFreq);
         this.checkMobileControls(); 
+        
+        // Set goal position for win check
+        const goalObject = this.level.find(o => o.t === 99);
+        this.goalX = goalObject ? goalObject.x * CFG.tile : 100000;
 
         if(this.currLvlIdx === 0 && !tutorialDone) { 
             this.showTutorialMessage("Press ACTION to JUMP!", 5000);
@@ -559,13 +566,17 @@ const Game = {
             document.getElementById('tutorial-msg').style.display = 'none';
             this.checkMobileControls(); 
             
-            // --- NEW: Reload level data if it's a built-in level ---
+            // --- Reload level data if it's a built-in level ---
             if(this.currLvlIdx !== -1) {
                  this.level = JSON.parse(JSON.stringify(LEVELS[this.currLvlIdx]));
             }
+            // Re-set goal position after reloading
+            const goalObject = this.level.find(o => o.t === 99);
+            this.goalX = goalObject ? goalObject.x * CFG.tile : 100000;
         }
     },
     win: function() {
+        if(this.state !== 'game') return; // Prevent winning multiple times
         this.state = 'win';
         AUDIO.win();
         AUDIO.stopBGM();
@@ -608,8 +619,7 @@ const Game = {
         
         document.getElementById('tutorial-msg').style.display = 'none';
 
-        let end = this.level.find(o=>o.t===99);
-        let endX = end ? end.x * CFG.tile : (this.currLvlIdx === -1 ? 10000 : 5000); 
+        let endX = this.goalX; 
         
         let pct = Math.floor((Player.x / endX)*100);
         pct = Math.max(0, Math.min(99, pct)); 
@@ -726,11 +736,11 @@ const Game = {
         if(this.state !== 'editor' && this.state !== 'dead') Player.draw(ctx, camY);
 
         if(this.state === 'game') {
-            let end = this.level.find(o=>o.t===99);
-            if(end) {
-                let p = Math.max(0, Math.min(100, ((Player.x - CFG.START_X * CFG.tile) / ((end.x - CFG.START_X) * CFG.tile)) * 100));
-                document.getElementById('prog').style.width = p+'%';
-            }
+            let endX = this.goalX;
+            let startX = CFG.START_X * CFG.tile;
+            
+            let p = Math.max(0, Math.min(100, ((Player.x - startX) / (endX - startX)) * 100));
+            document.getElementById('prog').style.width = p+'%';
         }
 
         ctx.restore();
@@ -738,7 +748,7 @@ const Game = {
     }
 };
 
-// --- PLAYER PHYSICS (unchanged functionality) ---
+// --- PLAYER PHYSICS (Updated with Goal Check) ---
 const Player = {
     x:0, y:0, w:40, h:40, 
     dx: CFG.spd, dy:0, 
@@ -792,6 +802,13 @@ const Player = {
     },
 
     update: function() {
+        // --- FIX 2: Check for Goal Collision before moving too far ---
+        if (this.x + this.w + this.dx > Game.goalX) {
+            Game.win();
+            return;
+        }
+        // -----------------------------------------------------------
+
         const gravityFactor = this.scale * (this.g > 0 ? 1 : -1);
         const termScaled = CFG.term * this.scale;
         
@@ -874,7 +891,7 @@ const Player = {
             if(r>ol && l<or && b>ot && t<ob) {
                 
                 if(o.t===2) Game.crash();
-                else if(o.t===99) { Game.win(); return; }
+                else if(o.t===99) { /* Goal check is now handled in Player.update() */ }
                 else if(o.t===3) { 
                     totalCoins++;
                     AUDIO.coin();
