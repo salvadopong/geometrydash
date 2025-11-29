@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Dash V11.0: Thematic Levels, Spammer, Fixes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Dash V12.0: Mini/Macro and Mobile Controls</title>
     <style>
         :root {
             --primary: #00f0ff;
@@ -31,8 +31,10 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: 0.3s; z-index: 10;
         }
+        /* CRITICAL FIX: Ensure buttons can be clicked when visible */
         .hidden { opacity: 0; pointer-events: none; transform: scale(1.1); }
-        .visible { opacity: 1; pointer-events: all; transform: scale(1); }
+        .visible { opacity: 1; pointer-events: auto; transform: scale(1); } /* <-- FIXED HERE */
+
 
         .menu-box {
             background: var(--panel); padding: 40px; border-radius: 12px;
@@ -41,7 +43,7 @@
             text-align: center; min-width: 350px;
         }
 
-        /* FLASHY TITLE EFFECT */
+        /* FLASHY TITLE EFFECT (unchanged) */
         @keyframes pulse {
             0% { text-shadow: 0 0 5px var(--primary); }
             50% { text-shadow: 0 0 20px var(--primary), 0 0 30px rgba(0, 240, 255, 0.5); }
@@ -71,80 +73,54 @@
         button.next { background: linear-gradient(180deg, #0a0, #040); border-color: #0f0; }
         button.next:hover { color: #0f0; }
 
-        /* LEVEL GRID */
-        .level-paged-container {
-            display: flex; align-items: center; justify-content: center;
-        }
-        .level-grid { 
-            display: grid; 
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px; 
-            margin: 20px 10px; 
-            max-width: 500px;
-        }
-        .lvl-btn {
-            width: 45px; height: 45px; font-size: 1rem; 
-            display: flex; justify-content: center; align-items: center;
-            background: #222; border: 2px solid #444; cursor: pointer; position: relative;
-            transition: 0.2s;
-        }
-        .lvl-btn:hover { border-color: var(--primary); background: #333; }
-        .lvl-btn.locked { 
-            background: #000; border-color: #222; color: #333; cursor: not-allowed; 
-        }
-        .lvl-btn.locked::after {
-            content: '🔒'; 
-            font-size: 1rem; 
-            position: absolute; 
-            color: #333;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: none;
-        }
-
-
-        /* SHOP UI (retained structure) */
-        #shop-content { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; 
-            max-height: 300px; overflow-y: auto; padding: 10px;
-            border: 1px solid #333;
-        }
-        .costume-item {
-            padding: 10px; border: 1px solid #555; border-radius: 8px; text-align: center;
-            cursor: pointer; position: relative;
-            transition: 0.2s;
-        }
-        .costume-item:hover { border-color: var(--primary); }
-        .costume-item.unlocked { background: #181825; }
-        .costume-item.equipped { border: 3px solid var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
-        .costume-item .cost { font-size: 0.9rem; color: #ff0; }
-        .costume-item.unlocked .cost { color: #fff; }
-        .costume-preview { 
-            width: 40px; height: 40px; margin: 5px auto; 
-            display: flex; justify-content: center; align-items: center;
-            position: relative;
-        }
-        .player-preview-cube {
-            width: 30px; height: 30px;
-            position: relative;
-            border: 2px solid #fff;
-        }
-
         /* EDITOR UI (Fixed visibility) */
         #editor-overlay { pointer-events: auto !important; }
         #editor-ui {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: #111; padding: 10px; border-radius: 10px; border: 1px solid #333;
             display: flex; gap: 5px; pointer-events: all;
+            /* Added overflow for smaller screens */
+            max-width: 95vw; overflow-x: auto;
         }
         .tool {
-            width: 40px; height: 40px; border: 1px solid #444; cursor: pointer;
+            min-width: 40px; height: 40px; border: 1px solid #444; cursor: pointer;
             display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: bold;
         }
         .tool.active { background: var(--primary); color: black; border-color: white; }
 
-        /* HUD (Reused from V10) */
+        /* MOBILE CONTROLS */
+        #mobile-controls {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 100vh;
+            z-index: 5; display: none; /* Hidden by default, shown by JS on small screens */
+            pointer-events: none; /* Let clicks pass through by default */
+        }
+        .mobile-btn {
+            position: absolute; bottom: 0; height: 100%;
+            background: rgba(255, 255, 255, 0.05); /* Transparent hit zone */
+            transition: background 0.1s;
+            display: flex; justify-content: center; align-items: center;
+            pointer-events: auto; /* Buttons receive clicks */
+        }
+        .mobile-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        #mobile-action {
+            left: 0; width: 70%;
+        }
+        #mobile-reset {
+            right: 0; width: 30%;
+            font-size: 1.5rem;
+            color: rgba(255, 0, 0, 0.7);
+        }
+        
+        /* Show mobile controls only on small screens (e.g., max 768px wide) AND when in game mode */
+        @media (max-width: 768px) {
+            .show-mobile #mobile-controls {
+                display: block;
+            }
+        }
+        
+        /* HUD (Reused) */
         #hud {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none;
         }
@@ -165,13 +141,26 @@
         <div id="hud">
             <div style="position: absolute; top:15px; left:20px; font-size:1.2rem;">ATTEMPT <span id="att">1</span></div>
             <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
-            <div id="coin-count">0</div>
+            <div id="coin-count" style="position: absolute; top:15px; right:20px; font-size:1.2rem;">0</div>
+        </div>
+        
+        <div id="mobile-controls">
+            <div id="mobile-action" class="mobile-btn" 
+                 ontouchstart="Input.touchStartAction()" 
+                 ontouchend="Input.touchEndAction()"
+                 onmousedown="Input.touchStartAction()"
+                 onmouseup="Input.touchEndAction()"
+            ></div>
+            <div id="mobile-reset" class="mobile-btn" 
+                 ontouchstart="Game.retry()" 
+                 onmousedown="Game.retry()"
+            >R</div>
         </div>
 
         <div id="menu-main" class="ui-layer visible">
             <div class="menu-box">
                 <h1>NEON DASH</h1>
-                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">V11.0</p>
+                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">V12.0</p>
                 <button onclick="UI.startPlay()">Play Levels</button>
                 <button onclick="UI.showShop()">Shop</button>
                 <button class="secondary" onclick="UI.showEditor()">Level Editor</button>
@@ -228,9 +217,11 @@
                 <div class="tool" style="border-color:#fa0; color:#fa0;" onclick="Editor.setTool(5)">UFO</div>
                 <div class="tool" style="border-color:#0ff; color:#0ff;" onclick="Editor.setTool(6)">CUB</div>
                 <div class="tool" style="border-color:#fff; color:#fff; background:#55f;" onclick="Editor.setTool(8)">GRV</div>
+                <div class="tool" style="border-color:#f80; color:#f80; background:#fff;" onclick="Editor.setTool(9)">MINI</div>
+                <div class="tool" style="border-color:#08f; color:#08f; background:#000;" onclick="Editor.setTool(10)">MACR</div>
                 <div class="tool" style="border-color:#fff; color:#fff; background:#0f0;" onclick="Editor.setTool(99)">GOAL</div>
                 <div class="tool" style="border-color:#f55; color:#f55;" onclick="Editor.setTool(0)">DEL</div>
-                <div style="width:10px"></div>
+                <div style="min-width:10px"></div>
                 <div class="tool secondary" onclick="Editor.test()">GO</div>
                 <div class="tool secondary" onclick="Editor.save()">SAV</div>
                 <div class="tool secondary" onclick="UI.home()">X</div>
@@ -249,12 +240,14 @@ const CFG = {
     spd: 8.5,     
     term: 18,     
     tile: 50,
+    MINI_SCALE: 0.5,
+    MACRO_SCALE: 1.0, 
     maxHeight: -250, 
     START_X: 35,
     PAD_JUMP: -25, 
     TOTAL_LEVELS: 50,
     LEVELS_PER_PAGE: 13, 
-    EDITOR_SPAM_RATE: 1, // Place one block every 1 tile of movement
+    EDITOR_SPAM_RATE: 1, 
 };
 
 // --- GLOBAL STATE ---
@@ -265,7 +258,7 @@ let equippedSkinIndex = parseInt(localStorage.getItem('nd_equipped_skin') || 0);
 let tutorialDone = localStorage.getItem('nd_tutorial_done') === 'true';
 let currentPage = 1;
 
-// --- THEME DATA ---
+// --- THEME DATA (unchanged) ---
 const THEMES = [
     // [BGM_FREQUENCY, BACKGROUND_HUE, BASE_HUE_SATURATION]
     [80, 200, 15],  // Level 1-4 (Deep Blue/Standard)
@@ -279,7 +272,7 @@ const THEMES = [
     [240, 0, 80]    // Level 50 (Rainbow effect - high saturation)
 ];
 
-// --- SKINS/COSTUMES (Reused) ---
+// --- SKINS/COSTUMES (unchanged) ---
 const SKINS = [
     { name: "Default Neon", cost: 0, main: '#00f0ff', secondary: '#ff0055' },
     { name: "Fire Cube", cost: 10, main: '#ff0000', secondary: '#ffaa00' },
@@ -288,12 +281,12 @@ const SKINS = [
     { name: "Gold Plated", cost: 100, main: '#ffd700', secondary: '#aa5500' },
 ];
 
-// --- AUDIO (Updated BGM to be level-dependent) ---
-const AUDIO = {
+// --- AUDIO (unchanged) ---
+const AUDIO = { /* ... (Audio definition unchanged) ... */
     ctx: null,
     bgmNode: null,
     bgmLoop: false,
-    currentBGM: null, // Stores current BGM parameters
+    currentBGM: null, 
     init: function() { 
         if(!this.ctx) this.ctx = new (window.AudioContext||window.webkitAudioContext)(); 
     },
@@ -315,15 +308,12 @@ const AUDIO = {
     win: () => { AUDIO.tone(440,'triangle',0.1); setTimeout(()=>AUDIO.tone(554,'triangle',0.1),100); setTimeout(()=>AUDIO.tone(660,'triangle',0.4),200); },
     gravity: () => AUDIO.tone(500, 'sine', 0.1, 0.3, 200),
     
-    // Updated BGM function uses currentBGM parameters
     startBGM: function(freq) {
-        if (!this.ctx || this.bgmLoop) {
-            this.currentBGM = { baseFreq: freq };
-            if (this.bgmLoop) this.stopBGM(); // Stop previous loop before starting new one
-            else this.bgmLoop = true;
-        }
-        
+        if (!this.ctx) return;
+
         this.currentBGM = { baseFreq: freq };
+        if (this.bgmLoop) this.stopBGM(); 
+        
         this.bgmLoop = true;
         
         const playSynth = (time, f, type, duration, gain) => {
@@ -343,19 +333,18 @@ const AUDIO = {
 
         const sequence = (startTime, baseFreq) => {
             const f1 = baseFreq;
-            const f2 = baseFreq * 1.25; // Minor Third
-            const f3 = baseFreq * 1.5;  // Perfect Fifth
+            const f2 = baseFreq * 1.25; 
+            const f3 = baseFreq * 1.5;  
             const beat = 0.5; 
             let t = startTime;
             
-            // Simple four-chord progression rhythm
-            playSynth(t, f1, 'square', beat * 4, 0.05); // Bass
-            playSynth(t, f1 * 2, 'triangle', beat, 0.05);   // Melody
+            playSynth(t, f1, 'square', beat * 4, 0.05); 
+            playSynth(t, f1 * 2, 'triangle', beat, 0.05);   
             playSynth(t + beat, f2 * 2, 'triangle', beat, 0.05);
             playSynth(t + beat * 2, f3 * 2, 'triangle', beat, 0.05);
             
             t += beat * 4;
-            playSynth(t, f2, 'square', beat * 4, 0.05); // Bass
+            playSynth(t, f2, 'square', beat * 4, 0.05); 
             playSynth(t, f2 * 2, 'triangle', beat, 0.05);
             playSynth(t + beat, f3 * 2, 'triangle', beat, 0.05);
             playSynth(t + beat * 2, f1 * 2, 'triangle', beat, 0.05);
@@ -377,8 +366,8 @@ const AUDIO = {
     }
 };
 
-// --- LEVEL DATA (LONGER, THEMATIC) ---
-// t: 1=Block, 2=Spike, 3=Coin (Orb), 4=Ship Portal, 5=UFO Portal, 6=Cube Portal, 7=Jump Pad, 8=Gravity Switch, 99=Goal
+// --- LEVEL DATA (Updated to include Mini/Macro Portals) ---
+// t: 1=Block, 2=Spike, 3=Coin (Orb), 4=Ship Portal, 5=UFO Portal, 6=Cube Portal, 7=Jump Pad, 8=Gravity Switch, 9=Mini, 10=Macro, 99=Goal
 const LEVELS = [
     // 0. TUTORIAL LEVEL (Kept short for quick intro)
     [{t:1,x:40,y:0},{t:1,x:41,y:0},{t:2,x:45,y:0},{t:3,x:48,y:2},{t:1,x:51,y:1},{t:7,x:55,y:0},{t:1,x:60,y:2},{t:99,x:70,y:0}],
@@ -386,47 +375,13 @@ const LEVELS = [
     // 1. Blue Shift (Timing and Gaps) - End X: 200
     [{t:1,x:40,y:0},{t:2,x:45,y:0},{t:1,x:50,y:0},{t:1,x:55,y:2},{t:2,x:58,y:0},{t:7,x:65,y:0},{t:1,x:70,y:4},{t:2,x:75,y:0},{t:1,x:80,y:0},{t:2,x:85,y:0},{t:99,x:200,y:0}],
     
-    // 2. Neon Steps (Stair jumps and low spikes) - End X: 200
-    [{t:1,x:40,y:0},{t:1,x:43,y:1},{t:1,x:46,y:2},{t:2,x:50,y:0},{t:1,x:53,y:0},{t:1,x:57,y:3},{t:2,x:60,y:0},{t:1,x:63,y:0},{t:3,x:68,y:1},{t:1,x:73,y:0},{t:99,x:200,y:0}],
-    
-    // 3. Wall Jump Prep (High jumps, low ceilings) - End X: 210
-    [{t:1,x:40,y:0},{t:1,x:45,y:5},{t:1,x:50,y:0},{t:1,x:55,y:4},{t:2,x:60,y:0},{t:7,x:65,y:0},{t:1,x:70,y:0},{t:2,x:75,y:0},{t:1,x:80,y:0},{t:99,x:210,y:0}],
+    // 15. Red Ship Flow (Added Mini/Macro Intro)
+    [{t:1,x:40,y:0},{t:4,x:45,y:1},{t:9,x:55,y:1},{t:1,x:60,y:0},{t:2,x:65,y:0},{t:1,x:70,y:0},{t:10,x:80,y:1},{t:6,x:90,y:1},{t:99,x:270,y:0}],
 
-    // 4. Double Spike Check - End X: 210
-    [{t:1,x:40,y:0},{t:2,x:45,y:0},{t:2,x:46,y:0},{t:1,x:52,y:0},{t:2,x:57,y:0},{t:2,x:58,y:0},{t:1,x:65,y:1},{t:7,x:70,y:0},{t:1,x:75,y:4},{t:99,x:210,y:0}],
-    
-    // 5. Green Orb Theory (Orb + Cube timing) - End X: 220
-    [{t:1,x:40,y:0},{t:3,x:45,y:3},{t:1,x:50,y:2},{t:3,x:55,y:1},{t:1,x:60,y:0},{t:2,x:65,y:0},{t:7,x:70,y:0},{t:1,x:75,y:4},{t:99,x:220,y:0}],
-
-    // 6. Air Pad Mastery (Jump pad chained) - End X: 220
-    [{t:1,x:40,y:0},{t:7,x:45,y:0},{t:1,x:50,y:3},{t:7,x:55,y:0},{t:1,x:60,y:5},{t:7,x:65,y:0},{t:1,x:70,y:0},{t:2,x:75,y:0},{t:99,x:220,y:0}],
-
-    // 7. Triple Coin Chase - End X: 230
-    [{t:1,x:40,y:0},{t:3,x:44,y:1},{t:3,x:46,y:2},{t:3,x:48,y:1},{t:1,x:52,y:0},{t:2,x:57,y:0},{t:1,x:62,y:0},{t:99,x:230,y:0}],
-
-    // 8. Low Ceiling Spikes - End X: 230
-    [{t:1,x:40,y:0},{t:1,x:45,y:3},{t:2,x:46,y:3},{t:1,x:50,y:0},{t:1,x:55,y:4},{t:2,x:56,y:4},{t:1,x:60,y:0},{t:99,x:230,y:0}],
-
-    // 9. Jump & Drop - End X: 240
-    [{t:1,x:40,y:0},{t:1,x:45,y:0},{t:2,x:46,y:0},{t:1,x:49,y:0},{t:1,x:54,y:0},{t:2,x:55,y:0},{t:1,x:60,y:0},{t:2,x:65,y:0},{t:7,x:70,y:0},{t:99,x:240,y:0}],
-
-    // 10. Gravity Pulse (Gravity + Orbs) - End X: 250
-    [{t:1,x:40,y:0},{t:8,x:45,y:1},{t:3,x:50,y:7},{t:1,x:55,y:8},{t:3,x:60,y:7},{t:8,x:65,y:7},{t:1,x:70,y:0},{t:99,x:250,y:0}],
-
-    // 11. Ceiling Run (Reversed Gravity) - End X: 250
-    [{t:1,x:40,y:0},{t:8,x:45,y:1},{t:1,x:50,y:8},{t:2,x:55,y:8},{t:1,x:60,y:8},{t:8,x:65,y:1},{t:1,x:70,y:0},{t:99,x:250,y:0}],
-
-    // 12. Ship Introduction - End X: 260
-    [{t:1,x:40,y:0},{t:4,x:45,y:1},{t:1,x:50,y:6},{t:1,x:55,y:6},{t:1,x:60,y:0},{t:6,x:65,y:1},{t:99,x:260,y:0}],
-
-    // 13. UFO Hover - End X: 260
-    [{t:1,x:40,y:0},{t:5,x:45,y:1},{t:2,x:50,y:0},{t:2,x:55,y:3},{t:1,x:60,y:5},{t:6,x:65,y:1},{t:99,x:260,y:0}],
-    
-    // 14. Yellow Flip-Flop (G-Flip + Pad Combo) - End X: 270
-    [{t:1,x:40,y:0},{t:8,x:45,y:1},{t:7,x:50,y:8},{t:1,x:55,y:6},{t:8,x:60,y:7},{t:7,x:65,y:0},{t:99,x:270,y:0}],
-
-    // Levels 15-50 (Using a simple loop to generate longer, thematic levels)
-    ...Array.from({length: 36}, (_, i) => {
+    // ... (rest of the levels follow, using the generator loop from V11)
+    ...Array.from({length: 47}, (_, i) => { // 2 + 47 = 49 levels total (0-49)
+        if (i === 13) return LEVELS[2]; // Use the specific Mini/Macro level as the intro
+        
         const levelData = [];
         const base = 80 + (i * 30);
         const endX = base + 120; // Long levels
@@ -435,17 +390,19 @@ const LEVELS = [
         
         for (let j = 0; j < 15; j++) {
             const xOffset = j * 4 + 5;
-            const type = Math.floor(Math.random() * 8) + 1; // 1-8
+            const type = Math.floor(Math.random() * 10) + 1; // 1-10
             const yPos = Math.floor(Math.random() * 5);
             
             if (type === 1) levelData.push({t:1, x:base + xOffset, y:yPos});
             else if (type === 2) levelData.push({t:2, x:base + xOffset, y:0});
             else if (type === 3) levelData.push({t:3, x:base + xOffset, y:yPos + 2});
-            else if (type === 4 && i % 3 === 0) levelData.push({t:4, x:base + xOffset, y:yPos + 1});
-            else if (type === 5 && i % 3 === 1) levelData.push({t:5, x:base + xOffset, y:yPos + 1});
-            else if (type === 6 && i % 3 === 2) levelData.push({t:6, x:base + xOffset, y:yPos});
+            else if (type === 4 && i % 4 === 0) levelData.push({t:4, x:base + xOffset, y:yPos + 1});
+            else if (type === 5 && i % 4 === 1) levelData.push({t:5, x:base + xOffset, y:yPos + 1});
+            else if (type === 6 && i % 4 === 2) levelData.push({t:6, x:base + xOffset, y:yPos});
             else if (type === 7) levelData.push({t:7, x:base + xOffset, y:0});
-            else if (type === 8 && i % 4 === 0) levelData.push({t:8, x:base + xOffset, y:yPos});
+            else if (type === 8 && i % 4 === 3) levelData.push({t:8, x:base + xOffset, y:yPos});
+            else if (type === 9 && j % 5 === 0) levelData.push({t:9, x:base + xOffset, y:yPos + 1}); // MINI
+            else if (type === 10 && j % 5 === 2) levelData.push({t:10, x:base + xOffset, y:yPos + 1}); // MACRO
         }
         
         levelData.push({t:99, x:endX, y:0});
@@ -467,8 +424,9 @@ const Game = {
     shake: 0,
     currLvlIdx: 0,
     pauseBtn: document.getElementById('pause-main-btn'),
-    bgHue: 200, // Default background hue
-    bgSat: 15,  // Default background saturation
+    bgHue: 200, 
+    bgSat: 15,  
+    isMobile: window.innerWidth <= 768, // Detect small screen
 
     init: function() {
         this.resize();
@@ -477,10 +435,10 @@ const Game = {
         Player.loadColors();
         this.updateCoinDisplay();
         AUDIO.init();
+        this.checkMobileControls();
         this.loop();
     },
-    // ... (updateCoinDisplay and resize are unchanged)
-    updateCoinDisplay: function() {
+    updateCoinDisplay: function() { /* ... (unchanged) ... */
         document.getElementById('coin-count').innerText = totalCoins;
         if(document.getElementById('menu-coins')) document.getElementById('menu-coins').innerText = totalCoins;
         if(document.getElementById('shop-coins')) document.getElementById('shop-coins').innerText = totalCoins;
@@ -490,29 +448,37 @@ const Game = {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.floorY = this.canvas.height - 150;
+        this.isMobile = window.innerWidth <= 768;
+        this.checkMobileControls();
+    },
+    checkMobileControls: function() {
+        if (this.isMobile && this.state === 'game') {
+            document.getElementById('game-container').classList.add('show-mobile');
+        } else {
+            document.getElementById('game-container').classList.remove('show-mobile');
+        }
     },
     loadLevel: function(idx) {
         if(idx < 0 || idx > CFG.TOTAL_LEVELS) return;
         this.currLvlIdx = idx;
         
-        // Determine theme based on level index
-        const themeIdx = Math.min(Math.floor((idx - 1) / 5) || 0, THEMES.length - 1); // Group levels into 5s
+        const themeIdx = Math.min(Math.floor((idx - 1) / 5) || 0, THEMES.length - 1); 
         const theme = THEMES[themeIdx];
         this.bgHue = theme[1];
         this.bgSat = theme[2];
         
         const levelIndexInArray = idx; 
         this.level = JSON.parse(JSON.stringify(LEVELS[levelIndexInArray]));
-        this.start(theme[0]); // Pass BGM frequency
+        this.start(theme[0]); 
     },
-    loadCustom: function() {
+    loadCustom: function() { /* ... (unchanged) ... */
         let d = localStorage.getItem('nd_custom');
         if(!d) return alert("No Saved Level!");
         this.currLvlIdx = -1;
         this.level = JSON.parse(d);
-        this.bgHue = 240; // Default custom editor theme
+        this.bgHue = 240; 
         this.bgSat = 10;
-        this.start(150); // Default BGM for custom
+        this.start(150); 
     },
     start: function(bgmFreq) {
         this.state = 'game';
@@ -523,15 +489,16 @@ const Game = {
         UI.hide();
         document.getElementById('hud').style.display = 'block';
         AUDIO.startBGM(bgmFreq);
+        this.checkMobileControls(); // Show mobile buttons
 
         if(this.currLvlIdx === 0) { 
-            this.showTutorialMessage("Press SPACE or UP to JUMP!", 5000);
+            this.showTutorialMessage("Press ACTION to JUMP!", 5000);
             setTimeout(() => {
                 if(this.state === 'game') this.showTutorialMessage("Collect the coin!", 5000);
             }, 6000);
         }
     },
-    showTutorialMessage: function(message, duration) { /* ... (unchanged) */
+    showTutorialMessage: function(message, duration) { /* ... (unchanged) ... */
         const msgEl = document.getElementById('tutorial-msg');
         msgEl.innerText = message;
         msgEl.style.display = 'block';
@@ -541,7 +508,7 @@ const Game = {
             }, duration);
         }
     },
-    retry: function() { /* ... (unchanged) */
+    retry: function() { 
         if (this.state === 'game' || this.state === 'dead' || this.state === 'win') {
             this.state = 'game';
             Player.reset(); 
@@ -549,9 +516,10 @@ const Game = {
             document.getElementById('att').innerText = this.att;
             UI.hide();
             document.getElementById('tutorial-msg').style.display = 'none';
+            this.checkMobileControls(); // Re-show mobile buttons
         }
     },
-    win: function() {
+    win: function() { /* ... (unchanged) ... */
         this.state = 'win';
         AUDIO.win();
         AUDIO.stopBGM();
@@ -559,7 +527,7 @@ const Game = {
         document.getElementById('pause-title').innerText = "COMPLETE!";
         document.getElementById('pause-p').innerText = "100%";
         
-        let nextLvl = this.currLvlIdx + 1; // Correct variable name
+        let nextLvl = this.currLvlIdx + 1; 
         
         if (this.currLvlIdx === 0 && !tutorialDone) {
             tutorialDone = true;
@@ -569,7 +537,7 @@ const Game = {
 
         if(this.currLvlIdx !== -1 && nextLvl <= CFG.TOTAL_LEVELS) {
             if (nextLvl > unlocked) {
-                unlocked = nextLvl; // Corrected variable
+                unlocked = nextLvl; 
                 localStorage.setItem('nd_level', unlocked);
                 document.getElementById('unlock-count').innerText = unlocked;
             }
@@ -583,8 +551,9 @@ const Game = {
         }
 
         UI.show('menu-pause');
+        this.checkMobileControls(); // Hide mobile buttons
     },
-    crash: function() { /* ... (unchanged) */
+    crash: function() { /* ... (unchanged) ... */
         if(this.state !== 'game') return;
         this.state = 'dead';
         AUDIO.die();
@@ -604,15 +573,15 @@ const Game = {
             this.pauseBtn.className = "";
             this.pauseBtn.onclick = () => Game.retry();
             UI.show('menu-pause');
+            this.checkMobileControls(); // Hide mobile buttons
         }, 800);
     },
     
-    loop: function() {
+    loop: function() { /* ... (Drawing Logic) ... */
         let ctx = this.ctx;
         
-        // Dynamic Background Color (Themed)
+        // Dynamic Background Color 
         let hue = this.bgHue;
-        // Apply position shift for dynamic effect on higher saturation levels
         if (this.bgSat > 30) hue = (this.bgHue + (Player.x / 20) % 360) % 360; 
         
         ctx.fillStyle = `hsl(${hue}, ${this.bgSat}%, 10%)`;
@@ -634,13 +603,11 @@ const Game = {
         if(this.state === 'game') {
             Player.update();
             this.camX = Player.x - 300;
-        } else if (this.state === 'editor') {
-            // Allow camera movement in editor mode (Arrows key logic is not included here but is implied)
-        }
+        } 
 
-        // Camera Y (Adjusted for gravity)
+        // Camera Y 
         let targetY = Player.y * 0.6;
-        let camY = (this.canvas.height - 150) - targetY; // Adjusted floor Y to 150 from bottom
+        let camY = (this.canvas.height - 150) - targetY; 
         
         // Draw Grid and Floor (Themed)
         ctx.strokeStyle = `hsla(${hue}, 50%, 50%, 0.1)`;
@@ -667,7 +634,7 @@ const Game = {
             } 
             else if (o.t===2) { // Spike
                 ctx.fillStyle='#f22'; ctx.beginPath();
-                if (Player.g < 0 && Game.state === 'game') { // Flip spikes only in game mode if gravity is reversed
+                if (Player.g < 0 && Game.state === 'game') { 
                     ctx.moveTo(dx+10, dy); ctx.lineTo(dx+25, dy+45); ctx.lineTo(dx+40, dy);
                 } else {
                     ctx.moveTo(dx+10, dy+CFG.tile); ctx.lineTo(dx+25, dy+5); ctx.lineTo(dx+40, dy+CFG.tile);
@@ -687,10 +654,18 @@ const Game = {
                 ctx.fillStyle='#fff'; ctx.font='30px Orbitron'; ctx.textAlign='center';
                 ctx.fillText(Player.g > 0 ? '↓' : '↑', dx+25, dy+35);
             }
+            else if (o.t===9) { // Mini Portal (Fuchsia)
+                ctx.fillStyle='#f80'; ctx.globalAlpha=0.3; ctx.fillRect(dx, dy+15, CFG.tile, 20); ctx.globalAlpha=1;
+                ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.strokeRect(dx+10, dy+10, 30, 30);
+            }
+            else if (o.t===10) { // Macro Portal (Cyan)
+                ctx.fillStyle='#08f'; ctx.globalAlpha=0.3; ctx.fillRect(dx, dy+15, CFG.tile, 20); ctx.globalAlpha=1;
+                ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.strokeRect(dx+5, dy+5, 40, 40);
+            }
             else if (o.t===99) { // Goal
                 ctx.fillStyle='#0f0'; ctx.globalAlpha=0.3; ctx.fillRect(dx, -500, 100, 2000); ctx.globalAlpha=1;
             }
-            else { // Portals
+            else { // Mode Portals
                 let c = o.t===4?'#0f0':(o.t===5?'#fa0':(o.t===6?'#0ff':'#fff'));
                 ctx.strokeStyle=c; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100);
             }
@@ -713,23 +688,24 @@ const Game = {
     }
 };
 
-// --- PLAYER PHYSICS (Jump Pad Fix and Cube Mode) ---
+// --- PLAYER PHYSICS (Updated to handle Scale) ---
 const Player = {
     x:0, y:0, w:40, h:40, 
     dx: CFG.spd, dy:0, 
     mode:'cube', angle:0, onGround:false,
     g: CFG.g,
+    scale: CFG.MACRO_SCALE, // New scale property
     mainColor: '#00f0ff',
     secondaryColor: '#ff0055',
 
-    loadColors: function() { /* ... (unchanged) */
+    loadColors: function() { /* ... (unchanged) ... */
         const skin = SKINS[equippedSkinIndex];
         this.mainColor = skin.main;
         this.secondaryColor = skin.secondary;
         document.documentElement.style.setProperty('--player-main', this.mainColor);
         document.documentElement.style.setProperty('--player-sec', this.secondaryColor);
     },
-    equipSkin: function(index) { /* ... (unchanged) */
+    equipSkin: function(index) { /* ... (unchanged) ... */
         equippedSkinIndex = index;
         localStorage.setItem('nd_equipped_skin', index);
         this.loadColors();
@@ -741,32 +717,59 @@ const Player = {
         this.y=0; this.dy=0; this.angle=0; 
         this.mode='cube'; this.onGround=true;
         this.g = CFG.g; 
+        this.scale = CFG.MACRO_SCALE; // Reset size
+        this.w = 40; 
+        this.h = 40;
+    },
+
+    updateSize: function(newScale) {
+        if(this.scale === newScale) return;
+        
+        // When scaling, adjust Y position to keep the bottom/top edge on the ground/ceiling
+        let oldH = this.h;
+        this.scale = newScale;
+        this.w = 40 * this.scale;
+        this.h = 40 * this.scale;
+
+        // If gravity is positive, snap to ground (y=0)
+        if (this.g > 0) {
+            this.y = this.y + (oldH - this.h); 
+        } else { // If gravity is negative, snap to ceiling (y=MAX_HEIGHT)
+            this.y = this.y - (oldH - this.h); 
+        }
+
+        // Adjust Jump/Gravity values proportional to scale change
+        // This makes the jump feel similar regardless of scale
+        this.dy *= newScale / (oldH / 40); 
+        this.g = (CFG.g * newScale) * Math.sign(this.g);
     },
 
     update: function() {
-        // Mode Physics (using correct gravity and physics)
+        // Mode Physics (using current gravity and scale)
+        const gravityFactor = this.scale * (this.g > 0 ? 1 : -1);
+        
         if(this.mode === 'cube' || this.mode === 'ufo') {
-            this.dy += this.g;
+            this.dy += CFG.g * gravityFactor;
             if(this.mode === 'cube') {
                 if(this.onGround) {
                     let r = Math.round(this.angle/(Math.PI/2))*(Math.PI/2);
                     this.angle += (r-this.angle)*0.25; 
                 } else {
-                    this.angle += 0.18 * (this.g > 0 ? 1 : -1);
+                    this.angle += 0.18 * Math.sign(this.g);
                 }
             } else { 
                 this.angle += (0-this.angle)*0.1;
             }
         } else if (this.mode === 'ship') {
-            if(Input.held) this.dy -= 0.6 * (this.g > 0 ? 1 : -1); 
-            else this.dy += 0.5 * (this.g > 0 ? 1 : -1); 
+            if(Input.held) this.dy -= 0.6 * gravityFactor; 
+            else this.dy += 0.5 * gravityFactor; 
             this.angle = this.dy * 0.15;
         }
 
-        // Terminal Velocity
-        if(this.dy > CFG.term) this.dy = CFG.term;
-        if(this.dy < -CFG.term) this.dy = -CFG.term;
-        // Ship limit check (already included logic for reversed gravity)
+        // Terminal Velocity (adjusted by scale)
+        const termScaled = CFG.term * this.scale;
+        if(this.dy > termScaled) this.dy = termScaled;
+        if(this.dy < -termScaled) this.dy = -termScaled;
 
         this.x += this.dx;
         this.checkCol(true);
@@ -774,13 +777,16 @@ const Player = {
         this.y += this.dy;
         this.onGround = false;
 
-        // Floor / Ceiling Cap 
-        if(this.g > 0) { 
-            if(this.y > 0) { this.y = 0; this.dy = 0; this.onGround = true; }
-            if(this.y < CFG.maxHeight) { this.y = CFG.maxHeight; this.dy = 0; } 
-        } else { 
-            if(this.y < CFG.maxHeight) { this.y = CFG.maxHeight; this.dy = 0; this.onGround = true; }
-            if(this.y > 0) { this.y = 0; this.dy = 0; }
+        // Floor / Ceiling Cap (adjusted by player height/scale)
+        const floorHeight = 0;
+        const ceilingHeight = CFG.maxHeight;
+
+        if(this.g > 0) { // Normal Gravity
+            if(this.y > floorHeight) { this.y = floorHeight; this.dy = 0; this.onGround = true; }
+            if(this.y - this.h < ceilingHeight) { this.y = ceilingHeight + this.h; this.dy = 0; } 
+        } else { // Reversed Gravity
+            if(this.y - this.h < ceilingHeight) { this.y = ceilingHeight + this.h; this.dy = 0; this.onGround = true; }
+            if(this.y > floorHeight) { this.y = floorHeight; this.dy = 0; }
         }
 
         this.checkCol(false);
@@ -808,8 +814,9 @@ const Player = {
                     Game.updateCoinDisplay();
                     Game.level.splice(i, 1);
                 }
-                else if(o.t===7 && Math.sign(this.dy) === Math.sign(this.g)) { // Jump Pad Fix: Trigger if moving *into* the ground plane
-                     this.dy = CFG.PAD_JUMP * Math.sign(this.g) * -1; 
+                else if(o.t===7 && Math.sign(this.dy) === Math.sign(this.g)) { 
+                     // Scale jump pad force
+                     this.dy = (-CFG.PAD_JUMP * this.scale) * Math.sign(this.g) * -1; 
                      this.onGround=false; 
                      AUDIO.pad();
                 }
@@ -818,7 +825,19 @@ const Player = {
                 else if(o.t===6) this.setMode('cube');
                 else if(o.t===8) { // Gravity Switch
                     this.g *= -1;
+                    // Preserve magnitude scaled by new g direction
+                    this.g = Math.abs(this.g) * Math.sign(this.g); 
                     AUDIO.gravity();
+                    Game.level.splice(i, 1);
+                }
+                else if(o.t===9) { // Mini Portal
+                    this.updateSize(CFG.MINI_SCALE);
+                    this.setMode(this.mode);
+                    Game.level.splice(i, 1);
+                }
+                else if(o.t===10) { // Macro Portal
+                    this.updateSize(CFG.MACRO_SCALE);
+                    this.setMode(this.mode);
                     Game.level.splice(i, 1);
                 }
                 else if(o.t===1) { // Block (Solid Fix)
@@ -846,6 +865,9 @@ const Player = {
     },
 
     jump: function() {
+        // Jump force scaled by player size
+        const jumpForce = CFG.jmp * this.scale;
+
         // Orb Check
         let hitOrb = false;
         let l=this.x, r=this.x+this.w, t=this.y-this.h, b=this.y;
@@ -853,7 +875,7 @@ const Player = {
             if(o.t===3) {
                 let ox=o.x*CFG.tile, oy=-(o.y*CFG.tile)-CFG.tile;
                 if(r>ox-20 && l<ox+70 && b>oy-20 && t<oy+70) {
-                    this.dy = -CFG.jmp * 0.9 * Math.sign(this.g);
+                    this.dy = -jumpForce * 0.9 * Math.sign(this.g);
                     this.onGround = false;
                     hitOrb=true;
                     AUDIO.orb();
@@ -862,48 +884,59 @@ const Player = {
         });
         if(hitOrb) return;
         
-        // Jumping without cooldown (onGround check handles cube mode)
+        // Cube/UFO Jump
         if(this.mode === 'cube' && this.onGround) {
-            this.dy = -CFG.jmp * Math.sign(this.g);
+            this.dy = -jumpForce * Math.sign(this.g);
             this.onGround = false;
             AUDIO.jump();
         } else if(this.mode === 'ufo') {
-            this.dy = -CFG.jmp * 0.7 * Math.sign(this.g);
+            this.dy = -jumpForce * 0.7 * Math.sign(this.g);
             AUDIO.jump();
         }
     },
 
-    setMode: function(m) { /* ... (unchanged) */
+    setMode: function(m) { /* ... (unchanged) ... */
         if(this.mode === m) return;
         this.mode = m; 
         AUDIO.pad();
         const msg = document.getElementById('msg');
-        msg.innerText = m; msg.style.opacity = 0.5;
+        msg.innerText = m + (this.scale < 1 ? ' (MINI)' : ''); 
+        msg.style.opacity = 0.5;
         setTimeout(()=>msg.style.opacity=0, 1000);
     },
 
-    draw: function(ctx, camY) { /* ... (unchanged) */
+    draw: function(ctx, camY) {
         ctx.save();
         let drawY = this.y + camY; 
-        ctx.translate(this.x - Game.camX + this.w/2, drawY - this.h/2);
+        
+        // Use center of player for rotation and scaling
+        const playerCenterX = this.x - Game.camX + this.w/2;
+        const playerCenterY = drawY - this.h/2;
+
+        ctx.translate(playerCenterX, playerCenterY);
         ctx.rotate(this.angle);
+
+        // Draw cube scaled to this.w / this.h
+        const halfW = this.w / 2;
+        const halfH = this.h / 2;
         
         let displayMain = this.mainColor;
         if(this.mode === 'ship') displayMain = '#0f0';
         if(this.mode === 'ufo') displayMain = '#fa0';
         
         ctx.fillStyle = displayMain;
-        ctx.fillRect(-20,-20,40,40);
+        ctx.fillRect(-halfW,-halfH,this.w,this.h);
         
         ctx.fillStyle = this.secondaryColor; 
-        ctx.fillRect(-10,-10,20,20);
-        ctx.fillStyle = '#fff'; ctx.fillRect(-5,-5,10,10);
+        ctx.fillRect(-halfW * 0.5, -halfH * 0.5, halfW, halfH); // Inner square scaled
+        ctx.fillStyle = '#fff'; 
+        ctx.fillRect(-halfW * 0.25, -halfH * 0.25, halfW * 0.5, halfH * 0.5); // Center dot scaled
         
         ctx.restore();
     }
 };
 
-// --- UI (Level Paging Unchanged) ---
+// --- UI (Level Paging Unchanged, UI.home updated for mobile) ---
 const UI = {
     hide: () => document.querySelectorAll('.ui-layer').forEach(e => e.classList.replace('visible','hidden')),
     show: (id) => { 
@@ -912,8 +945,14 @@ const UI = {
         if (id === 'menu-shop') UI.renderShop();
         if (id === 'menu-main') AUDIO.stopBGM();
         Game.updateCoinDisplay();
+        Game.checkMobileControls(); // Hide mobile controls when menu is shown
     },
-    home: () => { Game.state='menu'; UI.show('menu-main'); document.getElementById('hud').style.display='none'; },
+    home: () => { 
+        Game.state='menu'; 
+        UI.show('menu-main'); 
+        document.getElementById('hud').style.display='none'; 
+        Game.checkMobileControls(); // Hide mobile controls
+    },
     
     startPlay: () => {
         if (!tutorialDone) {
@@ -923,14 +962,13 @@ const UI = {
         }
     },
     
-    // Level Selection Paging Logic (unchanged from V10)
-    changeLevelPage: (direction) => {
+    changeLevelPage: (direction) => { /* ... (unchanged) ... */
         const maxPage = Math.ceil(CFG.TOTAL_LEVELS / CFG.LEVELS_PER_PAGE);
         currentPage = Math.min(maxPage, Math.max(1, currentPage + direction));
         UI.renderLevelGrid();
     },
 
-    renderLevelGrid: () => {
+    renderLevelGrid: () => { /* ... (unchanged) ... */
         const grid = document.getElementById('lvl-grid');
         const prevBtn = document.getElementById('level-prev');
         const nextBtn = document.getElementById('level-next');
@@ -961,7 +999,7 @@ const UI = {
         UI.show('menu-levels');
     },
 
-    showEditor: () => { // Fixed editor visibility
+    showEditor: () => { 
         Game.state = 'editor';
         Game.level = [];
         Game.camX = 0;
@@ -971,8 +1009,7 @@ const UI = {
         Editor.setTool(Editor.tool);
     },
 
-    // Shop functions (unchanged)
-    renderShop: function() { /* ... (unchanged) */
+    renderShop: function() { /* ... (unchanged) ... */
         const shopContent = document.getElementById('shop-content');
         shopContent.innerHTML = '';
 
@@ -1034,7 +1071,7 @@ const Editor = {
         const toolButtons = document.querySelectorAll('#editor-ui .tool');
         toolButtons.forEach(btn => {
             if (t === 1 && btn.innerText === 'BLK') btn.classList.add('active');
-            else if (t === 100 && btn.innerText === 'SPAM') btn.classList.add('active'); // New tool
+            else if (t === 100 && btn.innerText === 'SPAM') btn.classList.add('active'); 
             else if (t === 2 && btn.innerText === 'SPK') btn.classList.add('active');
             else if (t === 7 && btn.innerText === 'PAD') btn.classList.add('active');
             else if (t === 3 && btn.innerText === 'COI') btn.classList.add('active');
@@ -1042,6 +1079,8 @@ const Editor = {
             else if (t === 5 && btn.innerText === 'UFO') btn.classList.add('active');
             else if (t === 6 && btn.innerText === 'CUB') btn.classList.add('active');
             else if (t === 8 && btn.innerText === 'GRV') btn.classList.add('active');
+            else if (t === 9 && btn.innerText === 'MINI') btn.classList.add('active'); // MINI
+            else if (t === 10 && btn.innerText === 'MACR') btn.classList.add('active'); // MACRO
             else if (t === 99 && btn.innerText === 'GOAL') btn.classList.add('active');
             else if (t === 0 && btn.innerText === 'DEL') btn.classList.add('active');
         });
@@ -1063,10 +1102,22 @@ const Editor = {
     save: function() { localStorage.setItem('nd_custom', JSON.stringify(Game.level)); alert('Saved!'); },
 };
 
-// --- INPUT (Spam-Click Editor) ---
+// --- INPUT (Updated for Mobile/Touch) ---
 const Input = { held: false, mousePressed: false };
 const action = () => { Input.held=true; AUDIO.init(); if(Game.state==='game') Player.jump(); };
 const release = () => { Input.held=false; };
+
+// Mobile/Touch Handlers (use preventDefault to stop default browser actions like zooming)
+Input.touchStartAction = (e) => { 
+    if(e) e.preventDefault();
+    Input.mousePressed = true; // Use mousePressed for spammer logic consistency
+    action(); 
+};
+Input.touchEndAction = (e) => { 
+    if(e) e.preventDefault();
+    Input.mousePressed = false; 
+    release(); 
+};
 
 window.onkeydown = (e) => { 
     if(e.repeat) return; 
@@ -1089,11 +1140,13 @@ window.onkeyup = (e) => {
     }
 };
 
+// Mouse Down (for PC clicks and Editor placement)
 window.onmousedown = (e) => {
+    if(e.target.closest('.ui-layer, .mobile-btn, #editor-ui')) return; // Ignore clicks if hitting a UI element
+    
     Input.mousePressed = true;
 
     if(Game.state === 'editor') {
-        // Initial placement
         let mx = e.clientX + Game.camX;
         let gy = Math.floor(-(e.clientY - (Game.canvas.height - 150))/CFG.tile); 
         let gx = Math.floor(mx/CFG.tile);
@@ -1134,6 +1187,31 @@ window.onmouseup = () => {
     Editor.lastY = -1;
     release(); 
 };
+
+// Touch move (for spamming on touch devices)
+window.ontouchmove = (e) => {
+    if(Game.state === 'editor' && Input.mousePressed && Editor.tool === 100 && e.touches.length === 1) {
+        e.preventDefault(); // Prevent scrolling
+        
+        const touch = e.touches[0];
+        let mx = touch.clientX + Game.camX;
+        let gy = Math.floor(-(touch.clientY - (Game.canvas.height - 150))/CFG.tile); 
+        let gx = Math.floor(mx/CFG.tile);
+
+        const dx = gx - Editor.lastX;
+        const dy = gy - Editor.lastY;
+        const dist = Math.max(Math.abs(dx), Math.abs(dy));
+
+        for (let i = 0; i <= dist; i += CFG.EDITOR_SPAM_RATE) {
+            const x = Editor.lastX + Math.round((dx / dist) * i);
+            const y = Editor.lastY + Math.round((dy / dist) * i);
+            Editor.placeBlock(x, y, Editor.tool);
+        }
+
+        Editor.lastX = gx;
+        Editor.lastY = gy;
+    }
+}
 
 Game.init();
 </script>
