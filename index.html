@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Dash: 50 Levels, Tutorial, & Fixes V9</title>
+    <title>Neon Dash V10.0: Gravity, Paging, Polish</title>
     <style>
         :root {
             --primary: #00f0ff;
@@ -13,6 +13,7 @@
             --font-main: 'Orbitron', sans-serif;
             --player-main: #00f0ff;
             --player-sec: #ff0055;
+            --accent-green: #00ff00;
         }
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
@@ -71,15 +72,18 @@
         button.next:hover { color: #0f0; }
 
         /* LEVEL GRID */
+        .level-paged-container {
+            display: flex; align-items: center; justify-content: center;
+        }
         .level-grid { 
             display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 15px; 
-            margin: 20px 0; 
+            grid-template-columns: repeat(7, 1fr); /* More levels per row */
+            gap: 10px; 
+            margin: 20px 10px; 
             max-width: 500px;
         }
         .lvl-btn {
-            width: 60px; height: 60px; font-size: 1.5rem;
+            width: 45px; height: 45px; font-size: 1rem; /* Decreased size */
             display: flex; justify-content: center; align-items: center;
             background: #222; border: 2px solid #444; cursor: pointer; position: relative;
             transition: 0.2s;
@@ -90,7 +94,7 @@
         }
         .lvl-btn.locked::after {
             content: '🔒'; 
-            font-size: 1.5rem; 
+            font-size: 1rem; 
             position: absolute; 
             color: #333;
             top: 50%;
@@ -98,8 +102,61 @@
             transform: translate(-50%, -50%);
             animation: none;
         }
+        .nav-arrow {
+            font-size: 2rem;
+            background: none;
+            border: none;
+            color: white;
+            padding: 5px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .nav-arrow:hover { opacity: 1; }
+        .nav-arrow:disabled { opacity: 0.2; cursor: default; }
 
-        /* HUD */
+
+        /* SHOP UI */
+        #shop-content { 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; 
+            max-height: 300px; overflow-y: auto; padding: 10px;
+            border: 1px solid #333;
+        }
+        .costume-item {
+            padding: 10px; border: 1px solid #555; border-radius: 8px; text-align: center;
+            cursor: pointer; position: relative;
+            transition: 0.2s;
+        }
+        .costume-item:hover { border-color: var(--primary); }
+        .costume-item.unlocked { background: #181825; }
+        .costume-item.equipped { border: 3px solid var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
+        .costume-item .cost { font-size: 0.9rem; color: #ff0; }
+        .costume-item.unlocked .cost { color: #fff; }
+        .costume-preview { 
+            width: 40px; height: 40px; margin: 5px auto; 
+            display: flex; justify-content: center; align-items: center;
+            position: relative;
+        }
+        /* Style for the nested player cube preview */
+        .player-preview-cube {
+            width: 30px; height: 30px;
+            position: relative;
+            border: 2px solid #fff;
+        }
+
+        /* EDITOR UI */
+        #editor-ui {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #111; padding: 10px; border-radius: 10px; border: 1px solid #333;
+            display: flex; gap: 5px; pointer-events: all;
+        }
+        .tool {
+            width: 40px; height: 40px; border: 1px solid #444; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: bold;
+        }
+        .tool.active { background: var(--primary); color: black; border-color: white; }
+
+        /* HUD (Reused from V9) */
         #hud {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none;
         }
@@ -138,7 +195,7 @@
         <div id="menu-main" class="ui-layer visible">
             <div class="menu-box">
                 <h1>NEON DASH</h1>
-                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">V9.0</p>
+                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">V10.0</p>
                 <button onclick="UI.startPlay()">Play Levels</button>
                 <button onclick="UI.showShop()">Shop</button>
                 <button class="secondary" onclick="UI.showEditor()">Level Editor</button>
@@ -155,13 +212,17 @@
         <div id="menu-levels" class="ui-layer hidden">
             <div class="menu-box">
                 <h2>SELECT SECTOR</h2>
-                <div class="level-grid" id="lvl-grid"></div>
+                <div class="level-paged-container">
+                    <button id="level-prev" class="nav-arrow" onclick="UI.changeLevelPage(-1)" disabled>&#9664;</button>
+                    <div class="level-grid" id="lvl-grid"></div>
+                    <button id="level-next" class="nav-arrow" onclick="UI.changeLevelPage(1)">&#9654;</button>
+                </div>
                 <button class="secondary" onclick="Game.loadCustom()">CUSTOM</button>
                 <br>
                 <button onclick="UI.home()">BACK</button>
             </div>
         </div>
-        
+
         <div id="menu-shop" class="ui-layer hidden">
             <div class="menu-box">
                 <h2>CUBE SHOP</h2>
@@ -189,6 +250,7 @@
                 <div class="tool" style="border-color:#0f0; color:#0f0;" onclick="Editor.setTool(4)">SHP</div>
                 <div class="tool" style="border-color:#fa0; color:#fa0;" onclick="Editor.setTool(5)">UFO</div>
                 <div class="tool" style="border-color:#0ff; color:#0ff;" onclick="Editor.setTool(6)">CUB</div>
+                <div class="tool" style="border-color:#fff; color:#fff; background:#55f;" onclick="Editor.setTool(8)">GRV</div>
                 <div class="tool" style="border-color:#fff; color:#fff; background:#0f0;" onclick="Editor.setTool(99)">GOAL</div>
                 <div class="tool" style="border-color:#f55; color:#f55;" onclick="Editor.setTool(0)">DEL</div>
                 <div style="width:10px"></div>
@@ -211,9 +273,10 @@ const CFG = {
     term: 18,     
     tile: 50,
     maxHeight: -250, 
-    START_X: 20, // 20 tiles = ~3 seconds of lead time
-    PAD_JUMP: -25, // Updated jump pad boost
+    START_X: 35, // Increased start distance (35 tiles)
+    PAD_JUMP: -25, 
     TOTAL_LEVELS: 50,
+    LEVELS_PER_PAGE: 13, // New constant for pagination
 };
 
 // --- GLOBAL STATE ---
@@ -222,8 +285,9 @@ let totalCoins = parseInt(localStorage.getItem('nd_coins') || 0);
 let unlockedSkins = JSON.parse(localStorage.getItem('nd_skins') || '[0]');
 let equippedSkinIndex = parseInt(localStorage.getItem('nd_equipped_skin') || 0);
 let tutorialDone = localStorage.getItem('nd_tutorial_done') === 'true';
+let currentPage = 1; // Level selection page
 
-// --- SKINS/COSTUMES (Reused from V8) ---
+// --- SKINS/COSTUMES ---
 const SKINS = [
     { name: "Default Neon", cost: 0, main: '#00f0ff', secondary: '#ff0055' },
     { name: "Fire Cube", cost: 10, main: '#ff0000', secondary: '#ffaa00' },
@@ -232,10 +296,14 @@ const SKINS = [
     { name: "Gold Plated", cost: 100, main: '#ffd700', secondary: '#aa5500' },
 ];
 
-// --- AUDIO (Synthesizer - Reused from V8) ---
+// --- AUDIO (Synthesizer) ---
 const AUDIO = {
     ctx: null,
-    init: function() { if(!this.ctx) this.ctx = new (window.AudioContext||window.webkitAudioContext)(); },
+    bgmNode: null,
+    bgmLoop: false,
+    init: function() { 
+        if(!this.ctx) this.ctx = new (window.AudioContext||window.webkitAudioContext)(); 
+    },
     tone: function(f, t, d, v=0.1, s=0) {
         if(!this.ctx) return;
         const o = this.ctx.createOscillator(), g = this.ctx.createGain();
@@ -251,78 +319,150 @@ const AUDIO = {
     orb: () => AUDIO.tone(600, 'sine', 0.1, 0.1, 1200),
     pad: () => AUDIO.tone(300, 'square', 0.2, 0.1, 800),
     coin: () => AUDIO.tone(1000, 'sine', 0.05, 0.2, 1200),
-    win: () => { AUDIO.tone(440,'triangle',0.1); setTimeout(()=>AUDIO.tone(554,'triangle',0.1),100); setTimeout(()=>AUDIO.tone(660,'triangle',0.4),200); }
+    win: () => { AUDIO.tone(440,'triangle',0.1); setTimeout(()=>AUDIO.tone(554,'triangle',0.1),100); setTimeout(()=>AUDIO.tone(660,'triangle',0.4),200); },
+    gravity: () => AUDIO.tone(500, 'sine', 0.1, 0.3, 200),
+    
+    // New BGM Function
+    startBGM: function() {
+        if (!this.ctx || this.bgmLoop) return;
+        this.bgmLoop = true;
+        
+        const playSynth = (time, freq, type, duration, gain) => {
+            const osc = this.ctx.createOscillator();
+            const gainNode = this.ctx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, time);
+            gainNode.gain.setValueAtTime(gain, time);
+            
+            osc.connect(gainNode);
+            gainNode.connect(this.ctx.destination);
+            
+            osc.start(time);
+            osc.stop(time + duration);
+        };
+
+        const sequence = (startTime) => {
+            // Simple Synthwave/Lo-fi progression: Am - G - C - F
+            const beat = 0.5; // quarter note duration
+            let t = startTime;
+            
+            // Measure 1: Am Chord (A3, C4, E4)
+            playSynth(t, 220, 'square', beat * 4, 0.05); // Bass A3
+            playSynth(t, 440, 'triangle', beat, 0.05);   // Melodic A4
+            playSynth(t + beat, 523, 'triangle', beat, 0.05);  // C4
+            playSynth(t + beat * 2, 659, 'triangle', beat, 0.05); // E4
+            
+            // Measure 2: G Chord (G3, B3, D4)
+            t += beat * 4;
+            playSynth(t, 196, 'square', beat * 4, 0.05); // Bass G3
+            playSynth(t, 392, 'triangle', beat, 0.05);
+            playSynth(t + beat, 494, 'triangle', beat, 0.05);
+            playSynth(t + beat * 2, 587, 'triangle', beat, 0.05);
+
+            // Measure 3: C Chord (C3, E3, G3)
+            t += beat * 4;
+            playSynth(t, 130, 'square', beat * 4, 0.05); // Bass C3
+            playSynth(t, 261, 'triangle', beat, 0.05);
+            playSynth(t + beat, 329, 'triangle', beat, 0.05);
+            playSynth(t + beat * 2, 392, 'triangle', beat, 0.05);
+            
+            // Measure 4: F Chord (F3, A3, C4)
+            t += beat * 4;
+            playSynth(t, 175, 'square', beat * 4, 0.05); // Bass F3
+            playSynth(t, 349, 'triangle', beat, 0.05);
+            playSynth(t + beat, 440, 'triangle', beat, 0.05);
+            playSynth(t + beat * 2, 523, 'triangle', beat, 0.05);
+
+            return t + beat * 4; // Total duration: 16 beats or 8 seconds
+        };
+
+        const loop = (t) => {
+            if (!this.bgmLoop) return;
+            const nextT = sequence(t);
+            setTimeout(() => loop(nextT), (nextT - t) * 1000);
+        };
+        
+        loop(this.ctx.currentTime);
+    },
+    stopBGM: function() {
+        this.bgmLoop = false;
+    }
 };
 
-// --- LEVEL DATA (EXPANDED TO 50 LEVELS) ---
-// Note: Level array index 0 is the Tutorial. Levels 1-50 are the main game.
-// t: 1=Block, 2=Spike, 3=Coin (Orb), 4=Ship Portal, 5=UFO Portal, 6=Cube Portal, 7=Jump Pad, 99=Goal
+// --- LEVEL DATA (Expanded + Gravity Portal (8)) ---
+// t: 1=Block, 2=Spike, 3=Coin (Orb), 4=Ship Portal, 5=UFO Portal, 6=Cube Portal, 7=Jump Pad, 8=Gravity Switch, 99=Goal
 const LEVELS = [
     // 0. TUTORIAL LEVEL (Explains basics)
     [{t:1,x:25,y:0},{t:1,x:26,y:0},{t:2,x:30,y:0},{t:3,x:33,y:2},{t:1,x:36,y:1},{t:7,x:40,y:0},{t:1,x:44,y:2},{t:99,x:55,y:0}],
 
     // 1. SIMPLE JUMP
-    [{t:1,x:25,y:0},{t:2,x:30,y:0},{t:1,x:35,y:0},{t:2,x:39,y:0},{t:1,x:42,y:1},{t:99,x:60,y:0}],
+    [{t:1,x:40,y:0},{t:2,x:45,y:0},{t:1,x:50,y:0},{t:2,x:54,y:0},{t:1,x:57,y:1},{t:99,x:75,y:0}],
     
     // 2. TIMING
-    [{t:1,x:25,y:0},{t:1,x:26,y:0},{t:2,x:28,y:0},{t:1,x:33,y:1},{t:2,x:36,y:0},{t:1,x:40,y:0},{t:1,x:41,y:0},{t:99,x:65,y:0}],
+    [{t:1,x:40,y:0},{t:1,x:41,y:0},{t:2,x:43,y:0},{t:1,x:48,y:1},{t:2,x:51,y:0},{t:1,x:55,y:0},{t:1,x:56,y:0},{t:99,x:80,y:0}],
     
     // 3. PAD INTRO
-    [{t:7,x:25,y:0},{t:1,x:30,y:4},{t:2,x:32,y:0},{t:7,x:37,y:0},{t:1,x:42,y:2},{t:99,x:70,y:0}],
+    [{t:7,x:40,y:0},{t:1,x:45,y:4},{t:2,x:47,y:0},{t:7,x:52,y:0},{t:1,x:57,y:2},{t:99,x:85,y:0}],
 
     // 4. BLOCK STAIRS
-    [{t:1,x:25,y:0},{t:1,x:28,y:1},{t:1,x:31,y:2},{t:1,x:34,y:3},{t:1,x:37,y:4},{t:2,x:40,y:0},{t:99,x:75,y:0}],
+    [{t:1,x:40,y:0},{t:1,x:43,y:1},{t:1,x:46,y:2},{t:1,x:49,y:3},{t:1,x:52,y:4},{t:2,x:55,y:0},{t:99,x:90,y:0}],
 
     // 5. ORB JUMP
-    [{t:1,x:25,y:0},{t:3,x:29,y:3},{t:1,x:33,y:2},{t:2,x:36,y:0},{t:3,x:40,y:5},{t:1,x:44,y:4},{t:99,x:80,y:0}],
+    [{t:1,x:40,y:0},{t:3,x:44,y:3},{t:1,x:48,y:2},{t:2,x:51,y:0},{t:3,x:55,y:5},{t:1,x:59,y:4},{t:99,x:95,y:0}],
+
+    // 6. GRAVITY INTRO
+    [{t:1,x:40,y:0},{t:8,x:45,y:1},{t:1,x:50,y:8},{t:8,x:55,y:7},{t:1,x:60,y:0},{t:99,x:100,y:0}],
+
+    // 7. COIN GAP
+    [{t:1,x:40,y:0},{t:3,x:43,y:0},{t:3,x:47,y:0},{t:3,x:51,y:0},{t:1,x:54,y:0},{t:2,x:58,y:0},{t:99,x:105,y:0}],
+
+    // 8. LOW CEILING
+    [{t:1,x:40,y:0},{t:1,x:42,y:4},{t:1,x:46,y:0},{t:2,x:49,y:0},{t:1,x:51,y:3},{t:1,x:55,y:0},{t:99,x:110,y:0}],
+
+    // 9. DOUBLE SPIKE
+    [{t:1,x:40,y:0},{t:2,x:44,y:0},{t:2,x:45,y:0},{t:1,x:49,y:0},{t:7,x:53,y:0},{t:1,x:57,y:4},{t:99,x:115,y:0}],
+
+    // 10. COIN CHASE
+    [{t:1,x:40,y:0},{t:3,x:43,y:2},{t:3,x:45,y:1},{t:3,x:47,y:2},{t:1,x:51,y:0},{t:2,x:54,y:0},{t:2,x:55,y:0},{t:99,x:120,y:0}],
+
+    // 11. SHIP INTRO
+    [{t:1,x:40,y:0},{t:4,x:45,y:1},{t:1,x:51,y:6},{t:1,x:55,y:0},{t:6,x:60,y:1},{t:2,x:64,y:0},{t:99,x:125,y:0}],
     
-    // 6. COIN GAP
-    [{t:1,x:25,y:0},{t:3,x:28,y:0},{t:3,x:32,y:0},{t:3,x:36,y:0},{t:1,x:39,y:0},{t:2,x:43,y:0},{t:99,x:85,y:0}],
-
-    // 7. LOW CEILING
-    [{t:1,x:25,y:0},{t:1,x:27,y:4},{t:1,x:31,y:0},{t:2,x:34,y:0},{t:1,x:36,y:3},{t:1,x:40,y:0},{t:99,x:90,y:0}],
-
-    // 8. DOUBLE SPIKE
-    [{t:1,x:25,y:0},{t:2,x:29,y:0},{t:2,x:30,y:0},{t:1,x:34,y:0},{t:7,x:38,y:0},{t:1,x:42,y:4},{t:99,x:95,y:0}],
-
-    // 9. COIN CHASE
-    [{t:1,x:25,y:0},{t:3,x:28,y:2},{t:3,x:30,y:1},{t:3,x:32,y:2},{t:1,x:36,y:0},{t:2,x:39,y:0},{t:2,x:40,y:0},{t:99,x:100,y:0}],
-
-    // 10. SHIP INTRO
-    [{t:1,x:25,y:0},{t:4,x:30,y:1},{t:1,x:36,y:6},{t:1,x:40,y:0},{t:6,x:45,y:1},{t:2,x:49,y:0},{t:99,x:110,y:0}],
+    // 12. GRAVITY FLIP
+    [{t:1,x:40,y:0},{t:8,x:45,y:1},{t:1,x:50,y:8},{t:2,x:53,y:8},{t:1,x:57,y:8},{t:8,x:62,y:7},{t:1,x:67,y:0},{t:99,x:130,y:0}],
     
-    // Levels 11-50 (Using a simple loop to generate placeholder levels to meet the 50 level requirement)
-    ...Array.from({length: 40}, (_, i) => {
+    // 13. UFO INTRO
+    [{t:1,x:40,y:0},{t:5,x:45,y:1},{t:2,x:50,y:0},{t:2,x:52,y:0},{t:1,x:56,y:3},{t:6,x:61,y:1},{t:99,x:135,y:0}],
+
+    // Levels 14-50 (Using a simple loop to generate placeholder levels to meet the 50 level requirement)
+    ...Array.from({length: 37}, (_, i) => {
         const levelData = [];
-        const base = 25 + (i * 15);
+        const base = 70 + (i * 20);
         
-        // Ensure every level has a start and end
         levelData.push({t:1, x:base, y:0});
         
-        // Add varied obstacles
         for (let j = 0; j < 10; j++) {
             const xOffset = j * 4 + 5;
-            const type = Math.floor(Math.random() * 7) + 1; // 1-7
+            const type = Math.floor(Math.random() * 8) + 1; // 1-8
             const yPos = Math.floor(Math.random() * 5);
             
-            if (type === 1) levelData.push({t:1, x:base + xOffset, y:yPos}); // Block
-            else if (type === 2) levelData.push({t:2, x:base + xOffset, y:0}); // Spike
-            else if (type === 3) levelData.push({t:3, x:base + xOffset, y:yPos + 2}); // Coin
-            else if (type === 4) levelData.push({t:4, x:base + xOffset, y:yPos + 1}); // Ship
-            else if (type === 5) levelData.push({t:5, x:base + xOffset, y:yPos + 1}); // UFO
-            else if (type === 6) levelData.push({t:6, x:base + xOffset, y:yPos}); // Cube portal
-            else if (type === 7) levelData.push({t:7, x:base + xOffset, y:0}); // Jump Pad
+            if (type === 1) levelData.push({t:1, x:base + xOffset, y:yPos});
+            else if (type === 2) levelData.push({t:2, x:base + xOffset, y:0});
+            else if (type === 3) levelData.push({t:3, x:base + xOffset, y:yPos + 2});
+            else if (type === 4) levelData.push({t:4, x:base + xOffset, y:yPos + 1});
+            else if (type === 5) levelData.push({t:5, x:base + xOffset, y:yPos + 1});
+            else if (type === 6) levelData.push({t:6, x:base + xOffset, y:yPos});
+            else if (type === 7) levelData.push({t:7, x:base + xOffset, y:0});
+            else if (type === 8) levelData.push({t:8, x:base + xOffset, y:yPos});
         }
         
-        // Add a guaranteed goal block
         levelData.push({t:99, x:base + 50, y:0});
         
         return levelData;
     }),
-    
-    // Level 50 (Final Challenge)
-    [{t:1,x:25,y:0},{t:4,x:30,y:1},{t:1,x:35,y:5},{t:5,x:40,y:3},{t:1,x:45,y:0},{t:3,x:50,y:2},{t:2,x:53,y:0},{t:7,x:56,y:0},{t:1,x:60,y:6},{t:6,x:65,y:3},{t:1,x:70,y:0},{t:99,x:100,y:0}]
 ];
+
 
 // --- ENGINE ---
 const Game = {
@@ -343,6 +483,7 @@ const Game = {
         document.getElementById('unlock-count').innerText = unlocked;
         Player.loadColors();
         this.updateCoinDisplay();
+        AUDIO.init();
         this.loop();
     },
     updateCoinDisplay: function() {
@@ -357,10 +498,10 @@ const Game = {
         this.floorY = this.canvas.height - 150;
     },
     loadLevel: function(idx) {
-        if(idx > CFG.TOTAL_LEVELS) return;
+        if(idx < 0 || idx > CFG.TOTAL_LEVELS) return;
         this.currLvlIdx = idx;
-        // The level array index 0 is the tutorial, but levels are numbered 1 to 50
-        const levelIndexInArray = idx === 0 ? 0 : idx; 
+        // Level array index 0 is the tutorial, levels 1-50 are the main game (array indices 1-50).
+        const levelIndexInArray = idx; 
         this.level = JSON.parse(JSON.stringify(LEVELS[levelIndexInArray]));
         this.start();
     },
@@ -375,15 +516,16 @@ const Game = {
         this.state = 'game';
         Player.reset();
         this.camX = 0;
-        this.att = 1; // Reset attempts when starting a new level
+        this.att = 1; 
         document.getElementById('att').innerText = this.att;
         UI.hide();
         document.getElementById('hud').style.display = 'block';
+        AUDIO.startBGM();
 
-        if(this.currLvlIdx === 0) { // Tutorial mode message
+        if(this.currLvlIdx === 0) { 
             this.showTutorialMessage("Press SPACE or UP to JUMP!", 5000);
             setTimeout(() => {
-                if(this.state === 'game') this.showTutorialMessage("Don't hit the spikes!", 5000);
+                if(this.state === 'game') this.showTutorialMessage("Collect the coin!", 5000);
             }, 6000);
         }
     },
@@ -404,12 +546,13 @@ const Game = {
             this.att++;
             document.getElementById('att').innerText = this.att;
             UI.hide();
-            document.getElementById('tutorial-msg').style.display = 'none'; // Clear tutorial msg on retry
+            document.getElementById('tutorial-msg').style.display = 'none';
         }
     },
     win: function() {
         this.state = 'win';
         AUDIO.win();
+        AUDIO.stopBGM();
         document.getElementById('tutorial-msg').style.display = 'none';
         document.getElementById('pause-title').innerText = "COMPLETE!";
         document.getElementById('pause-p').innerText = "100%";
@@ -417,15 +560,14 @@ const Game = {
         let nextLvl = this.currLvlIdx + 1;
 
         if (this.currLvlIdx === 0 && !tutorialDone) {
-            // Mark tutorial as complete
             tutorialDone = true;
             localStorage.setItem('nd_tutorial_done', 'true');
-            nextLvl = 1; // Start Level 1 next
+            nextLvl = 1;
         }
 
         if(this.currLvlIdx !== -1 && nextLvl <= CFG.TOTAL_LEVELS) {
             if (nextLvl > unlocked) {
-                unlocked = nextLvl;
+                unlocked = nextLyl;
                 localStorage.setItem('nd_level', unlocked);
                 document.getElementById('unlock-count').innerText = unlocked;
             }
@@ -433,9 +575,9 @@ const Game = {
             this.pauseBtn.className = "next";
             this.pauseBtn.onclick = () => Game.loadLevel(nextLvl);
         } else {
-            this.pauseBtn.innerText = "RETRY (R Key)";
-            this.pauseBtn.className = "";
-            this.pauseBtn.onclick = () => Game.retry();
+            this.pauseBtn.innerText = "MENU";
+            this.pauseBtn.className = "secondary";
+            this.pauseBtn.onclick = () => UI.home();
         }
 
         UI.show('menu-pause');
@@ -444,6 +586,7 @@ const Game = {
         if(this.state !== 'game') return;
         this.state = 'dead';
         AUDIO.die();
+        AUDIO.stopBGM();
         this.shake = 20;
         
         document.getElementById('tutorial-msg').style.display = 'none';
@@ -465,7 +608,7 @@ const Game = {
     loop: function() {
         let ctx = this.ctx;
         
-        // Dynamic Background Color
+        // Dynamic Background Color (HUE based on position)
         let hue = (Player.x / 100) % 360;
         ctx.fillStyle = `hsl(${hue}, 15%, 10%)`;
         ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
@@ -476,17 +619,23 @@ const Game = {
             this.shake*=0.9;
         }
         
+        // Gravity Flip Visual effect
+        if(Player.g < 0) {
+            ctx.scale(1, -1);
+            ctx.translate(0, -this.canvas.height); 
+        }
+
         // Physics
         if(this.state === 'game') {
             Player.update();
             this.camX = Player.x - 300;
         }
 
-        // Camera Y
+        // Camera Y (Adjusted for gravity)
         let targetY = Player.y * 0.6;
         let camY = (this.canvas.height - 200) - targetY;
         
-        // Draw Grid and Floor (Reused from V8)
+        // Draw Grid and Floor
         ctx.strokeStyle = 'rgba(255,255,255,0.05)';
         ctx.lineWidth = 2;
         let ox = -(this.camX % CFG.tile);
@@ -498,7 +647,7 @@ const Game = {
         ctx.fillStyle = '#111';
         ctx.fillRect(0, camY+2, this.canvas.width, 500);
 
-        // Draw Objects (Reused from V8)
+        // Draw Objects
         this.level.forEach(o => {
             let dx = o.x * CFG.tile - this.camX;
             let dy = camY - (o.y * CFG.tile) - CFG.tile;
@@ -511,7 +660,12 @@ const Game = {
             } 
             else if (o.t===2) { // Spike
                 ctx.fillStyle='#f22'; ctx.beginPath();
-                ctx.moveTo(dx+10, dy+CFG.tile); ctx.lineTo(dx+25, dy+5); ctx.lineTo(dx+40, dy+CFG.tile);
+                // Flip spikes if gravity is negative (taller spikes)
+                if (Player.g < 0) {
+                    ctx.moveTo(dx+10, dy); ctx.lineTo(dx+25, dy+45); ctx.lineTo(dx+40, dy);
+                } else {
+                    ctx.moveTo(dx+10, dy+CFG.tile); ctx.lineTo(dx+25, dy+5); ctx.lineTo(dx+40, dy+CFG.tile);
+                }
                 ctx.fill(); ctx.strokeStyle='#fff'; ctx.stroke();
             }
             else if (o.t===3) { // Coin (Orb)
@@ -522,11 +676,16 @@ const Game = {
                 ctx.fillStyle='#ff0'; ctx.fillRect(dx+5, dy+40, 40, 10);
                 ctx.strokeStyle='#fff'; ctx.strokeRect(dx+5, dy+40, 40, 10);
             }
+            else if (o.t===8) { // Gravity Switch
+                ctx.fillStyle='#55f'; ctx.fillRect(dx, dy, CFG.tile, CFG.tile);
+                ctx.fillStyle='#fff'; ctx.font='30px Orbitron'; ctx.textAlign='center';
+                ctx.fillText(Player.g > 0 ? '↓' : '↑', dx+25, dy+35);
+            }
             else if (o.t===99) { // Goal
                 ctx.fillStyle='#0f0'; ctx.globalAlpha=0.3; ctx.fillRect(dx, -500, 100, 2000); ctx.globalAlpha=1;
             }
             else { // Portals
-                let c = o.t===4?'#0f0':(o.t===5?'#fa0':'#0ff');
+                let c = o.t===4?'#0f0':(o.t===5?'#fa0':(o.t===6?'#0ff':'#fff'));
                 ctx.strokeStyle=c; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100);
             }
         });
@@ -538,7 +697,6 @@ const Game = {
         if(this.state === 'game') {
             let end = this.level.find(o=>o.t===99);
             if(end) {
-                // Calculation adjusted to account for START_X offset
                 let p = Math.max(0, Math.min(100, ((Player.x - CFG.START_X * CFG.tile) / ((end.x - CFG.START_X) * CFG.tile)) * 100));
                 document.getElementById('prog').style.width = p+'%';
             }
@@ -549,11 +707,12 @@ const Game = {
     }
 };
 
-// --- PLAYER PHYSICS (Updated collision logic) ---
+// --- PLAYER PHYSICS ---
 const Player = {
     x:0, y:0, w:40, h:40, 
     dx: CFG.spd, dy:0, 
     mode:'cube', angle:0, onGround:false,
+    g: CFG.g, // Current gravity
     mainColor: '#00f0ff',
     secondaryColor: '#ff0055',
 
@@ -576,30 +735,34 @@ const Player = {
         this.x = CFG.START_X * CFG.tile; 
         this.y=0; this.dy=0; this.angle=0; 
         this.mode='cube'; this.onGround=true;
+        this.g = CFG.g; // Reset gravity
     },
 
     update: function() {
-        // Mode Physics (Reused from V8)
-        if(this.mode === 'cube') {
-            this.dy += CFG.g;
-            if(this.onGround) {
-                let r = Math.round(this.angle/(Math.PI/2))*(Math.PI/2);
-                this.angle += (r-this.angle)*0.25; 
-            } else {
-                this.angle += 0.18;
+        // Mode Physics
+        if(this.mode === 'cube' || this.mode === 'ufo') {
+            this.dy += this.g; // Use current gravity
+            if(this.mode === 'cube') {
+                if(this.onGround) {
+                    let r = Math.round(this.angle/(Math.PI/2))*(Math.PI/2);
+                    this.angle += (r-this.angle)*0.25; 
+                } else {
+                    this.angle += 0.18 * (this.g > 0 ? 1 : -1);
+                }
+            } else { // UFO
+                this.angle += (0-this.angle)*0.1;
             }
         } else if (this.mode === 'ship') {
-            if(Input.held) this.dy -= 0.6; 
-            else this.dy += 0.5; 
+            if(Input.held) this.dy -= 0.6 * (this.g > 0 ? 1 : -1); 
+            else this.dy += 0.5 * (this.g > 0 ? 1 : -1); 
             this.angle = this.dy * 0.15;
-        } else if (this.mode === 'ufo') {
-            this.dy += CFG.g;
-            this.angle += (0-this.angle)*0.1;
         }
 
         // Terminal Velocity
         if(this.dy > CFG.term) this.dy = CFG.term;
-        if(this.mode === 'ship' && this.dy < -10) this.dy = -10;
+        if(this.dy < -CFG.term) this.dy = -CFG.term;
+        if(this.mode === 'ship' && this.dy < -10 && this.g > 0) this.dy = -10;
+        if(this.mode === 'ship' && this.dy > 10 && this.g < 0) this.dy = 10;
 
         // Move X
         this.x += this.dx;
@@ -609,17 +772,14 @@ const Player = {
         this.y += this.dy;
         this.onGround = false;
 
-        // Floor / Ceiling Cap 
-        if(this.y > 0) { 
-            this.y = 0; 
-            this.dy = 0; 
-            this.onGround = true; 
-            if(this.mode==='ship'||this.mode==='ufo') this.dy = -4; 
+        // Floor / Ceiling Cap (Vertical bounds are 0 and maxHeight)
+        if(this.g > 0) { // Normal Gravity
+            if(this.y > 0) { this.y = 0; this.dy = 0; this.onGround = true; }
+            if(this.y < CFG.maxHeight) { this.y = CFG.maxHeight; this.dy = 0; } 
+        } else { // Reversed Gravity
+            if(this.y < CFG.maxHeight) { this.y = CFG.maxHeight; this.dy = 0; this.onGround = true; }
+            if(this.y > 0) { this.y = 0; this.dy = 0; }
         }
-        if(this.y < CFG.maxHeight) { 
-            this.y = CFG.maxHeight;
-            this.dy = 0;
-        } 
 
         this.checkCol(false);
     },
@@ -639,43 +799,53 @@ const Player = {
             if(r>ol && l<or && b>ot && t<ob) {
                 
                 if(o.t===2) Game.crash();
-                else if(o.t===99) { Game.win(); return; } // Goal Fix
-                else if(o.t===3) { // Coin Collection
+                else if(o.t===99) { Game.win(); return; }
+                else if(o.t===3) { 
                     totalCoins++;
                     AUDIO.coin();
                     Game.updateCoinDisplay();
                     Game.level.splice(i, 1);
                 }
-                else if(o.t===7 && this.dy > 0) { // Jump Pad (Updated boost)
-                     this.dy = CFG.PAD_JUMP; 
+                else if(o.t===7 && Math.sign(this.dy) === Math.sign(this.g)) { // Pad collision only on descent
+                     this.dy = CFG.PAD_JUMP * Math.sign(this.g) * -1; 
                      this.onGround=false; 
                      AUDIO.pad();
                 }
                 else if(o.t===4) this.setMode('ship');
                 else if(o.t===5) this.setMode('ufo');
                 else if(o.t===6) this.setMode('cube');
+                else if(o.t===8) { // Gravity Switch
+                    this.g *= -1;
+                    AUDIO.gravity();
+                    Game.level.splice(i, 1); // Remove portal after use
+                }
                 else if(o.t===1) { // Block (Solid Fix)
                     
                     if(isX) { 
-                        // Horizontal Collision (Death)
                         Game.crash(); 
                     }
                     else {
-                        // Vertical Collision (Solid Stop)
-                        let prevB = b - this.dy; // Previous bottom Y position
-                        let prevT = t - this.dy; // Previous top Y position
+                        let prevB = b - this.dy; 
+                        let prevT = t - this.dy; 
+                        let hitGround = false;
 
-                        if (this.dy > 0 && prevB <= ot + 5) { // Landing on top (Floor)
+                        if (this.g > 0 && this.dy > 0 && prevB <= ot + 5) { // Landing on top (Normal Gravity)
                             this.y = ot; 
                             this.dy = 0; 
-                            this.onGround = true;
-                        } else if (this.dy < 0 && prevT >= ob - 5) { // Hitting ceiling (Head hit)
+                            hitGround = true;
+                        } else if (this.g < 0 && this.dy < 0 && prevT >= ob - 5) { // Landing on bottom (Reversed Gravity)
                             this.y = ob + this.h;
                             this.dy = 0;
-                        } else {
-                            // If block is somehow hit vertically, but not from clear top/bottom, it's a side hit, which is fatal.
-                             Game.crash(); 
+                            hitGround = true;
+                        } else if (this.g > 0 && this.dy < 0 && prevT >= ob - 5) { // Hitting ceiling (Normal Gravity)
+                            this.y = ob + this.h;
+                            this.dy = 0;
+                        } else if (this.g < 0 && this.dy > 0 && prevB <= ot + 5) { // Hitting floor (Reversed Gravity ceiling)
+                            this.y = ot;
+                            this.dy = 0;
                         }
+                        
+                        if(hitGround && this.mode === 'cube') this.onGround = true;
                     }
                 }
             }
@@ -690,7 +860,7 @@ const Player = {
             if(o.t===3) {
                 let ox=o.x*CFG.tile, oy=-(o.y*CFG.tile)-CFG.tile;
                 if(r>ox-20 && l<ox+70 && b>oy-20 && t<oy+70) {
-                    this.dy = -CFG.jmp * 0.9;
+                    this.dy = -CFG.jmp * 0.9 * Math.sign(this.g);
                     this.onGround = false;
                     hitOrb=true;
                     AUDIO.orb();
@@ -700,11 +870,11 @@ const Player = {
         if(hitOrb) return;
 
         if(this.mode === 'cube' && this.onGround) {
-            this.dy = -CFG.jmp;
+            this.dy = -CFG.jmp * Math.sign(this.g);
             this.onGround = false;
             AUDIO.jump();
         } else if(this.mode === 'ufo') {
-            this.dy = -CFG.jmp * 0.7;
+            this.dy = -CFG.jmp * 0.7 * Math.sign(this.g);
             AUDIO.jump();
         }
     },
@@ -728,6 +898,7 @@ const Player = {
         if(this.mode === 'ship') displayMain = '#0f0';
         if(this.mode === 'ufo') displayMain = '#fa0';
         
+        // Cube Rendering
         ctx.fillStyle = displayMain;
         ctx.fillRect(-20,-20,40,40);
         
@@ -745,25 +916,38 @@ const UI = {
         UI.hide();
         document.getElementById(id).classList.replace('hidden','visible');
         if (id === 'menu-shop') UI.renderShop();
+        if (id === 'menu-main') AUDIO.stopBGM();
         Game.updateCoinDisplay();
     },
     home: () => { Game.state='menu'; UI.show('menu-main'); document.getElementById('hud').style.display='none'; },
     
     startPlay: () => {
         if (!tutorialDone) {
-            // Force start tutorial
             Game.loadLevel(0);
         } else {
             UI.showLevels();
         }
     },
     
-    showLevels: () => {
+    // Level Selection Paging Logic
+    changeLevelPage: (direction) => {
+        const maxPage = Math.ceil(CFG.TOTAL_LEVELS / CFG.LEVELS_PER_PAGE);
+        currentPage = Math.min(maxPage, Math.max(1, currentPage + direction));
+        UI.renderLevelGrid();
+    },
+
+    renderLevelGrid: () => {
         const grid = document.getElementById('lvl-grid');
+        const prevBtn = document.getElementById('level-prev');
+        const nextBtn = document.getElementById('level-next');
+
         grid.innerHTML = '';
-        const maxLevel = CFG.TOTAL_LEVELS;
         
-        for(let i=1; i<=maxLevel; i++) {
+        const start = (currentPage - 1) * CFG.LEVELS_PER_PAGE + 1;
+        const end = Math.min(CFG.TOTAL_LEVELS, start + CFG.LEVELS_PER_PAGE - 1);
+
+        // Render levels for the current page
+        for(let i=start; i<=end; i++) {
             let b = document.createElement('div');
             b.className = 'lvl-btn';
             b.innerText = i;
@@ -774,20 +958,18 @@ const UI = {
             }
             grid.appendChild(b);
         }
+        
+        // Update pagination buttons
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = end === CFG.TOTAL_LEVELS;
+    },
+
+    showLevels: () => {
+        UI.renderLevelGrid(); // Render initial page 1
         UI.show('menu-levels');
     },
 
-    showEditor: () => {
-        Game.state = 'editor';
-        Game.level = [];
-        Game.camX = 0;
-        UI.show('editor-overlay');
-        let d = localStorage.getItem('nd_custom');
-        if(d) Game.level = JSON.parse(d);
-        Editor.setTool(Editor.tool);
-    },
-
-    // Shop functions (Reused from V8)
+    // Shop Visual Polish
     renderShop: function() {
         const shopContent = document.getElementById('shop-content');
         shopContent.innerHTML = '';
@@ -802,8 +984,18 @@ const UI = {
             if (isUnlocked) item.classList.add('unlocked');
             if (isEquipped) item.classList.add('equipped');
 
+            // Cube Preview Rendering
+            const previewHTML = `
+                <div class="costume-preview">
+                    <div class="player-preview-cube" style="background-color:${skin.main}; border-color:${skin.secondary};">
+                        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:15px; height:15px; background-color:${skin.secondary};"></div>
+                        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:5px; height:5px; background-color:#fff;"></div>
+                    </div>
+                </div>
+            `;
+            
             item.innerHTML = `
-                <div class="costume-preview" style="background-color: ${skin.main}; border-color: ${skin.secondary};"></div>
+                ${previewHTML}
                 <strong>${skin.name}</strong><br>
                 <div class="cost">${isUnlocked ? (isEquipped ? 'EQUIPPED' : 'Click to Equip') : `Cost: ${skin.cost} 💰`}</div>
             `;
@@ -845,6 +1037,7 @@ const Editor = {
             else if (t === 4 && btn.innerText === 'SHP') btn.classList.add('active');
             else if (t === 5 && btn.innerText === 'UFO') btn.classList.add('active');
             else if (t === 6 && btn.innerText === 'CUB') btn.classList.add('active');
+            else if (t === 8 && btn.innerText === 'GRV') btn.classList.add('active');
             else if (t === 99 && btn.innerText === 'GOAL') btn.classList.add('active');
             else if (t === 0 && btn.innerText === 'DEL') btn.classList.add('active');
         });
@@ -853,7 +1046,7 @@ const Editor = {
     save: function() { localStorage.setItem('nd_custom', JSON.stringify(Game.level)); alert('Saved!'); },
 };
 
-// --- INPUT (Reused from V8) ---
+// --- INPUT ---
 const Input = { held: false };
 const action = () => { Input.held=true; AUDIO.init(); if(Game.state==='game') Player.jump(); };
 const release = () => { Input.held=false; };
