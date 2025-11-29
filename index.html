@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Neon Dash V14.0: Hand-Crafted Levels & UI Fixes</title>
+    <title>Neon Dash V15.0: Editor Cleanup & Longer Levels</title>
     <style>
         :root {
             --primary: #00f0ff;
@@ -70,7 +70,7 @@
         button.next { background: linear-gradient(180deg, #0a0, #040); border-color: #0f0; }
         button.next:hover { color: #0f0; }
 
-        /* Level Grid */
+        /* Level Grid & Shop Styles (unchanged) */
         .level-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -89,38 +89,45 @@
         .lvl-btn:not(.locked):hover { background: var(--primary); color: #000; border-color: #fff; }
         .lvl-btn.locked { background: #111; color: #555; border-style: dotted; cursor: not-allowed; }
         
-        /* Level Paged Container */
-        .level-paged-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .nav-arrow {
+        /* EDITOR UI (Relocated and restyled) */
+        #editor-controls {
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            z-index: 20; 
+            pointer-events: auto;
+            background: var(--panel);
             padding: 10px;
-            margin: 0 10px;
-            font-size: 2rem;
-            min-width: 50px;
+            border-radius: 8px;
+            border: 1px solid #333;
         }
-        .nav-arrow:disabled {
-            opacity: 0.3;
-            cursor: default;
-        }
-
-        /* Editor UI (unchanged) */
-        #editor-overlay { pointer-events: auto !important; }
         #editor-ui {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: #111; padding: 10px; border-radius: 10px; border: 1px solid #333;
-            display: flex; gap: 5px; pointer-events: all;
-            max-width: 95vw; overflow-x: auto;
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 5px; 
+            padding: 10px 0;
+            max-width: 250px;
         }
         .tool {
             min-width: 40px; height: 40px; border: 1px solid #444; cursor: pointer;
             display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: bold;
         }
         .tool.active { background: var(--primary); color: black; border-color: white; }
-
-        /* MOBILE CONTROLS (unchanged) */
+        
+        /* Controls for editor mode */
+        #editor-overlay { 
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            pointer-events: auto !important; 
+        }
+        
+        #editor-info {
+            position: absolute; bottom: 20px; left: 20px;
+            background: #111; padding: 10px; border-radius: 5px;
+            font-size: 0.8rem; color: #aaa;
+        }
+        
+        /* Mobile Controls & HUD (unchanged) */
         #mobile-controls {
             position: fixed; bottom: 0; left: 0; right: 0; height: 100vh;
             z-index: 5; display: none; 
@@ -151,7 +158,6 @@
             }
         }
         
-        /* HUD (Reused) */
         #hud {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none;
         }
@@ -160,44 +166,6 @@
             width: 60%; height: 10px; background: rgba(255,255,255,0.1); border: 1px solid #fff;
         }
         .progress-fill { height: 100%; background: var(--primary); width: 0%; }
-
-        /* Shop Styles (unchanged) */
-        #shop-content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
-        }
-        .costume-item {
-            padding: 15px;
-            border: 2px solid #555;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 120px;
-            text-align: center;
-            transition: all 0.2s;
-        }
-        .costume-item:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-        }
-        .costume-item.equipped {
-            border-color: var(--accent-green);
-            background: rgba(0, 255, 0, 0.1);
-        }
-        .costume-preview {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 10px;
-            position: relative;
-        }
-        .player-preview-cube {
-            width: 50px;
-            height: 50px;
-            border: 3px solid;
-            position: relative;
-        }
     </style>
 </head>
 <body>
@@ -226,7 +194,7 @@
         <div id="menu-main" class="ui-layer visible">
             <div class="menu-box">
                 <h1>NEON DASH</h1>
-                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">V14.0</p>
+                <p style="letter-spacing:4px; color:#888; font-size:0.8rem; margin-top:-10px;">V15.0</p>
                 <button onclick="UI.startPlay()">Play Levels</button>
                 <button onclick="UI.showShop()">Shop</button>
                 <button class="secondary" onclick="UI.showEditor()">Level Editor</button>
@@ -272,30 +240,35 @@
             </div>
         </div>
 
-        <div id="editor-overlay" class="ui-layer hidden">
-            <div id="editor-ui">
-                <div class="tool active" onclick="Editor.setTool(1)">BLK</div>
-                <div class="tool" onclick="Editor.setTool(100)">SPAM</div>
-                <div class="tool" onclick="Editor.setTool(2)">SPK</div>
-                <div class="tool" onclick="Editor.setTool(7)">PAD</div>
-                <div class="tool" onclick="Editor.setTool(3)">COI</div>
-                <div class="tool" style="border-color:#0f0; color:#0f0;" onclick="Editor.setTool(4)">SHP</div>
-                <div class="tool" style="border-color:#fa0; color:#fa0;" onclick="Editor.setTool(5)">UFO</div>
-                <div class="tool" style="border-color:#0ff; color:#0ff;" onclick="Editor.setTool(6)">CUB</div>
-                <div class="tool" style="border-color:#f50; color:#f50;" onclick="Editor.setTool(11)">WAVE</div>
-                <div class="tool" style="border-color:#0f5; color:#0f5;" onclick="Editor.setTool(12)">ROBOT</div>
-                <div class="tool" style="border-color:#fff; color:#fff; background:#55f;" onclick="Editor.setTool(8)">GRV</div>
-                <div class="tool" style="border-color:#f80; color:#f80; background:#fff;" onclick="Editor.setTool(9)">MINI</div>
-                <div class="tool" style="border-color:#08f; color:#08f; background:#000;" onclick="Editor.setTool(10)">MACR</div>
-                <div class="tool" style="border-color:#fff; color:#fff; background:#0f0;" onclick="Editor.setTool(99)">GOAL</div>
-                <div class="tool" style="border-color:#f55; color:#f55;" onclick="Editor.setTool(0)">DEL</div>
-                <div style="min-width:10px"></div>
-                <div class="tool secondary" onclick="Editor.test()">GO</div>
-                <div class="tool secondary" onclick="Editor.save()">SAV</div>
-                <div class="tool secondary" onclick="UI.home()">X</div>
+        <div id="editor-overlay" class="ui-layer hidden" style="pointer-events: none;">
+            <div id="editor-controls" style="pointer-events: auto;">
+                <h3 style="margin: 0; padding: 5px 0 10px;">EDITOR</h3>
+                <div id="editor-ui">
+                    <div class="tool active" onclick="Editor.setTool(1)">BLK</div>
+                    <div class="tool" onclick="Editor.setTool(100)">SPAM</div>
+                    <div class="tool" onclick="Editor.setTool(2)">SPK</div>
+                    <div class="tool" onclick="Editor.setTool(7)">PAD</div>
+                    <div class="tool" onclick="Editor.setTool(3)">COI</div>
+                    <div class="tool" style="border-color:#0f0; color:#0f0;" onclick="Editor.setTool(4)">SHP</div>
+                    <div class="tool" style="border-color:#fa0; color:#fa0;" onclick="Editor.setTool(5)">UFO</div>
+                    <div class="tool" style="border-color:#0ff; color:#0ff;" onclick="Editor.setTool(6)">CUB</div>
+                    <div class="tool" style="border-color:#f50; color:#f50;" onclick="Editor.setTool(11)">WAVE</div>
+                    <div class="tool" style="border-color:#0f5; color:#0f5;" onclick="Editor.setTool(12)">ROBOT</div>
+                    <div class="tool" style="border-color:#fff; color:#fff; background:#55f;" onclick="Editor.setTool(8)">GRV</div>
+                    <div class="tool" style="border-color:#f80; color:#f80; background:#fff;" onclick="Editor.setTool(9)">MINI</div>
+                    <div class="tool" style="border-color:#08f; color:#08f; background:#000;" onclick="Editor.setTool(10)">MACR</div>
+                    <div class="tool" style="border-color:#fff; color:#fff; background:#0f0;" onclick="Editor.setTool(99)">GOAL</div>
+                    <div class="tool" style="border-color:#f55; color:#f55;" onclick="Editor.setTool(0)">DEL</div>
+                    <div style="width:100%; display: flex; gap:5px; margin-top: 10px;">
+                        <button style="flex:1; padding: 5px; font-size: 1rem; margin:0;" onclick="Editor.test()">TEST</button>
+                        <button style="flex:1; padding: 5px; font-size: 1rem; margin:0;" onclick="Editor.save()">SAVE</button>
+                    </div>
+                </div>
+                <button class="secondary" style="width:100%; padding: 5px; font-size: 1rem; margin-top: 10px;" onclick="UI.home()">EXIT</button>
             </div>
-            <div style="position: absolute; top:20px; right:20px; text-align: right; pointer-events: all;">
-                <p>Arrows: Camera | Click: Place</p>
+            
+            <div id="editor-info">
+                Arrows: Move Camera | Click: Place/Delete
             </div>
         </div>
     </div>
@@ -308,13 +281,14 @@ const CFG = {
     spd: 8.5,     
     term: 18,     
     tile: 50,
+    TILE_SEP_FACTOR: 2, // New setting for wider gaps
     MINI_SCALE: 0.6, 
     MACRO_SCALE: 1.0, 
     maxHeight: -250, 
-    START_X: 35,
+    START_X: 10, // Moved earlier
     PAD_JUMP: -25, 
-    TOTAL_LEVELS: 10, // Changed to 10 hand-crafted levels
-    LEVELS_PER_PAGE: 10, // All on one page now
+    TOTAL_LEVELS: 10, 
+    LEVELS_PER_PAGE: 10, 
     EDITOR_SPAM_RATE: 1, 
 };
 
@@ -328,7 +302,6 @@ let currentPage = 1;
 
 // --- THEME DATA (unchanged) ---
 const THEMES = [
-    // [BGM_FREQUENCY, BACKGROUND_HUE, BASE_HUE_SATURATION]
     [80, 200, 15],  
     [100, 120, 20], 
     [120, 60, 25],  
@@ -350,12 +323,12 @@ const SKINS = [
 ];
 
 // --- AUDIO (unchanged) ---
-const AUDIO = {
+const AUDIO = { /* ... (Audio logic unchanged) ... */
     ctx: null, bgmLoop: false, currentBGM: null, 
     init: function() { 
         if(!this.ctx) this.ctx = new (window.AudioContext||window.webkitAudioContext)(); 
     },
-    tone: function(f, t, d, v=0.1, s=0) { /* ... */
+    tone: function(f, t, d, v=0.1, s=0) { 
         if(!this.ctx) return;
         const o = this.ctx.createOscillator(), g = this.ctx.createGain();
         o.type=t; o.frequency.value=f; 
@@ -372,57 +345,44 @@ const AUDIO = {
     coin: () => AUDIO.tone(1000, 'sine', 0.05, 0.2, 1200),
     win: () => { AUDIO.tone(440,'triangle',0.1); setTimeout(()=>AUDIO.tone(554,'triangle',0.1),100); setTimeout(()=>AUDIO.tone(660,'triangle',0.4),200); },
     gravity: () => AUDIO.tone(500, 'sine', 0.1, 0.3, 200),
-    
     startBGM: function(freq) { /* ... (BGM logic unchanged) ... */
         if (!this.ctx) return;
-
         this.currentBGM = { baseFreq: freq };
         if (this.bgmLoop) this.stopBGM(); 
-        
         this.bgmLoop = true;
-        
         const playSynth = (time, f, type, duration, gain) => {
             const osc = this.ctx.createOscillator();
             const gainNode = this.ctx.createGain();
-            
             osc.type = type;
             osc.frequency.setValueAtTime(f, time);
             gainNode.gain.setValueAtTime(gain, time);
-            
             osc.connect(gainNode);
             gainNode.connect(this.ctx.destination);
-            
             osc.start(time);
             osc.stop(time + duration);
         };
-
         const sequence = (startTime, baseFreq) => {
             const f1 = baseFreq;
             const f2 = baseFreq * 1.25; 
             const f3 = baseFreq * 1.5;  
             const beat = 0.5; 
             let t = startTime;
-            
             playSynth(t, f1, 'square', beat * 4, 0.05); 
             playSynth(t, f1 * 2, 'triangle', beat, 0.05);   
             playSynth(t + beat, f2 * 2, 'triangle', beat, 0.05);
             playSynth(t + beat * 2, f3 * 2, 'triangle', beat, 0.05);
-            
             t += beat * 4;
             playSynth(t, f2, 'square', beat * 4, 0.05); 
             playSynth(t, f2 * 2, 'triangle', beat, 0.05);
             playSynth(t + beat, f3 * 2, 'triangle', beat, 0.05);
             playSynth(t + beat * 2, f1 * 2, 'triangle', beat, 0.05);
-
             return t + beat * 4; 
         };
-
         const loop = (t) => {
             if (!this.bgmLoop || !this.currentBGM) return;
             const nextT = sequence(t, this.currentBGM.baseFreq);
             setTimeout(() => loop(nextT), (nextT - t) * 1000);
         };
-        
         loop(this.ctx.currentTime);
     },
     stopBGM: function() {
@@ -431,38 +391,43 @@ const AUDIO = {
     }
 };
 
-// --- HAND-CRAFTED LEVEL DATA (10 Levels) ---
-// t: 1=Block, 2=Spike, 3=Coin (Orb), 4=Ship Portal, 5=UFO Portal, 6=Cube Portal, 7=Jump Pad, 8=Gravity Switch, 9=Mini, 10=Macro, 11=Wave Portal, 12=Robot Portal, 99=Goal
+// Helper function to create obstacle arrays with better spacing
+const createObstacle = (t, x, y) => ({t:t, x:x * CFG.TILE_SEP_FACTOR, y:y});
+
+// --- HAND-CRAFTED LEVEL DATA (10 Longer Levels) ---
+const L = createObstacle; // Shorthand for creation
+const S = CFG.TILE_SEP_FACTOR; // Shorthand for spacing factor
+
 const LEVELS = [
-    // 0. The Basics (Tutorial) - Cube, Jump Pad, Coin, Spike
-    [{t:1,x:40,y:0},{t:1,x:41,y:0},{t:2,x:45,y:0},{t:3,x:48,y:2},{t:1,x:51,y:1},{t:7,x:55,y:0},{t:1,x:60,y:2},{t:2,x:62,y:0},{t:1,x:68,y:0},{t:99,x:80,y:0}],
+    // 0. The Basics (Tutorial) - Cube, Jump Pad, Coin, Spike (Length: 100 * S)
+    [L(1,40,0), L(1,41,0), L(2,45,0), L(3,48,2), L(1,52,1), L(7,56,0), L(1,60,2), L(2,63,0), L(1,68,0), L(2,70,0), L(7,72,0), L(1,75,1), L(3,80,2), L(2,85,0), L(1,90,0), L(99,100,0)],
 
-    // 1. Ship Launch - Intro Ship mode
-    [{t:1,x:40,y:0},{t:4,x:45,y:1},{t:1,x:60,y:4},{t:1,x:70,y:4},{t:1,x:80,y:4},{t:6,x:85,y:1},{t:99,x:100,y:0}],
+    // 1. Ship Launch - Intro Ship mode and narrow flight (Length: 120 * S)
+    [L(1,40,0), L(4,45,1), L(1,55,5), L(1,60,0), L(1,65,5), L(1,70,0), L(1,75,5), L(1,80,0), L(1,85,5), L(1,90,0), L(3,95,3), L(6,100,1), L(1,105,0), L(99,120,0)],
 
-    // 2. The Weight of Gravity - Cube, Gravity Switch, and Upside-down Spikes
-    [{t:1,x:40,y:0},{t:2,x:45,y:0},{t:8,x:50,y:2},{t:2,x:55,y:4},{t:1,x:60,y:4},{t:8,x:65,y:2},{t:1,x:70,y:0},{t:99,x:90,y:0}],
+    // 2. The Weight of Gravity - Cube, Gravity Switch, and Upside-down Spikes (Length: 130 * S)
+    [L(1,40,0), L(2,45,0), L(8,50,2), L(2,55,4), L(1,60,4), L(2,62,4), L(1,65,4), L(3,68,1), L(8,75,2), L(1,80,0), L(2,85,0), L(1,90,0), L(8,95,2), L(1,100,4), L(6,105,4), L(99,130,0)],
 
-    // 3. Mini Hurdles - Cube, Mini, and low spikes
-    [{t:1,x:40,y:0},{t:9,x:45,y:1},{t:2,x:50,y:0},{t:1,x:55,y:0},{t:2,x:56,y:0},{t:1,x:60,y:0},{t:10,x:65,y:1},{t:99,x:85,y:0}],
+    // 3. Mini Hurdles - Cube, Mini, and low spikes, mini jumps (Length: 140 * S)
+    [L(1,40,0), L(9,45,1), L(2,48,0), L(1,50,0), L(2,52,0), L(1,55,0), L(2,58,0), L(1,60,0), L(2,63,0), L(1,65,0), L(1,70,0), L(2,72,0), L(1,75,0), L(3,80,2), L(10,85,1), L(1,90,0), L(2,95,0), L(1,100,0), L(99,140,0)],
 
-    // 4. UFO Floater - UFO mode with high and low blocks
-    [{t:1,x:40,y:0},{t:5,x:45,y:2},{t:1,x:55,y:0},{t:1,x:60,y:3},{t:1,x:65,y:0},{t:1,x:70,y:4},{t:6,x:75,y:2},{t:99,x:100,y:0}],
+    // 4. UFO Floater - UFO mode with high and low blocks, multiple gravity jumps (Length: 150 * S)
+    [L(1,40,0), L(5,45,2), L(1,55,0), L(1,60,3), L(1,65,0), L(1,70,4), L(1,75,0), L(1,80,3), L(3,85,2), L(1,90,0), L(1,95,4), L(1,100,0), L(6,105,2), L(1,110,0), L(1,115,0), L(99,150,0)],
 
-    // 5. Robot Leap - Robot mode and timing the large jump
-    [{t:1,x:40,y:0},{t:12,x:45,y:0},{t:1,x:50,y:0},{t:2,x:52,y:0},{t:1,x:55,y:0},{t:2,x:60,y:0},{t:1,x:65,y:0},{t:1,x:75,y:0},{t:1,x:85,y:0},{t:6,x:90,y:0},{t:99,x:110,y:0}],
+    // 5. Robot Leap - Robot mode and complex timing jumps (Length: 160 * S)
+    [L(1,40,0), L(12,45,0), L(1,50,0), L(2,52,0), L(1,55,0), L(2,57,0), L(1,60,0), L(2,63,0), L(1,65,0), L(1,75,0), L(2,77,0), L(1,80,0), L(2,83,0), L(1,85,0), L(3,90,2), L(1,95,0), L(2,97,0), L(6,100,0), L(1,105,0), L(99,160,0)],
 
-    // 6. Wave Tunnel - Intro Wave mode, requires holding/releasing
-    [{t:1,x:40,y:0},{t:11,x:45,y:0},{t:1,x:50,y:3},{t:1,x:55,y:1},{t:1,x:60,y:4},{t:1,x:65,y:1},{t:1,x:70,y:3},{t:6,x:75,y:0},{t:99,x:100,y:0}],
+    // 6. Wave Tunnel - Intro Wave mode, requires precise holding/releasing through tunnels (Length: 170 * S)
+    [L(1,40,0), L(11,45,0), L(1,50,3), L(1,55,1), L(1,60,4), L(1,65,1), L(1,70,3), L(1,75,1), L(1,80,4), L(1,85,1), L(1,90,3), L(1,95,1), L(3,100,2), L(6,105,0), L(1,110,0), L(1,115,0), L(99,170,0)],
 
-    // 7. Mini Ship Maze - Mini and Ship mode, tight corridor
-    [{t:1,x:40,y:0},{t:9,x:42,y:1},{t:4,x:45,y:1},{t:1,x:50,y:3},{t:1,x:55,y:3},{t:1,x:60,y:3},{t:1,x:65,y:3},{t:6,x:70,y:1},{t:10,x:73,y:1},{t:99,x:95,y:0}],
+    // 7. Mini Ship Maze - Mini and Ship mode, tight corridor with vertical movement (Length: 180 * S)
+    [L(1,40,0), L(9,42,1), L(4,45,1), L(1,50,3), L(1,55,3), L(1,60,3), L(1,65,3), L(1,70,3), L(1,75,3), L(1,80,3), L(1,85,3), L(1,90,3), L(1,95,3), L(1,100,3), L(6,105,1), L(10,108,1), L(1,112,0), L(99,180,0)],
 
-    // 8. Gravity Flips and UFO - Gravity switches during UFO
-    [{t:1,x:40,y:0},{t:5,x:45,y:2},{t:8,x:55,y:2},{t:1,x:65,y:4},{t:8,x:75,y:2},{t:1,x:85,y:0},{t:6,x:90,y:0},{t:99,x:120,y:0}],
+    // 8. Gravity Flips and UFO - Gravity switches during UFO, requires fast reaction (Length: 190 * S)
+    [L(1,40,0), L(5,45,2), L(8,55,2), L(1,60,4), L(1,65,4), L(1,70,4), L(8,75,2), L(1,80,0), L(1,85,0), L(1,90,0), L(8,95,2), L(1,100,4), L(1,105,4), L(1,110,4), L(3,115,2), L(6,120,0), L(1,125,0), L(99,190,0)],
     
-    // 9. Everything Gauntlet - Combining Mini Robot, Wave, and Ship in quick succession
-    [{t:1,x:40,y:0},{t:12,x:45,y:0},{t:9,x:47,y:0},{t:1,x:50,y:0},{t:11,x:55,y:0},{t:1,x:60,y:2},{t:4,x:65,y:2},{t:1,x:75,y:4},{t:6,x:80,y:0},{t:10,x:82,y:0},{t:99,x:110,y:0}],
+    // 9. Everything Gauntlet - Combining Mini Robot, Wave, and Ship in quick succession (Length: 200 * S)
+    [L(1,40,0), L(12,45,0), L(9,47,0), L(1,50,0), L(2,52,0), L(11,55,0), L(1,60,2), L(4,65,2), L(1,75,4), L(6,80,0), L(10,82,0), L(1,85,0), L(7,90,0), L(2,95,0), L(4,100,0), L(1,110,3), L(6,120,0), L(99,200,0)],
 ];
 
 
@@ -517,13 +482,13 @@ const Game = {
         if(idx < 0 || idx >= LEVELS.length) return;
         this.currLvlIdx = idx;
         
-        // Theme selection based on level index (Cycles through themes)
         const themeIdx = idx % THEMES.length; 
         const theme = THEMES[themeIdx];
         this.bgHue = theme[1];
         this.bgSat = theme[2];
         
-        this.level = JSON.parse(JSON.stringify(LEVELS[idx]));
+        // Note: Using JSON.parse(JSON.stringify) creates a deep copy of the level structure
+        this.level = JSON.parse(JSON.stringify(LEVELS[idx])); 
         this.start(theme[0]); 
     },
     loadCustom: function() {
@@ -619,10 +584,10 @@ const Game = {
         document.getElementById('tutorial-msg').style.display = 'none';
 
         let end = this.level.find(o=>o.t===99);
-        let endX = end ? end.x * CFG.tile : (this.currLvlIdx === -1 ? 10000 : 5000); // Handle custom levels without goals
+        let endX = end ? end.x * CFG.tile : (this.currLvlIdx === -1 ? 10000 : 5000); 
         
         let pct = Math.floor((Player.x / endX)*100);
-        pct = Math.max(0, Math.min(99, pct)); // Cap at 99%
+        pct = Math.max(0, Math.min(99, pct)); 
 
         setTimeout(() => {
             document.getElementById('pause-title').innerText = "CRASHED";
@@ -638,7 +603,6 @@ const Game = {
     loop: function() {
         let ctx = this.ctx;
         
-        // Dynamic Background Color 
         let hue = this.bgHue;
         if (this.bgSat > 30) hue = (this.bgHue + (Player.x / 20) % 360) % 360; 
         
@@ -656,17 +620,18 @@ const Game = {
             ctx.translate(0, -this.canvas.height); 
         }
 
-        // Physics
         if(this.state === 'game') {
             Player.update();
             this.camX = Player.x - 300;
         } 
+        // Camera movement for editor mode (new)
+        else if (this.state === 'editor' && Input.editorMoveX !== 0) {
+            this.camX += Input.editorMoveX * 10;
+        }
 
-        // Camera Y 
         let targetY = Player.y * 0.6;
         let camY = (this.canvas.height - 150) - targetY; 
         
-        // Draw Grid and Floor 
         ctx.strokeStyle = `hsla(${hue}, 50%, 50%, 0.1)`;
         ctx.lineWidth = 2;
         let ox = -(this.camX % CFG.tile);
@@ -678,7 +643,6 @@ const Game = {
         ctx.fillStyle = '#111';
         ctx.fillRect(0, camY+2, this.canvas.width, 500);
 
-        // Draw Objects (Rendering logic unchanged)
         this.level.forEach(o => {
             let dx = o.x * CFG.tile - this.camX;
             let dy = camY - (o.y * CFG.tile) - CFG.tile;
@@ -709,7 +673,7 @@ const Game = {
             else if (o.t===8) { // Gravity Switch
                 ctx.fillStyle='#55f'; ctx.fillRect(dx, dy, CFG.tile, CFG.tile);
                 ctx.fillStyle='#fff'; ctx.font='30px Orbitron'; ctx.textAlign='center';
-                ctx.fillText(Player.g > 0 ? '↓' : '↑', dx+25, dy+35);
+                ctx.fillText('G', dx+25, dy+35);
             }
             else if (o.t===9) { // Mini Portal (Orange)
                 ctx.fillStyle='#f80'; ctx.globalAlpha=0.3; ctx.fillRect(dx, dy+15, CFG.tile, 20); ctx.globalAlpha=1;
@@ -734,10 +698,8 @@ const Game = {
             }
         });
 
-        // Player
         if(this.state !== 'editor' && this.state !== 'dead') Player.draw(ctx, camY);
 
-        // Progress Bar
         if(this.state === 'game') {
             let end = this.level.find(o=>o.t===99);
             if(end) {
@@ -751,7 +713,7 @@ const Game = {
     }
 };
 
-// --- PLAYER PHYSICS (unchanged) ---
+// --- PLAYER PHYSICS (unchanged functionality) ---
 const Player = {
     x:0, y:0, w:40, h:40, 
     dx: CFG.spd, dy:0, 
@@ -857,10 +819,10 @@ const Player = {
         const floorHeight = 0;
         const ceilingHeight = CFG.maxHeight;
 
-        if(this.g > 0) { // Normal Gravity
+        if(this.g > 0) { 
             if(this.y > floorHeight) { this.y = floorHeight; this.dy = 0; this.onGround = true; }
             if(this.y - this.h < ceilingHeight) { this.y = ceilingHeight + this.h; this.dy = 0; } 
-        } else { // Reversed Gravity
+        } else { 
             if(this.y - this.h < ceilingHeight) { this.y = ceilingHeight + this.h; this.dy = 0; this.onGround = true; }
             if(this.y > floorHeight) { this.y = floorHeight; this.dy = 0; }
         }
@@ -920,7 +882,7 @@ const Player = {
                     this.setMode(this.mode);
                     Game.level.splice(i, 1);
                 }
-                else if(o.t===1) { // Block (Solid Fix)
+                else if(o.t===1) { 
                     if(this.mode === 'wave') Game.crash(); 
                     if(isX) { Game.crash(); }
                     else {
@@ -928,13 +890,13 @@ const Player = {
                         let prevT = t - this.dy; 
                         let hitGround = false;
 
-                        if (this.g > 0 && this.dy > 0 && prevB <= ot + 5) { // Landing on top (Normal Gravity)
+                        if (this.g > 0 && this.dy > 0 && prevB <= ot + 5) { 
                             this.y = ot; this.dy = 0; hitGround = true;
-                        } else if (this.g < 0 && this.dy < 0 && prevT >= ob - 5) { // Landing on bottom (Reversed Gravity)
+                        } else if (this.g < 0 && this.dy < 0 && prevT >= ob - 5) { 
                             this.y = ob + this.h; this.dy = 0; hitGround = true;
-                        } else if (this.g > 0 && this.dy < 0 && prevT >= ob - 5) { // Hitting ceiling (Normal Gravity)
+                        } else if (this.g > 0 && this.dy < 0 && prevT >= ob - 5) { 
                             this.y = ob + this.h; this.dy = 0;
-                        } else if (this.g < 0 && this.dy > 0 && prevB <= ot + 5) { // Hitting floor (Reversed Gravity ceiling)
+                        } else if (this.g < 0 && this.dy > 0 && prevB <= ot + 5) { 
                             this.y = ot; this.dy = 0;
                         }
                         
@@ -948,7 +910,6 @@ const Player = {
     jump: function() {
         const jumpForce = CFG.jmp * this.scale;
 
-        // Orb Check
         let hitOrb = false;
         let l=this.x, r=this.x+this.w, t=this.y-this.h, b=this.y;
         Game.level.forEach(o => {
@@ -964,7 +925,6 @@ const Player = {
         });
         if(hitOrb) return;
         
-        // Mode Jumps
         if(this.mode === 'cube' && this.onGround) {
             this.dy = -jumpForce * Math.sign(this.g);
             this.onGround = false;
@@ -1020,7 +980,6 @@ const Player = {
         const halfH = this.h / 2;
         
         if (this.mode === 'wave') {
-            // Draw diamond/triangle shape for wave
             ctx.beginPath();
             ctx.moveTo(-halfW, 0);
             ctx.lineTo(0, -halfH);
@@ -1032,7 +991,6 @@ const Player = {
             ctx.lineWidth = 4 * this.scale;
             ctx.stroke();
         } else {
-            // Draw cube/ship/ufo/robot scaled
             ctx.fillRect(-halfW,-halfH,this.w,this.h);
             
             ctx.fillStyle = this.secondaryColor; 
@@ -1060,6 +1018,7 @@ const UI = {
         Game.state='menu'; 
         UI.show('menu-main'); 
         document.getElementById('hud').style.display='none'; 
+        Input.editorMoveX = 0; // Stop camera movement
         Game.checkMobileControls(); 
     },
     
@@ -1072,7 +1031,6 @@ const UI = {
     },
     
     changeLevelPage: (direction) => {
-        // With only 10 levels, we don't need paging, but keeping the structure for future expansion.
         const maxPage = Math.ceil(CFG.TOTAL_LEVELS / CFG.LEVELS_PER_PAGE);
         currentPage = Math.min(maxPage, Math.max(1, currentPage + direction));
         UI.renderLevelGrid();
@@ -1091,16 +1049,15 @@ const UI = {
         for(let i=start; i<end; i++) {
             let b = document.createElement('div');
             b.className = 'lvl-btn';
-            b.innerText = i + 1; // Display Level 1-10
+            b.innerText = i + 1; 
             if(i + 1 > unlocked) {
                 b.classList.add('locked');
             } else {
-                b.onclick = () => Game.loadLevel(i); // Load by zero-based index (0-9)
+                b.onclick = () => Game.loadLevel(i); 
             }
             grid.appendChild(b);
         }
         
-        // Disable navigation controls as all 10 levels fit on one page
         prevBtn.disabled = true;
         nextBtn.disabled = true;
     },
@@ -1114,7 +1071,11 @@ const UI = {
         Game.state = 'editor';
         Game.level = [];
         Game.camX = 0;
+        
+        // Show only the editor controls
+        UI.hide();
         document.getElementById('editor-overlay').classList.replace('hidden', 'visible');
+        
         let d = localStorage.getItem('nd_custom');
         if(d) Game.level = JSON.parse(d);
         Editor.setTool(Editor.tool);
@@ -1173,7 +1134,7 @@ const UI = {
     }
 };
 
-// --- EDITOR (unchanged) ---
+// --- EDITOR (Added keyboard camera controls) ---
 const Editor = {
     tool: 1,
     lastX: -1,
@@ -1181,10 +1142,8 @@ const Editor = {
     setTool: function(t) {
         this.tool = t;
         document.querySelectorAll('#editor-ui .tool').forEach(el => el.classList.remove('active'));
-        const toolButtons = document.querySelectorAll('#editor-ui .tool');
-        toolButtons.forEach(btn => {
-            // Find the button by its label and activate
-            const toolLabels = {1:'BLK', 100:'SPAM', 2:'SPK', 7:'PAD', 3:'COI', 4:'SHP', 5:'UFO', 6:'CUB', 11:'WAVE', 12:'ROBOT', 8:'GRV', 9:'MINI', 10:'MACR', 99:'GOAL', 0:'DEL'};
+        const toolLabels = {1:'BLK', 100:'SPAM', 2:'SPK', 7:'PAD', 3:'COI', 4:'SHP', 5:'UFO', 6:'CUB', 11:'WAVE', 12:'ROBOT', 8:'GRV', 9:'MINI', 10:'MACR', 99:'GOAL', 0:'DEL'};
+        document.querySelectorAll('#editor-ui .tool').forEach(btn => {
             if (btn.innerText === toolLabels[t]) btn.classList.add('active');
         });
     },
@@ -1204,31 +1163,37 @@ const Editor = {
     save: function() { localStorage.setItem('nd_custom', JSON.stringify(Game.level)); alert('Saved!'); },
 };
 
-// --- INPUT (Crucial Fixes for UI Buttons) ---
-const Input = { held: false, mousePressed: false };
+// --- INPUT (Updated for editor movement) ---
+const Input = { 
+    held: false, 
+    mousePressed: false,
+    editorMoveX: 0 
+};
 const action = () => { Input.held=true; AUDIO.init(); if(Game.state==='game') Player.jump(); };
 const release = () => { Input.held=false; };
 
-// Helper to check if the event target is inside a UI element
 const isUIElement = (target) => {
-    return target.closest('.ui-layer') || target.closest('.mobile-btn') || target.closest('#editor-ui');
+    return target.closest('.ui-layer') || target.closest('.mobile-btn') || target.closest('#editor-controls');
 };
 
-// Mobile/Touch Handlers 
 Input.touchStartAction = (e) => { 
-    e.preventDefault(); // Only prevent default on the dedicated action button
+    e.preventDefault(); 
     Input.mousePressed = true; 
     action(); 
 };
 Input.touchEndAction = (e) => { 
-    e.preventDefault(); // Only prevent default on the dedicated action button
+    e.preventDefault(); 
     Input.mousePressed = false; 
     release(); 
 };
 
-// --- Keyboard Events (Unchanged) ---
 window.onkeydown = (e) => { 
     if(e.repeat) return; 
+    
+    if(Game.state === 'editor') {
+        if(e.code === 'ArrowRight') Input.editorMoveX = 1;
+        else if(e.code === 'ArrowLeft') Input.editorMoveX = -1;
+    }
     
     if(e.code === 'Space' || e.code === 'ArrowUp') {
         e.preventDefault(); 
@@ -1246,11 +1211,12 @@ window.onkeyup = (e) => {
     if(e.code === 'Space' || e.code === 'ArrowUp') {
         release();
     }
+    if(Game.state === 'editor') {
+        if(e.code === 'ArrowRight' || e.code === 'ArrowLeft') Input.editorMoveX = 0;
+    }
 };
 
-// --- Mouse Events (FIXED) ---
 window.onmousedown = (e) => {
-    // If we click *outside* of the UI/Editor, treat it as a game action/placement
     if(!isUIElement(e.target)) {
         Input.mousePressed = true;
 
@@ -1266,8 +1232,6 @@ window.onmousedown = (e) => {
             action();
         }
     }
-    // IMPORTANT: Do NOT call preventDefault() here if it's a UI element click. 
-    // This allows the default 'button' click handler to fire.
 };
 
 window.onmousemove = (e) => {
@@ -1298,15 +1262,13 @@ window.onmouseup = () => {
     release(); 
 };
 
-// --- Touch Events (FIXED for UI interaction) ---
 window.ontouchstart = (e) => {
-    if (isUIElement(e.target)) return; // Allow UI elements to handle their own clicks/taps
+    if (isUIElement(e.target)) return; 
 
-    // If we are touching the canvas, handle it as game input or editor input
     Input.mousePressed = true;
     
     if (Game.state === 'editor' && e.touches.length === 1) {
-        e.preventDefault(); // Prevent scrolling while editing
+        e.preventDefault(); 
         const touch = e.touches[0];
         let mx = touch.clientX + Game.camX;
         let gy = Math.floor(-(touch.clientY - (Game.canvas.height - 150))/CFG.tile); 
@@ -1316,7 +1278,6 @@ window.ontouchstart = (e) => {
         Editor.lastX = gx;
         Editor.lastY = gy;
     }
-    // Game action is handled by the dedicated mobile action button via touchStartAction
 };
 
 window.ontouchmove = (e) => {
