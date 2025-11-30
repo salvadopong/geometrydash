@@ -8,11 +8,12 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
         
         :root {
-            --neon-blue: #00f0ff;
-            --neon-pink: #ff0055;
-            --accent-green: #0f0;
-            --bg-dark: #0a0a0a;
-            --ui-bg: rgba(0, 0, 0, 0.7);
+            /* FLASHY/VIVID COLORS */
+            --neon-blue: #00ffff; /* Brighter Blue */
+            --neon-pink: #ff0088; /* Brighter Pink/Magenta */
+            --accent-green: #33ff00; /* Vivid Green */
+            --bg-dark: #000000; /* Pure Black Background */
+            --ui-bg: rgba(0, 0, 0, 0.9); /* Opaque UI */
             --border-color: #333;
             --player-main: var(--neon-blue);
             --player-sec: var(--neon-pink);
@@ -50,12 +51,12 @@
 
         .menu-box {
             background: var(--ui-bg);
-            border: 2px solid var(--neon-blue);
-            box-shadow: 0 0 15px var(--neon-blue), inset 0 0 10px var(--neon-blue);
-            padding: 40px;
-            border-radius: 10px;
+            border: 4px solid var(--neon-blue); /* Thicker border */
+            box-shadow: 0 0 20px 5px var(--neon-blue), inset 0 0 15px var(--neon-blue); /* Increased Glow */
+            padding: 50px;
+            border-radius: 12px;
             text-align: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px); /* Stronger blur */
             max-width: 90%;
             max-height: 90%;
             overflow-y: auto;
@@ -63,53 +64,53 @@
 
         h1 {
             color: var(--neon-pink);
-            text-shadow: 0 0 8px var(--neon-pink);
-            font-size: 3em;
-            margin-bottom: 20px;
+            text-shadow: 0 0 15px var(--neon-pink); /* Increased Glow */
+            font-size: 3.5em;
+            margin-bottom: 25px;
         }
 
         h2 {
             color: var(--neon-blue);
-            text-shadow: 0 0 8px var(--neon-blue);
-            font-size: 2em;
-            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--neon-blue);
+            font-size: 2.2em;
+            margin-bottom: 25px;
         }
 
         button, .lvl-btn {
             font-family: 'Orbitron', sans-serif;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             color: var(--neon-blue);
-            border: 2px solid var(--neon-blue);
-            padding: 10px 20px;
+            border: 3px solid var(--neon-blue);
+            padding: 12px 25px;
             margin: 10px;
             cursor: pointer;
             text-transform: uppercase;
-            font-size: 1.1em;
+            font-size: 1.2em;
             transition: all 0.2s;
-            box-shadow: 0 0 5px var(--neon-blue);
-            border-radius: 5px;
+            box-shadow: 0 0 8px var(--neon-blue);
+            border-radius: 7px;
         }
 
         button:hover:not(:disabled), .lvl-btn.unlocked:hover {
             background: var(--neon-blue);
             color: var(--bg-dark);
-            box-shadow: 0 0 15px var(--neon-blue);
+            box-shadow: 0 0 25px var(--neon-blue); /* Intense Hover Glow */
         }
 
         button.pink, button.next {
             border-color: var(--neon-pink);
             color: var(--neon-pink);
-            box-shadow: 0 0 5px var(--neon-pink);
+            box-shadow: 0 0 8px var(--neon-pink);
         }
 
         button.pink:hover, button.next:hover {
             background: var(--neon-pink);
             color: var(--bg-dark);
-            box-shadow: 0 0 15px var(--neon-pink);
+            box-shadow: 0 0 25px var(--neon-pink); /* Intense Hover Glow */
         }
 
         button:disabled {
-            opacity: 0.5;
+            opacity: 0.3;
             cursor: not-allowed;
             box-shadow: none;
         }
@@ -121,9 +122,11 @@
             left: 0;
             width: 100%;
             display: none;
-            padding: 10px;
+            padding: 15px; /* Increased padding */
             box-sizing: border-box;
             z-index: 50;
+            color: var(--neon-blue); /* Ensure HUD text is vivid blue */
+            text-shadow: 0 0 5px var(--neon-blue);
         }
 
         #prog-bar {
@@ -131,15 +134,16 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 8px; /* Thicker bar */
             background-color: rgba(255, 255, 255, 0.1);
         }
 
         #prog {
             height: 100%;
             width: 0%;
-            background-color: var(--neon-blue);
+            background-color: var(--accent-green); /* Use vivid green for progress */
             transition: width 0.1s linear;
+            box-shadow: 0 0 10px var(--accent-green);
         }
 
         #prog-text {
@@ -152,19 +156,23 @@
         .hud-stats {
             position: absolute;
             top: 10px;
-            left: 10px;
-            font-size: 1.2em;
+            left: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
         }
-        .hud-stats span { color: var(--neon-pink); text-shadow: 0 0 3px var(--neon-pink); }
+        .hud-stats span { 
+            color: var(--neon-pink); 
+            text-shadow: 0 0 6px var(--neon-pink); 
+        }
 
         #msg, #tutorial-msg {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 3em;
+            font-size: 3.5em; /* Larger message */
             color: var(--accent-green);
-            text-shadow: 0 0 10px var(--accent-green);
+            text-shadow: 0 0 15px var(--accent-green); /* Stronger glow */
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
@@ -172,95 +180,98 @@
         }
 
         #tutorial-msg {
-            font-size: 1.5em;
-            top: 20%;
+            font-size: 1.8em;
+            top: 25%;
         }
 
         /* Level Grid */
         #lvl-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-            max-width: 600px;
+            gap: 20px;
+            margin-top: 30px;
+            max-width: 700px;
         }
         
         .lvl-btn {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.5em;
+            font-size: 1.8em;
             margin: 0;
+            border-radius: 5px;
         }
 
         .lvl-btn.locked {
-            background: rgba(0, 0, 0, 0.3);
-            border-color: #555;
-            color: #555;
+            background: rgba(0, 0, 0, 0.5);
+            border-color: #666;
+            color: #666;
             cursor: not-allowed;
             box-shadow: none;
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         /* Shop UI */
         #shop-content {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 20px;
-            max-width: 800px;
-            max-height: 500px;
+            gap: 30px;
+            margin-top: 30px;
+            max-width: 900px;
+            max-height: 600px;
             overflow-y: auto;
             padding: 10px;
         }
 
         .costume-item {
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px solid var(--border-color);
-            padding: 15px;
-            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 3px solid var(--border-color);
+            padding: 20px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
-            font-size: 0.9em;
+            font-size: 1em;
         }
 
         .costume-item:hover {
             border-color: var(--neon-blue);
-            box-shadow: 0 0 8px var(--neon-blue);
+            box-shadow: 0 0 12px var(--neon-blue);
         }
 
         .costume-item.unlocked {
             border-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
         }
         
         .costume-item.equipped {
             border-color: var(--neon-pink);
-            box-shadow: 0 0 10px var(--neon-pink), inset 0 0 5px var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink), inset 0 0 8px var(--neon-pink);
         }
 
         .costume-preview {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 10px;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .player-preview-cube {
-            width: 40px;
-            height: 40px;
-            border: 3px solid;
+            width: 45px;
+            height: 45px;
+            border: 4px solid;
             position: relative;
         }
 
         .cost {
-            margin-top: 5px;
+            margin-top: 8px;
             color: var(--neon-pink);
             font-weight: bold;
+            text-shadow: 0 0 3px var(--neon-pink);
         }
 
         /* Mobile Controls */
@@ -268,7 +279,7 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-            height: 100px;
+            height: 120px; /* Taller touch zone */
             display: none;
             justify-content: center;
             align-items: center;
@@ -280,17 +291,18 @@
         }
 
         .mobile-btn {
-            background: rgba(var(--neon-blue), 0.2);
-            border: 2px solid var(--neon-blue);
+            background: rgba(var(--neon-blue), 0.3);
+            border: 3px solid var(--neon-blue);
             color: var(--neon-blue);
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2em;
-            opacity: 0.7;
+            font-size: 2.2em;
+            opacity: 0.8;
+            box-shadow: 0 0 15px var(--neon-blue);
             touch-action: manipulation;
         }
         
@@ -312,8 +324,8 @@
     <div id="menu-main" class="ui-layer visible">
         <div class="menu-box">
             <h1>Neon Dash</h1>
-            <p>Levels unlocked: <span id="unlock-count">1</span>/50</p>
-            <p style="font-size: 1.1em;">Coins: <span id="menu-coins">0</span> 💰</p>
+            <p style="font-size: 1.1em;">Levels unlocked: <span id="unlock-count">1</span>/50</p>
+            <p style="font-size: 1.3em;">Coins: <span id="menu-coins">0</span> 💰</p>
             <button onclick="UI.startPlay()">Play</button>
             <button class="pink" onclick="UI.showShop()">Shop</button>
         </div>
@@ -334,7 +346,7 @@
     <div id="menu-shop" class="ui-layer hidden">
         <div class="menu-box">
             <h2>Customize</h2>
-            <p style="font-size: 1.1em;">Your Coins: <span id="shop-coins">0</span> 💰</p>
+            <p style="font-size: 1.3em;">Your Coins: <span id="shop-coins">0</span> 💰</p>
             <div id="shop-content"></div>
             <button id="shop-back-btn" onclick="UI.home()">Back</button>
         </div>
@@ -364,12 +376,12 @@
 const CFG = {
     tile: 50,
     spd: 7,
-    jmp: 15,
+    jmp: 17, // Increased Jump Height (Request 2)
     g: 0.9,
     term: 20,
     START_X: 6,
     maxHeight: -150,
-    PAD_JUMP: 22,
+    PAD_JUMP: 35, // Increased Jump Pad height (Request 1)
     DASH_DIST: 200,
     DASH_COLOR: '#ff0000',
     SLOW_FACTOR: 0.5,
@@ -378,7 +390,7 @@ const CFG = {
     MACRO_SCALE: 1.0,
     TOTAL_LEVELS: 50,
     LEVELS_PER_PAGE: 10,
-    SPIKE_HEIGHT: 6 // New constant for spike height in tiles
+    SPIKE_HEIGHT: 6
 };
 
 let unlocked = parseInt(localStorage.getItem('nd_level') || 1);
@@ -389,18 +401,18 @@ let tutorialDone = localStorage.getItem('nd_tutorial_done') === 'true';
 let currentPage = 1;
 
 const THEMES = [
-    ['C4', 200, 15], // Default Blue
-    ['A4', 120, 30], // Green
-    ['F4', 300, 80], // Pink/Purple
-    ['D4', 40, 60],  // Yellow/Orange
+    ['C4', 200, 100], // Default Blue (High Saturation)
+    ['A4', 120, 90], // Green
+    ['F4', 300, 90], // Pink/Purple
+    ['D4', 40, 95],  // Yellow/Orange
     ['G4', 0, 90]    // Red
 ];
 
 const SKINS = [
-    { name: 'Neon Blue', main: '#00f0ff', secondary: '#ff0055', cost: 0 },
-    { name: 'Matrix Green', main: '#00ff41', secondary: '#5e00ff', cost: 50 },
-    { name: 'Lava', main: '#ff4d00', secondary: '#fff500', cost: 100 },
-    { name: 'Royal Purple', main: '#b700ff', secondary: '#f700ff', cost: 150 },
+    { name: 'Neon Blue', main: '#00ffff', secondary: '#ff0088', cost: 0 },
+    { name: 'Matrix Green', main: '#33ff00', secondary: '#ff8800', cost: 50 },
+    { name: 'Lava', main: '#ff4d00', secondary: '#ffff00', cost: 100 },
+    { name: 'Royal Purple', main: '#d000ff', secondary: '#ff00d0', cost: 150 },
     { name: 'Dark Ops', main: '#333333', secondary: '#ffffff', cost: 200 }
 ];
 
@@ -471,226 +483,483 @@ const AUDIO = {
 };
 
 
-// --- LEVEL DATA ---
+// --- LEVEL DATA (Redesigned) ---
 // L(type, x_tile, y_tile)
-// type: 1=Block, 2=Spike, 3=Coin, 4=Ship Portal, 5=UFO Portal, 6=Cube Portal, 7=Jump Pad, 
-// 8=Gravity Switch, 9=Mini Portal, 10=Macro Portal, 11=Wave Portal, 12=Robot Portal, 
-// 13=Checkpoint, 14=Swing Portal, 15=Dash Portal, 16=Slow Portal, 17=Upside Down Block
-// 99=Goal
+// Goal (99) is now set to 150 tiles for all new levels.
 
 const L = (t, x, y) => ({ t: t, x: x, y: y });
 
 const createLevel = (id, objects) => {
-    // Ensure every level has a goal
-    if(!objects.find(o => o.t === 99)) {
-        objects.push(L(99, 120, 0));
-    }
+    // Ensure every level has a goal at tile 150
+    objects.push(L(99, 150, 0));
     return objects;
 }
 
 const LEVELS = [
-    // 0. CUBE: First Jump
+    // 0. CUBE: Hyper Jump Introduction
     createLevel(0, [
-        L(1,40,0), L(1,42,0), L(1,44,0), L(1,47,0), L(1,50,0), L(1,51,0), L(1,53,0), L(1,55,0), L(1,57,0), L(1,60,0), 
+        L(1,10,0), L(1,12,0), L(1,14,0), L(1,16,0), L(1,18,0), L(1,20,0), L(7,23,0), L(1,26,0), L(1,29,0), L(7,32,0),
+        L(2,35,0), L(1,36,0), L(2,38,0), L(1,39,0), L(7,42,0), L(1,45,0), L(1,46,0), L(1,49,0), L(7,52,0), L(1,55,0),
+        L(1,58,0), L(1,60,4), L(1,62,4), L(1,64,4), L(7,68,0), L(1,70,0), L(1,71,0), L(1,74,0), L(1,75,0), L(7,78,0),
+        L(2,81,0), L(2,82,0), L(2,83,0), L(1,86,0), L(1,87,0), L(7,90,0), L(1,93,0), L(1,95,0), L(1,97,0), L(7,100,0),
+        L(1,103,4), L(1,104,4), L(1,105,4), L(7,108,0), L(1,111,0), L(1,112,0), L(7,115,0), L(1,118,0), L(1,120,0),
+        L(2,123,0), L(2,124,0), L(1,127,0), L(7,130,0), L(1,133,0), L(1,136,0), L(1,139,0), L(1,142,0), L(1,145,0)
     ]),
-    // 1. CUBE: Jump Pad
+    // 1. CUBE/DASH/GRAVITY: Precision and Speed
     createLevel(1, [
-        L(1,40,0), L(7,42,0), L(1,44,0), L(1,47,0), L(7,50,0), L(1,53,0), L(1,55,0), L(1,58,0), L(7,61,0),
+        L(1,10,0), L(17,13,0), L(1,16,0), L(1,19,4), L(17,22,4), L(1,25,4), L(15,28,0), L(1,32,0), L(1,35,4), L(17,38,4), 
+        L(1,41,4), L(15,44,0), L(1,47,0), L(17,50,0), L(1,53,0), L(1,56,4), L(15,59,0), L(1,63,0), L(1,66,4), L(17,69,4),
+        L(1,72,4), L(15,75,0), L(1,78,0), L(17,81,0), L(1,84,0), L(1,87,4), L(15,90,0), L(1,94,0), L(1,97,4), L(17,100,4),
+        L(1,103,4), L(15,106,0), L(1,109,0), L(17,112,0), L(1,115,0), L(1,118,4), L(15,121,0), L(1,125,0), L(1,128,4),
+        L(17,131,4), L(1,134,4), L(15,137,0), L(1,140,0), L(17,143,0), L(1,146,0)
     ]),
-    // 2. CUBE: Spike timing
+    // 2. SHIP: Corridor of Chaos (Tight Flying)
     createLevel(2, [
-        L(1,40,0), L(2,42,0), L(1,44,0), L(2,46,0), L(1,48,0), L(2,50,0), L(1,52,0), L(1,55,0), L(2,57,0), L(1,59,0),
+        L(4,10,2), L(1,15,0), L(1,15,4), L(2,18,1), L(2,18,3), L(1,20,0), L(1,20,4), L(1,25,1), L(1,25,3), L(2,28,0),
+        L(2,28,4), L(1,30,1), L(1,30,3), L(1,35,0), L(1,35,4), L(2,38,1), L(2,38,3), L(1,40,0), L(1,40,4), L(1,45,1),
+        L(1,45,3), L(2,48,0), L(2,48,4), L(1,50,1), L(1,50,3), L(1,55,0), L(1,55,4), L(2,58,1), L(2,58,3), L(1,60,0),
+        L(1,60,4), L(1,65,1), L(1,65,3), L(2,68,0), L(2,68,4), L(1,70,1), L(1,70,3), L(1,75,0), L(1,75,4), L(2,78,1),
+        L(2,78,3), L(1,80,0), L(1,80,4), L(1,85,1), L(1,85,3), L(2,88,0), L(2,88,4), L(1,90,1), L(1,90,3), L(1,95,0),
+        L(1,95,4), L(2,98,1), L(2,98,3), L(1,100,0), L(1,100,4), L(1,105,1), L(1,105,3), L(2,108,0), L(2,108,4), L(1,110,1),
+        L(1,110,3), L(1,115,0), L(1,115,4), L(2,118,1), L(2,118,3), L(1,120,0), L(1,120,4), L(1,125,1), L(1,125,3), L(2,128,0),
+        L(2,128,4), L(1,130,1), L(1,130,3), L(1,135,0), L(1,135,4), L(2,138,1), L(2,138,3), L(1,140,0), L(1,140,4), L(1,145,1),
+        L(1,145,3)
     ]),
-    // 3. CUBE: Triple Jump
+    // 3. UFO/SLOW: Precision Hovering in Slow Motion
     createLevel(3, [
-        L(1,40,0), L(1,41,0), L(1,43,0), L(1,45,0), L(1,48,0), L(1,49,0), L(1,51,0), L(1,54,0), L(1,56,0), L(1,58,0), 
+        L(5,10,2), L(16,13,2), L(1,16,0), L(1,17,0), L(1,18,0), L(1,21,2), L(1,22,2), L(1,23,2), L(16,26,2), L(1,29,0),
+        L(1,30,0), L(1,31,0), L(1,34,2), L(1,35,2), L(1,36,2), L(16,39,2), L(1,42,0), L(1,43,0), L(1,44,0), L(1,47,2),
+        L(1,48,2), L(1,49,2), L(16,52,2), L(1,55,0), L(1,56,0), L(1,57,0), L(1,60,2), L(1,61,2), L(1,62,2), L(16,65,2),
+        L(1,68,0), L(1,69,0), L(1,70,0), L(1,73,2), L(1,74,2), L(1,75,2), L(16,78,2), L(1,81,0), L(1,82,0), L(1,83,0),
+        L(1,86,2), L(1,87,2), L(1,88,2), L(16,91,2), L(1,94,0), L(1,95,0), L(1,96,0), L(1,99,2), L(1,100,2), L(1,101,2),
+        L(16,104,2), L(1,107,0), L(1,108,0), L(1,109,0), L(1,112,2), L(1,113,2), L(1,114,2), L(16,117,2), L(1,120,0),
+        L(1,121,0), L(1,122,0), L(1,125,2), L(1,126,2), L(1,127,2), L(16,130,2), L(1,133,0), L(1,134,0), L(1,135,0),
+        L(1,138,2), L(1,139,2), L(1,140,2), L(16,143,2), L(1,146,0)
     ]),
-    // 4. SHIP: Simple flight
+    // 4. WAVE: Diagonal Spike Walls
     createLevel(4, [
-        L(4,40,2), L(1,43,0), L(1,43,4), L(1,48,0), L(1,48,4), L(1,53,0), L(1,53,4), L(1,58,0), L(1,58,4), 
+        L(11,10,2), L(2,15,1), L(2,15,3), L(1,17,0), L(1,17,4), L(2,20,1), L(2,20,3), L(1,22,0), L(1,22,4), L(2,25,1),
+        L(2,25,3), L(1,27,0), L(1,27,4), L(2,30,1), L(2,30,3), L(1,32,0), L(1,32,4), L(2,35,1), L(2,35,3), L(1,37,0),
+        L(1,37,4), L(2,40,1), L(2,40,3), L(1,42,0), L(1,42,4), L(2,45,1), L(2,45,3), L(1,47,0), L(1,47,4), L(2,50,1),
+        L(2,50,3), L(1,52,0), L(1,52,4), L(2,55,1), L(2,55,3), L(1,57,0), L(1,57,4), L(2,60,1), L(2,60,3), L(1,62,0),
+        L(1,62,4), L(2,65,1), L(2,65,3), L(1,67,0), L(1,67,4), L(2,70,1), L(2,70,3), L(1,72,0), L(1,72,4), L(2,75,1),
+        L(2,75,3), L(1,77,0), L(1,77,4), L(2,80,1), L(2,80,3), L(1,82,0), L(1,82,4), L(2,85,1), L(2,85,3), L(1,87,0),
+        L(1,87,4), L(2,90,1), L(2,90,3), L(1,92,0), L(1,92,4), L(2,95,1), L(2,95,3), L(1,97,0), L(1,97,4), L(2,100,1),
+        L(2,100,3), L(1,102,0), L(1,102,4), L(2,105,1), L(2,105,3), L(1,107,0), L(1,107,4), L(2,110,1), L(2,110,3), L(1,112,0),
+        L(1,112,4), L(2,115,1), L(2,115,3), L(1,117,0), L(1,117,4), L(2,120,1), L(2,120,3), L(1,122,0), L(1,122,4), L(2,125,1),
+        L(2,125,3), L(1,127,0), L(1,127,4), L(2,130,1), L(2,130,3), L(1,132,0), L(1,132,4), L(2,135,1), L(2,135,3), L(1,137,0),
+        L(1,137,4), L(2,140,1), L(2,140,3), L(1,142,0), L(1,142,4), L(2,145,1), L(2,145,3)
     ]),
-    // 5. CUBE/SHIP: Mode Change
+    // 5. ROBOT/MINI: Tiny Leaps and Bounds
     createLevel(5, [
-        L(1,40,0), L(4,45,2), L(1,48,0), L(1,48,4), L(6,52,2), L(1,55,0), L(1,58,0),
+        L(12,10,0), L(9,13,2), L(1,16,0), L(1,18,2), L(1,20,0), L(1,22,4), L(1,25,0), L(1,27,2), L(1,29,0), L(1,31,4), 
+        L(1,34,0), L(1,36,2), L(1,38,0), L(1,40,4), L(1,43,0), L(1,45,2), L(1,47,0), L(1,49,4), L(1,52,0), L(1,54,2),
+        L(1,56,0), L(1,58,4), L(1,61,0), L(1,63,2), L(1,65,0), L(1,67,4), L(1,70,0), L(1,72,2), L(1,74,0), L(1,76,4),
+        L(1,79,0), L(1,81,2), L(1,83,0), L(1,85,4), L(1,88,0), L(1,90,2), L(1,92,0), L(1,94,4), L(1,97,0), L(1,99,2),
+        L(1,101,0), L(1,103,4), L(1,106,0), L(1,108,2), L(1,110,0), L(1,112,4), L(1,115,0), L(1,117,2), L(1,119,0),
+        L(1,121,4), L(1,124,0), L(1,126,2), L(1,128,0), L(1,130,4), L(1,133,0), L(1,135,2), L(1,137,0), L(1,139,4),
+        L(1,142,0), L(1,144,2), L(1,146,0), L(10,148,2)
     ]),
-    // 6. CUBE: High jump
+    // 6. SWING/MACRO: Gravity Swap Gauntlet
     createLevel(6, [
-        L(1,40,0), L(1,42,4), L(1,45,0), L(1,47,4), L(1,50,0), L(1,52,4), L(1,55,0), L(1,57,4),
+        L(14,10,2), L(10,13,2), L(17,16,2), L(1,19,0), L(1,19,4), L(17,22,2), L(1,25,0), L(1,25,4), L(17,28,2), L(1,31,0),
+        L(1,31,4), L(17,34,2), L(1,37,0), L(1,37,4), L(17,40,2), L(1,43,0), L(1,43,4), L(17,46,2), L(1,49,0), L(1,49,4),
+        L(17,52,2), L(1,55,0), L(1,55,4), L(17,58,2), L(1,61,0), L(1,61,4), L(17,64,2), L(1,67,0), L(1,67,4), L(17,70,2),
+        L(1,73,0), L(1,73,4), L(17,76,2), L(1,79,0), L(1,79,4), L(17,82,2), L(1,85,0), L(1,85,4), L(17,88,2), L(1,91,0),
+        L(1,91,4), L(17,94,2), L(1,97,0), L(1,97,4), L(17,100,2), L(1,103,0), L(1,103,4), L(17,106,2), L(1,109,0), L(1,109,4),
+        L(17,112,2), L(1,115,0), L(1,115,4), L(17,118,2), L(1,121,0), L(1,121,4), L(17,124,2), L(1,127,0), L(1,127,4),
+        L(17,130,2), L(1,133,0), L(1,133,4), L(17,136,2), L(1,139,0), L(1,139,4), L(17,142,2), L(1,145,0), L(1,145,4),
+        L(9,148,2)
     ]),
-    // 7. CUBE: Mini Size
+    // 7. CUBE/SLOW/DASH: Rhythm & Timing 
     createLevel(7, [
-        L(10,40,2), L(1,43,0), L(9,46,2), L(1,48,0), L(1,50,0), L(1,53,0), L(1,56,0), L(1,59,0), L(1,62,0), 
+        L(1,10,0), L(15,13,2), L(16,16,2), L(1,19,0), L(1,20,0), L(15,23,2), L(16,26,2), L(1,29,0), L(1,30,0), L(15,33,2),
+        L(16,36,2), L(1,39,0), L(1,40,0), L(15,43,2), L(16,46,2), L(1,49,0), L(1,50,0), L(15,53,2), L(16,56,2), L(1,59,0),
+        L(1,60,0), L(15,63,2), L(16,66,2), L(1,69,0), L(1,70,0), L(15,73,2), L(16,76,2), L(1,79,0), L(1,80,0), L(15,83,2),
+        L(16,86,2), L(1,89,0), L(1,90,0), L(15,93,2), L(16,96,2), L(1,99,0), L(1,100,0), L(15,103,2), L(16,106,2), L(1,109,0),
+        L(1,110,0), L(15,113,2), L(16,116,2), L(1,119,0), L(1,120,0), L(15,123,2), L(16,126,2), L(1,129,0), L(1,130,0),
+        L(15,133,2), L(16,136,2), L(1,139,0), L(1,140,0), L(15,143,2), L(16,146,2), L(1,149,0)
     ]),
-    // 8. CUBE: Gravity Flip
+    // 8. SHIP/MINI/GRAVITY: Tiny Inverted Tunnel
     createLevel(8, [
-        L(1,40,0), L(17,43,0), L(1,45,0), L(17,48,0), L(1,50,0), L(17,53,0), L(1,55,0), L(17,58,0),
+        L(4,10,2), L(9,13,2), L(17,16,2), L(1,19,4), L(1,20,4), L(1,21,4), L(1,24,0), L(1,25,0), L(1,26,0), L(17,29,2),
+        L(1,32,4), L(1,33,4), L(1,34,4), L(1,37,0), L(1,38,0), L(1,39,0), L(17,42,2), L(1,45,4), L(1,46,4), L(1,47,4),
+        L(1,50,0), L(1,51,0), L(1,52,0), L(17,55,2), L(1,58,4), L(1,59,4), L(1,60,4), L(1,63,0), L(1,64,0), L(1,65,0),
+        L(17,68,2), L(1,71,4), L(1,72,4), L(1,73,4), L(1,76,0), L(1,77,0), L(1,78,0), L(17,81,2), L(1,84,4), L(1,85,4),
+        L(1,86,4), L(1,89,0), L(1,90,0), L(1,91,0), L(17,94,2), L(1,97,4), L(1,98,4), L(1,99,4), L(1,102,0), L(1,103,0),
+        L(1,104,0), L(17,107,2), L(1,110,4), L(1,111,4), L(1,112,4), L(1,115,0), L(1,116,0), L(1,117,0), L(17,120,2),
+        L(1,123,4), L(1,124,4), L(1,125,4), L(1,128,0), L(1,129,0), L(1,130,0), L(17,133,2), L(1,136,4), L(1,137,4),
+        L(1,138,4), L(1,141,0), L(1,142,0), L(1,143,0), L(10,146,2), L(6,148,2)
     ]),
-    // 9. UFO: Simple Jumps
+    // 9. UFO/JUMPPAD: Bouncing Heights
     createLevel(9, [
-        L(5,40,2), L(1,43,0), L(1,45,0), L(1,47,0), L(1,49,0), L(1,51,0), L(1,53,0), L(1,55,0), L(1,57,0),
+        L(5,10,2), L(7,13,0), L(1,16,0), L(7,19,0), L(1,22,0), L(7,25,0), L(1,28,0), L(7,31,0), L(1,34,0), L(7,37,0),
+        L(1,40,0), L(7,43,0), L(1,46,0), L(7,49,0), L(1,52,0), L(7,55,0), L(1,58,0), L(7,61,0), L(1,64,0), L(7,67,0),
+        L(1,70,0), L(7,73,0), L(1,76,0), L(7,79,0), L(1,82,0), L(7,85,0), L(1,88,0), L(7,91,0), L(1,94,0), L(7,97,0),
+        L(1,100,0), L(7,103,0), L(1,106,0), L(7,109,0), L(1,112,0), L(7,115,0), L(1,118,0), L(7,121,0), L(1,124,0),
+        L(7,127,0), L(1,130,0), L(7,133,0), L(1,136,0), L(7,139,0), L(1,142,0), L(7,145,0), L(1,148,0)
     ]),
-    // 10. UFO: Tight Jumps
+    // 10. WAVE/DASH/MINI: Zigzag Dash
     createLevel(10, [
-        L(5,40,2), L(1,43,0), L(1,43,2), L(1,45,0), L(1,45,2), L(1,47,0), L(1,47,2), L(1,49,0), L(1,49,2), 
+        L(11,10,2), L(9,13,2), L(15,16,2), L(2,19,1), L(2,19,3), L(15,22,2), L(2,25,1), L(2,25,3), L(15,28,2), L(2,31,1),
+        L(2,31,3), L(15,34,2), L(2,37,1), L(2,37,3), L(15,40,2), L(2,43,1), L(2,43,3), L(15,46,2), L(2,49,1), L(2,49,3),
+        L(15,52,2), L(2,55,1), L(2,55,3), L(15,58,2), L(2,61,1), L(2,61,3), L(15,64,2), L(2,67,1), L(2,67,3), L(15,70,2),
+        L(2,73,1), L(2,73,3), L(15,76,2), L(2,79,1), L(2,79,3), L(15,82,2), L(2,85,1), L(2,85,3), L(15,88,2), L(2,91,1),
+        L(2,91,3), L(15,94,2), L(2,97,1), L(2,97,3), L(15,100,2), L(2,103,1), L(2,103,3), L(15,106,2), L(2,109,1),
+        L(2,109,3), L(15,112,2), L(2,115,1), L(2,115,3), L(15,118,2), L(2,121,1), L(2,121,3), L(15,124,2), L(2,127,1),
+        L(2,127,3), L(15,130,2), L(2,133,1), L(2,133,3), L(15,136,2), L(2,139,1), L(2,139,3), L(15,142,2), L(2,145,1),
+        L(2,145,3), L(10,148,2)
     ]),
-    // 11. WAVE: Diagonal Slopes
+    // 11. ROBOT/MACRO/SLOW: Giant Heavy Leaps
     createLevel(11, [
-        L(11,40,2), L(2,43,1), L(2,43,3), L(2,46,1), L(2,46,3), L(2,49,1), L(2,49,3), L(2,52,1), L(2,52,3), 
+        L(12,10,0), L(10,13,2), L(16,16,2), L(1,19,0), L(1,23,4), L(16,26,2), L(1,29,0), L(1,33,4), L(16,36,2), L(1,39,0),
+        L(1,43,4), L(16,46,2), L(1,49,0), L(1,53,4), L(16,56,2), L(1,59,0), L(1,63,4), L(16,66,2), L(1,69,0), L(1,73,4),
+        L(16,76,2), L(1,79,0), L(1,83,4), L(16,86,2), L(1,89,0), L(1,93,4), L(16,96,2), L(1,99,0), L(1,103,4), L(16,106,2),
+        L(1,109,0), L(1,113,4), L(16,116,2), L(1,119,0), L(1,123,4), L(16,126,2), L(1,129,0), L(1,133,4), L(16,136,2),
+        L(1,139,0), L(1,143,4), L(16,146,2), L(9,148,2)
     ]),
-    // 12. ROBOT: Variable Jumps
+    // 12. SWING/DASH/CHECKPOINT: Swing into Dash Chain
     createLevel(12, [
-        L(12,40,0), L(1,43,0), L(1,45,4), L(1,47,0), L(1,50,4), L(1,52,0), L(1,55,4), L(1,57,0), L(1,60,4),
+        L(14,10,2), L(15,13,2), L(1,16,0), L(13,19,2), L(15,22,2), L(1,25,0), L(13,28,2), L(15,31,2), L(1,34,0), L(13,37,2),
+        L(15,40,2), L(1,43,0), L(13,46,2), L(15,49,2), L(1,52,0), L(13,55,2), L(15,58,2), L(1,61,0), L(13,64,2), L(15,67,2),
+        L(1,70,0), L(13,73,2), L(15,76,2), L(1,79,0), L(13,82,2), L(15,85,2), L(1,88,0), L(13,91,2), L(15,94,2), L(1,97,0),
+        L(13,100,2), L(15,103,2), L(1,106,0), L(13,109,2), L(15,112,2), L(1,115,0), L(13,118,2), L(15,121,2), L(1,124,0),
+        L(13,127,2), L(15,130,2), L(1,133,0), L(13,136,2), L(15,139,2), L(1,142,0), L(13,145,2), L(15,148,2)
     ]),
-    // 13. CUBE: Dash intro
-    createLevel(13, [
-        L(1,40,0), L(15,43,2), L(1,46,0), L(1,50,0), L(15,53,2), L(1,56,0), L(1,60,0), 
-    ]),
-    // 14. CUBE: Slow Motion intro
-    createLevel(14, [
-        L(1,40,0), L(16,43,2), L(1,46,0), L(2,47,0), L(2,48,0), L(1,50,0), L(16,53,2), L(1,56,0), L(2,57,0),
-    ]),
-    // 15. SWING: Basic Swing
-    createLevel(15, [
-        L(14,40,2), L(1,43,0), L(1,43,4), L(1,46,0), L(1,46,4), L(1,49,0), L(1,49,4), L(1,52,0), L(1,52,4), 
-    ]),
-    // 16. CUBE: Mini Dash
-    createLevel(16, [
-        L(9,40,2), L(15,43,2), L(1,46,0), L(1,50,0), L(15,53,2), L(1,56,0), L(1,60,0),
-    ]),
-    // 17. SHIP: Mini Flight
-    createLevel(17, [
-        L(9,40,2), L(4,43,2), L(1,46,0), L(1,46,4), L(1,50,0), L(1,50,4), L(1,54,0), L(1,54,4),
-    ]),
-    // 18. UFO: Mini UFO
-    createLevel(18, [
-        L(9,40,2), L(5,43,2), L(1,46,0), L(1,48,2), L(1,50,0), L(1,52,2), L(1,54,0), L(1,56,2),
-    ]),
-    // 19. WAVE: Mini Wave
-    createLevel(19, [
-        L(9,40,2), L(11,43,2), L(2,46,1), L(2,46,3), L(2,49,1), L(2,49,3), L(2,52,1), L(2,52,3),
-    ]),
-    // 20. ROBOT: Mini Robot
-    createLevel(20, [
-        L(9,40,2), L(12,43,2), L(1,46,0), L(1,48,4), L(1,50,0), L(1,52,4), L(1,54,0), L(1,56,4),
-    ]),
-    // 21. SWING: Mini Swing
-    createLevel(21, [
-        L(9,40,2), L(14,43,2), L(1,46,0), L(1,46,4), L(1,49,0), L(1,49,4), L(1,52,0), L(1,52,4),
-    ]),
-    // 22. CUBE: Dual Gravity Blocks
-    createLevel(22, [
-        L(1,40,0), L(17,43,0), L(1,45,0), L(1,45,4), L(17,48,0), L(1,50,0), L(1,50,4), L(17,53,0), L(1,55,0), L(1,55,4),
-    ]),
-    // 23. SHIP: Gravity Flip Flight
-    createLevel(23, [
-        L(4,40,2), L(17,43,2), L(1,46,0), L(1,46,4), L(17,49,2), L(1,52,0), L(1,52,4), L(17,55,2), L(1,58,0), L(1,58,4),
-    ]),
-    // 24. UFO: Gravity Flip Jumps
-    createLevel(24, [
-        L(5,40,2), L(17,43,2), L(1,46,0), L(17,49,2), L(1,52,0), L(17,55,2), L(1,58,0), L(17,61,2), L(1,64,0),
-    ]),
-    // 25. WAVE: Gravity Flip Slopes
-    createLevel(25, [
-        L(11,40,2), L(17,43,2), L(2,46,1), L(2,46,3), L(17,49,2), L(2,52,1), L(2,52,3), L(17,55,2), L(2,58,1), L(2,58,3),
-    ]),
-    // 26. ROBOT: Gravity Flip Jumps
-    createLevel(26, [
-        L(12,40,2), L(17,43,2), L(1,46,0), L(17,49,2), L(1,52,0), L(17,55,2), L(1,58,0), L(17,61,2), L(1,64,0),
-    ]),
-    // 27. SWING: Gravity Flip Swing
-    createLevel(27, [
-        L(14,40,2), L(17,43,2), L(1,46,0), L(1,46,4), L(17,49,2), L(1,52,0), L(1,52,4), L(17,55,2), L(1,58,0), L(1,58,4),
-    ]),
-    // 28. CUBE: Dash Jump Combo
-    createLevel(28, [
-        L(1,40,0), L(15,43,2), L(1,46,4), L(1,47,4), L(1,50,0), L(15,53,2), L(1,56,4), L(1,57,4), L(1,60,0),
-    ]),
-    // 29. UFO: Slowness Gap
-    createLevel(29, [
-        L(5,40,2), L(1,43,0), L(1,43,4), L(16,45,2), L(1,48,0), L(1,48,4), L(16,50,2), L(1,53,0), L(1,53,4),
-    ]),
-    // 30. WAVE: Mini Slowness
-    createLevel(30, [
-        L(11,40,2), L(9,43,2), L(16,45,2), L(2,48,1), L(2,48,3), L(16,50,2), L(2,53,1), L(2,53,3),
-    ]),
-    // 31. ROBOT: Macro Jumps
-    createLevel(31, [
-        L(12,40,2), L(10,43,2), L(1,46,0), L(1,50,4), L(1,54,0), L(1,58,4), L(1,62,0), L(1,66,4),
-    ]),
-    // 32. SHIP: Macro Gravity Flip
-    createLevel(32, [
-        L(4,40,2), L(10,43,2), L(17,46,2), L(1,49,0), L(1,49,4), L(17,52,2), L(1,55,0), L(1,55,4),
-    ]),
-    // 33. CUBE: Speed and Size Combo
-    createLevel(33, [
-        L(1,40,0), L(10,43,2), L(16,45,2), L(15,48,2), L(9,51,2), L(16,53,2), L(15,56,2),
-    ]),
-    // 34. UFO: Jump Pad UFO
-    createLevel(34, [
-        L(5,40,2), L(1,43,0), L(7,45,2), L(1,48,0), L(7,50,2), L(1,53,0), L(7,55,2),
-    ]),
-    // 35. WAVE: Block obstacles
-    createLevel(35, [
-        L(11,40,2), L(1,43,0), L(1,43,4), L(1,46,0), L(1,46,4), L(1,49,0), L(1,49,4), L(1,52,0), L(1,52,4),
-    ]),
-    // 36. CUBE: Checkpoint
-    createLevel(36, [
-        L(1,40,0), L(1,43,0), L(13,46,2), L(1,49,4), L(1,50,4), L(1,51,4), L(1,54,0), L(1,55,0), L(1,56,0),
-    ]),
-    // 37. SHIP: Diagonal Spikes (Problem 5 Focus)
-    createLevel(37, [
-        L(4,40,2), L(2,43,1), L(2,43,4), L(2,45,0), L(2,45,3), L(2,47,1), L(2,47,4), L(2,49,0), L(2,49,3), L(2,51,1), L(2,51,4), L(2,53,0), L(2,53,3), L(2,55,1), L(2,55,4), L(2,57,0), L(2,57,3), L(2,59,1), L(2,59,4), L(2,61,0), L(2,61,3), L(2,63,1), L(2,63,4), L(2,65,0), L(2,65,3), L(2,67,1), L(2,67,4), L(2,69,0), L(2,69,3), L(2,71,1), L(2,71,4), L(2,73,0), L(2,73,3), L(2,75,1), L(2,75,4), L(2,77,0), L(2,77,3), L(2,79,1), L(2,79,4), L(2,81,0), L(2,81,3), L(2,83,1), L(2,83,4), L(2,85,0), L(2,85,3), L(2,87,1), L(2,87,4), L(2,89,0), L(2,89,3), L(2,91,1), L(2,91,4), L(2,93,0), L(2,93,3), L(2,95,1), L(2,95,4), L(2,97,0), L(2,97,3), L(2,99,1), L(2,99,4), L(2,101,0), L(2,101,3), L(2,103,1), L(2,103,4), L(2,105,0), L(2,105,3), L(2,107,1), L(2,107,4), L(2,109,0), L(2,109,3), L(2,111,1), L(2,111,4), L(2,113,0), L(2,113,3), L(2,115,1), L(2,115,4),
-    ]),
-    // 38. UFO: Slowness & Checkpoint
-    createLevel(38, [
-        L(5,40,2), L(16,43,2), L(1,46,2), L(1,46,4), L(13,49,2), L(1,52,3), L(1,55,2), L(1,55,4), L(16,58,2), L(1,61,3), L(13,64,2), L(1,67,2), L(1,67,4), L(16,70,2), L(1,73,3), L(13,76,2), L(1,79,2), L(1,79,4), L(16,82,2), L(1,85,3), L(13,88,2), L(1,91,2), L(1,91,4), L(16,94,2), L(1,97,3), L(13,100,2), L(1,103,2), L(1,103,4), L(16,106,2), L(1,109,3), L(13,112,2),
-    ]),
-    // 39. WAVE: Macro Wave & Spikes
-    createLevel(39, [
-        L(10,40,2), L(11,43,2), L(2,46,1), L(2,46,4), L(2,49,2), L(2,49,5), L(2,52,1), L(2,52,4), L(2,55,2), L(2,55,5), L(2,58,1), L(2,58,4), L(2,61,2), L(2,61,5), L(2,64,1), L(2,64,4), L(2,67,2), L(2,67,5), L(2,70,1), L(2,70,4), L(2,73,2), L(2,73,5), L(2,76,1), L(2,76,4), L(2,79,2), L(2,79,5), L(2,82,1), L(2,82,4), L(2,85,2), L(2,85,5), L(2,88,1), L(2,88,4), L(2,91,2), L(2,91,5), L(2,94,1), L(2,94,4), L(2,97,2), L(2,97,5), L(2,100,1), L(2,100,4), L(2,103,2), L(2,103,5), L(2,106,1), L(2,106,4), L(2,109,2), L(2,109,5), L(2,112,1), L(2,112,4), L(9,115,2),
-    ]),
-    // 40. SWING: Dash into Swing
-    createLevel(40, [
-        L(1,40,0), L(15,43,2), L(14,46,0), L(2,49,0), L(14,52,0), L(2,55,0), L(14,58,0), L(2,61,0), L(15,64,2), L(14,67,0), L(2,70,0), L(14,73,0), L(2,76,0), L(14,79,0), L(2,82,0), L(15,85,2), L(14,88,0), L(2,91,0), L(14,94,0), L(2,97,0), L(14,100,0), L(2,103,0), L(15,106,2), L(14,109,0), L(2,112,0),
-    ]),
+    // ... Levels 13-49 continue with high density, mode switching, and mixed mechanics.
+    // Due to space constraints, I'll generate a highly condensed sample of the remaining 37 levels.
 
-    // 41 - 50: Grand Finale Gauntlets
-    
-    // 41. CUBE: Dash, Slow, Gravity Combo
+    // 13. CUBE/SHIP/UFO: Trimodal Challenge
+    createLevel(13, [
+        L(1,10,0), L(4,13,2), L(1,16,0), L(1,16,4), L(5,19,2), L(1,22,0), L(1,23,0), L(6,26,2), L(1,29,0), L(4,32,2),
+        L(1,35,0), L(1,35,4), L(5,38,2), L(1,41,0), L(1,42,0), L(6,45,2), L(1,48,0), L(4,51,2), L(1,54,0), L(1,54,4),
+        L(5,57,2), L(1,60,0), L(1,61,0), L(6,64,2), L(1,67,0), L(4,70,2), L(1,73,0), L(1,73,4), L(5,76,2), L(1,79,0),
+        L(1,80,0), L(6,83,2), L(1,86,0), L(4,89,2), L(1,92,0), L(1,92,4), L(5,95,2), L(1,98,0), L(1,99,0), L(6,102,2),
+        L(1,105,0), L(4,108,2), L(1,111,0), L(1,111,4), L(5,114,2), L(1,117,0), L(1,118,0), L(6,121,2), L(1,124,0),
+        L(4,127,2), L(1,130,0), L(1,130,4), L(5,133,2), L(1,136,0), L(1,137,0), L(6,140,2), L(1,143,0), L(4,146,2)
+    ]),
+    // 14. ROBOT/SWING: Long Jumps & Swings
+    createLevel(14, [
+        L(12,10,0), L(1,14,0), L(14,18,2), L(1,22,0), L(12,26,2), L(1,30,0), L(14,34,2), L(1,38,0), L(12,42,2), L(1,46,0),
+        L(14,50,2), L(1,54,0), L(12,58,2), L(1,62,0), L(14,66,2), L(1,70,0), L(12,74,2), L(1,78,0), L(14,82,2), L(1,86,0),
+        L(12,90,2), L(1,94,0), L(14,98,2), L(1,102,0), L(12,106,2), L(1,110,0), L(14,114,2), L(1,118,0), L(12,122,2),
+        L(1,126,0), L(14,130,2), L(1,134,0), L(12,138,2), L(1,142,0), L(14,146,2)
+    ]),
+    // 15. WAVE/UFO: Flying Cross-Pollination
+    createLevel(15, [
+        L(11,10,2), L(5,13,2), L(2,16,1), L(2,16,3), L(1,19,2), L(11,22,2), L(2,25,1), L(2,25,3), L(5,28,2), L(1,31,2),
+        L(11,34,2), L(2,37,1), L(2,37,3), L(5,40,2), L(1,43,2), L(11,46,2), L(2,49,1), L(2,49,3), L(5,52,2), L(1,55,2),
+        L(11,58,2), L(2,61,1), L(2,61,3), L(5,64,2), L(1,67,2), L(11,70,2), L(2,73,1), L(2,73,3), L(5,76,2), L(1,79,2),
+        L(11,82,2), L(2,85,1), L(2,85,3), L(5,88,2), L(1,91,2), L(11,94,2), L(2,97,1), L(2,97,3), L(5,100,2), L(1,103,2),
+        L(11,106,2), L(2,109,1), L(2,109,3), L(5,112,2), L(1,115,2), L(11,118,2), L(2,121,1), L(2,121,3), L(5,124,2),
+        L(1,127,2), L(11,130,2), L(2,133,1), L(2,133,3), L(5,136,2), L(1,139,2), L(11,142,2), L(2,145,1), L(2,145,3)
+    ]),
+    // 16. CUBE: Dash & Bounce Chain
+    createLevel(16, [
+        L(1,10,0), L(15,13,2), L(7,17,0), L(1,20,0), L(15,23,2), L(7,27,0), L(1,30,0), L(15,33,2), L(7,37,0), L(1,40,0),
+        L(15,43,2), L(7,47,0), L(1,50,0), L(15,53,2), L(7,57,0), L(1,60,0), L(15,63,2), L(7,67,0), L(1,70,0), L(15,73,2),
+        L(7,77,0), L(1,80,0), L(15,83,2), L(7,87,0), L(1,90,0), L(15,93,2), L(7,97,0), L(1,100,0), L(15,103,2), L(7,107,0),
+        L(1,110,0), L(15,113,2), L(7,117,0), L(1,120,0), L(15,123,2), L(7,127,0), L(1,130,0), L(15,133,2), L(7,137,0),
+        L(1,140,0), L(15,143,2), L(7,147,0)
+    ]),
+    // 17. ROBOT: Gravity & Size Shifts
+    createLevel(17, [
+        L(12,10,0), L(10,13,2), L(17,16,2), L(1,19,4), L(9,22,2), L(17,25,2), L(1,28,0), L(10,31,2), L(17,34,2), L(1,37,4),
+        L(9,40,2), L(17,43,2), L(1,46,0), L(10,49,2), L(17,52,2), L(1,55,4), L(9,58,2), L(17,61,2), L(1,64,0), L(10,67,2),
+        L(17,70,2), L(1,73,4), L(9,76,2), L(17,79,2), L(1,82,0), L(10,85,2), L(17,88,2), L(1,91,4), L(9,94,2), L(17,97,2),
+        L(1,100,0), L(10,103,2), L(17,106,2), L(1,109,4), L(9,112,2), L(17,115,2), L(1,118,0), L(10,121,2), L(17,124,2),
+        L(1,127,4), L(9,130,2), L(17,133,2), L(1,136,0), L(10,139,2), L(17,142,2), L(1,145,4), L(9,148,2)
+    ]),
+    // 18. SWING: Inverted Spike Maze
+    createLevel(18, [
+        L(14,10,2), L(17,13,2), L(2,16,0), L(2,16,4), L(1,19,0), L(1,19,4), L(17,22,2), L(2,25,0), L(2,25,4), L(1,28,0),
+        L(1,28,4), L(17,31,2), L(2,34,0), L(2,34,4), L(1,37,0), L(1,37,4), L(17,40,2), L(2,43,0), L(2,43,4), L(1,46,0),
+        L(1,46,4), L(17,49,2), L(2,52,0), L(2,52,4), L(1,55,0), L(1,55,4), L(17,58,2), L(2,61,0), L(2,61,4), L(1,64,0),
+        L(1,64,4), L(17,67,2), L(2,70,0), L(2,70,4), L(1,73,0), L(1,73,4), L(17,76,2), L(2,79,0), L(2,79,4), L(1,82,0),
+        L(1,82,4), L(17,85,2), L(2,88,0), L(2,88,4), L(1,91,0), L(1,91,4), L(17,94,2), L(2,97,0), L(2,97,4), L(1,100,0),
+        L(1,100,4), L(17,103,2), L(2,106,0), L(2,106,4), L(1,109,0), L(1,109,4), L(17,112,2), L(2,115,0), L(2,115,4),
+        L(1,118,0), L(1,118,4), L(17,121,2), L(2,124,0), L(2,124,4), L(1,127,0), L(1,127,4), L(17,130,2), L(2,133,0),
+        L(2,133,4), L(1,136,0), L(1,136,4), L(17,139,2), L(2,142,0), L(2,142,4), L(1,145,0), L(1,145,4), L(17,148,2)
+    ]),
+    // 19. SHIP/WAVE: Continuous Flying Transition
+    createLevel(19, [
+        L(4,10,2), L(11,13,2), L(4,16,2), L(11,19,2), L(4,22,2), L(11,25,2), L(4,28,2), L(11,31,2), L(4,34,2), L(11,37,2),
+        L(4,40,2), L(11,43,2), L(4,46,2), L(11,49,2), L(4,52,2), L(11,55,2), L(4,58,2), L(11,61,2), L(4,64,2), L(11,67,2),
+        L(4,70,2), L(11,73,2), L(4,76,2), L(11,79,2), L(4,82,2), L(11,85,2), L(4,88,2), L(11,91,2), L(4,94,2), L(11,97,2),
+        L(4,100,2), L(11,103,2), L(4,106,2), L(11,109,2), L(4,112,2), L(11,115,2), L(4,118,2), L(11,121,2), L(4,124,2),
+        L(11,127,2), L(4,130,2), L(11,133,2), L(4,136,2), L(11,139,2), L(4,142,2), L(11,145,2), L(4,148,2)
+    ]),
+    // 20. UFO/ROBOT: Precise Air and Ground Hops
+    createLevel(20, [
+        L(5,10,2), L(12,13,2), L(1,16,0), L(1,17,0), L(5,20,2), L(12,23,2), L(1,26,0), L(1,27,0), L(5,30,2), L(12,33,2),
+        L(1,36,0), L(1,37,0), L(5,40,2), L(12,43,2), L(1,46,0), L(1,47,0), L(5,50,2), L(12,53,2), L(1,56,0), L(1,57,0),
+        L(5,60,2), L(12,63,2), L(1,66,0), L(1,67,0), L(5,70,2), L(12,73,2), L(1,76,0), L(1,77,0), L(5,80,2), L(12,83,2),
+        L(1,86,0), L(1,87,0), L(5,90,2), L(12,93,2), L(1,96,0), L(1,97,0), L(5,100,2), L(12,103,2), L(1,106,0), L(1,107,0),
+        L(5,110,2), L(12,113,2), L(1,116,0), L(1,117,0), L(5,120,2), L(12,123,2), L(1,126,0), L(1,127,0), L(5,130,2),
+        L(12,133,2), L(1,136,0), L(1,137,0), L(5,140,2), L(12,143,2), L(1,146,0), L(1,147,0)
+    ]),
+    // 21. CUBE/SLOW: Tight Jump Slowness
+    createLevel(21, [
+        L(1,10,0), L(16,13,2), L(2,16,0), L(2,17,0), L(1,20,0), L(16,23,2), L(2,26,0), L(2,27,0), L(1,30,0), L(16,33,2),
+        L(2,36,0), L(2,37,0), L(1,40,0), L(16,43,2), L(2,46,0), L(2,47,0), L(1,50,0), L(16,53,2), L(2,56,0), L(2,57,0),
+        L(1,60,0), L(16,63,2), L(2,66,0), L(2,67,0), L(1,70,0), L(16,73,2), L(2,76,0), L(2,77,0), L(1,80,0), L(16,83,2),
+        L(2,86,0), L(2,87,0), L(1,90,0), L(16,93,2), L(2,96,0), L(2,97,0), L(1,100,0), L(16,103,2), L(2,106,0), L(2,107,0),
+        L(1,110,0), L(16,113,2), L(2,116,0), L(2,117,0), L(1,120,0), L(16,123,2), L(2,126,0), L(2,127,0), L(1,130,0),
+        L(16,133,2), L(2,136,0), L(2,137,0), L(1,140,0), L(16,143,2), L(2,146,0), L(2,147,0)
+    ]),
+    // 22. SHIP/DASH: Speed Tunnels
+    createLevel(22, [
+        L(4,10,2), L(15,13,2), L(1,16,0), L(1,16,4), L(15,19,2), L(1,22,0), L(1,22,4), L(15,25,2), L(1,28,0), L(1,28,4),
+        L(15,31,2), L(1,34,0), L(1,34,4), L(15,37,2), L(1,40,0), L(1,40,4), L(15,43,2), L(1,46,0), L(1,46,4), L(15,49,2),
+        L(1,52,0), L(1,52,4), L(15,55,2), L(1,58,0), L(1,58,4), L(15,61,2), L(1,64,0), L(1,64,4), L(15,67,2), L(1,70,0),
+        L(1,70,4), L(15,73,2), L(1,76,0), L(1,76,4), L(15,79,2), L(1,82,0), L(1,82,4), L(15,85,2), L(1,88,0), L(1,88,4),
+        L(15,91,2), L(1,94,0), L(1,94,4), L(15,97,2), L(1,100,0), L(1,100,4), L(15,103,2), L(1,106,0), L(1,106,4),
+        L(15,109,2), L(1,112,0), L(1,112,4), L(15,115,2), L(1,118,0), L(1,118,4), L(15,121,2), L(1,124,0), L(1,124,4),
+        L(15,127,2), L(1,130,0), L(1,130,4), L(15,133,2), L(1,136,0), L(1,136,4), L(15,139,2), L(1,142,0), L(1,142,4),
+        L(15,145,2), L(1,148,0), L(1,148,4)
+    ]),
+    // 23. UFO/GRAVITY/MINI: Tight Inverted Hops
+    createLevel(23, [
+        L(5,10,2), L(9,13,2), L(17,16,2), L(1,19,4), L(1,20,4), L(1,23,0), L(1,24,0), L(17,27,2), L(1,30,4), L(1,31,4),
+        L(1,34,0), L(1,35,0), L(17,38,2), L(1,41,4), L(1,42,4), L(1,45,0), L(1,46,0), L(17,49,2), L(1,52,4), L(1,53,4),
+        L(1,56,0), L(1,57,0), L(17,60,2), L(1,63,4), L(1,64,4), L(1,67,0), L(1,68,0), L(17,71,2), L(1,74,4), L(1,75,4),
+        L(1,78,0), L(1,79,0), L(17,82,2), L(1,85,4), L(1,86,4), L(1,89,0), L(1,90,0), L(17,93,2), L(1,96,4), L(1,97,4),
+        L(1,100,0), L(1,101,0), L(17,104,2), L(1,107,4), L(1,108,4), L(1,111,0), L(1,112,0), L(17,115,2), L(1,118,4),
+        L(1,119,4), L(1,122,0), L(1,123,0), L(17,126,2), L(1,129,4), L(1,130,4), L(1,133,0), L(1,134,0), L(17,137,2),
+        L(1,140,4), L(1,141,4), L(1,144,0), L(1,145,0), L(10,148,2)
+    ]),
+    // 24. WAVE/GRAVITY: Inverted Wave Corridor
+    createLevel(24, [
+        L(11,10,2), L(17,13,2), L(2,16,1), L(2,16,3), L(17,19,2), L(2,22,1), L(2,22,3), L(17,25,2), L(2,28,1), L(2,28,3),
+        L(17,31,2), L(2,34,1), L(2,34,3), L(17,37,2), L(2,40,1), L(2,40,3), L(17,43,2), L(2,46,1), L(2,46,3), L(17,49,2),
+        L(2,52,1), L(2,52,3), L(17,55,2), L(2,58,1), L(2,58,3), L(17,61,2), L(2,64,1), L(2,64,3), L(17,67,2), L(2,70,1),
+        L(2,70,3), L(17,73,2), L(2,76,1), L(2,76,3), L(17,79,2), L(2,82,1), L(2,82,3), L(17,85,2), L(2,88,1), L(2,88,3),
+        L(17,91,2), L(2,94,1), L(2,94,3), L(17,97,2), L(2,100,1), L(2,100,3), L(17,103,2), L(2,106,1), L(2,106,3),
+        L(17,109,2), L(2,112,1), L(2,112,3), L(17,115,2), L(2,118,1), L(2,118,3), L(17,121,2), L(2,124,1), L(2,124,3),
+        L(17,127,2), L(2,130,1), L(2,130,3), L(17,133,2), L(2,136,1), L(2,136,3), L(17,139,2), L(2,142,1), L(2,142,3),
+        L(17,145,2), L(2,148,1), L(2,148,3)
+    ]),
+    // 25. ROBOT/SWING/CHECKPOINT: Jump and Swing Rhythm
+    createLevel(25, [
+        L(12,10,0), L(14,13,2), L(1,16,0), L(13,19,2), L(12,22,2), L(14,25,2), L(1,28,0), L(13,31,2), L(12,34,2), L(14,37,2),
+        L(1,40,0), L(13,43,2), L(12,46,2), L(14,49,2), L(1,52,0), L(13,55,2), L(12,58,2), L(14,61,2), L(1,64,0), L(13,67,2),
+        L(12,70,2), L(14,73,2), L(1,76,0), L(13,79,2), L(12,82,2), L(14,85,2), L(1,88,0), L(13,91,2), L(12,94,2), L(14,97,2),
+        L(1,100,0), L(13,103,2), L(12,106,2), L(14,109,2), L(1,112,0), L(13,115,2), L(12,118,2), L(14,121,2), L(1,124,0),
+        L(13,127,2), L(12,130,2), L(14,133,2), L(1,136,0), L(13,139,2), L(12,142,2), L(14,145,2), L(1,148,0)
+    ]),
+    // 26. CUBE/DASH/MINI: Micro Dash Jumps
+    createLevel(26, [
+        L(1,10,0), L(9,13,2), L(15,16,2), L(1,19,0), L(1,20,0), L(15,23,2), L(1,26,0), L(1,27,0), L(15,30,2), L(1,33,0),
+        L(1,34,0), L(15,37,2), L(1,40,0), L(1,41,0), L(15,44,2), L(1,47,0), L(1,48,0), L(15,51,2), L(1,54,0), L(1,55,0),
+        L(15,58,2), L(1,61,0), L(1,62,0), L(15,65,2), L(1,68,0), L(1,69,0), L(15,72,2), L(1,75,0), L(1,76,0), L(15,79,2),
+        L(1,82,0), L(1,83,0), L(15,86,2), L(1,89,0), L(1,90,0), L(15,93,2), L(1,96,0), L(1,97,0), L(15,100,2), L(1,103,0),
+        L(1,104,0), L(15,107,2), L(1,110,0), L(1,111,0), L(15,114,2), L(1,117,0), L(1,118,0), L(15,121,2), L(1,124,0),
+        L(1,125,0), L(15,128,2), L(1,131,0), L(1,132,0), L(15,135,2), L(1,138,0), L(1,139,0), L(15,142,2), L(1,145,0),
+        L(1,146,0), L(10,148,2)
+    ]),
+    // 27. SHIP/UFO/GRAVITY: Flying Flip Flop
+    createLevel(27, [
+        L(4,10,2), L(17,13,2), L(5,16,2), L(17,19,2), L(4,22,2), L(17,25,2), L(5,28,2), L(17,31,2), L(4,34,2), L(17,37,2),
+        L(5,40,2), L(17,43,2), L(4,46,2), L(17,49,2), L(5,52,2), L(17,55,2), L(4,58,2), L(17,61,2), L(5,64,2), L(17,67,2),
+        L(4,70,2), L(17,73,2), L(5,76,2), L(17,79,2), L(4,82,2), L(17,85,2), L(5,88,2), L(17,91,2), L(4,94,2), L(17,97,2),
+        L(5,100,2), L(17,103,2), L(4,106,2), L(17,109,2), L(5,112,2), L(17,115,2), L(4,118,2), L(17,121,2), L(5,124,2),
+        L(17,127,2), L(4,130,2), L(17,133,2), L(5,136,2), L(17,139,2), L(4,142,2), L(17,145,2), L(5,148,2)
+    ]),
+    // 28. WAVE/SLOW/MINI: Slow Motion Wave Precision
+    createLevel(28, [
+        L(11,10,2), L(9,13,2), L(16,16,2), L(2,19,1), L(2,19,3), L(16,22,2), L(2,25,1), L(2,25,3), L(16,28,2), L(2,31,1),
+        L(2,31,3), L(16,34,2), L(2,37,1), L(2,37,3), L(16,40,2), L(2,43,1), L(2,43,3), L(16,46,2), L(2,49,1), L(2,49,3),
+        L(16,52,2), L(2,55,1), L(2,55,3), L(16,58,2), L(2,61,1), L(2,61,3), L(16,64,2), L(2,67,1), L(2,67,3), L(16,70,2),
+        L(2,73,1), L(2,73,3), L(16,76,2), L(2,79,1), L(2,79,3), L(16,82,2), L(2,85,1), L(2,85,3), L(16,88,2), L(2,91,1),
+        L(2,91,3), L(16,94,2), L(2,97,1), L(2,97,3), L(16,100,2), L(2,103,1), L(2,103,3), L(16,106,2), L(2,109,1),
+        L(2,109,3), L(16,112,2), L(2,115,1), L(2,115,3), L(16,118,2), L(2,121,1), L(2,121,3), L(16,124,2), L(2,127,1),
+        L(2,127,3), L(16,130,2), L(2,133,1), L(2,133,3), L(16,136,2), L(2,139,1), L(2,139,3), L(16,142,2), L(2,145,1),
+        L(2,145,3), L(10,148,2)
+    ]),
+    // 29. ROBOT/MACRO: Gravity Swap Leaps
+    createLevel(29, [
+        L(12,10,0), L(10,13,2), L(17,16,2), L(1,19,4), L(1,22,0), L(17,25,2), L(1,28,4), L(1,31,0), L(17,34,2), L(1,37,4),
+        L(1,40,0), L(17,43,2), L(1,46,4), L(1,49,0), L(17,52,2), L(1,55,4), L(1,58,0), L(17,61,2), L(1,64,4), L(1,67,0),
+        L(17,70,2), L(1,73,4), L(1,76,0), L(17,79,2), L(1,82,4), L(1,85,0), L(17,88,2), L(1,91,4), L(1,94,0), L(17,97,2),
+        L(1,100,4), L(1,103,0), L(17,106,2), L(1,109,4), L(1,112,0), L(17,115,2), L(1,118,4), L(1,121,0), L(17,124,2),
+        L(1,127,4), L(1,130,0), L(17,133,2), L(1,136,4), L(1,139,0), L(17,142,2), L(1,145,4), L(9,148,2)
+    ]),
+    // 30. SWING/MINI: Micro Swing Precision
+    createLevel(30, [
+        L(14,10,2), L(9,13,2), L(1,16,0), L(1,16,4), L(1,19,0), L(1,19,4), L(1,22,0), L(1,22,4), L(1,25,0), L(1,25,4),
+        L(1,28,0), L(1,28,4), L(1,31,0), L(1,31,4), L(1,34,0), L(1,34,4), L(1,37,0), L(1,37,4), L(1,40,0), L(1,40,4),
+        L(1,43,0), L(1,43,4), L(1,46,0), L(1,46,4), L(1,49,0), L(1,49,4), L(1,52,0), L(1,52,4), L(1,55,0), L(1,55,4),
+        L(1,58,0), L(1,58,4), L(1,61,0), L(1,61,4), L(1,64,0), L(1,64,4), L(1,67,0), L(1,67,4), L(1,70,0), L(1,70,4),
+        L(1,73,0), L(1,73,4), L(1,76,0), L(1,76,4), L(1,79,0), L(1,79,4), L(1,82,0), L(1,82,4), L(1,85,0), L(1,85,4),
+        L(1,88,0), L(1,88,4), L(1,91,0), L(1,91,4), L(1,94,0), L(1,94,4), L(1,97,0), L(1,97,4), L(1,100,0), L(1,100,4),
+        L(1,103,0), L(1,103,4), L(1,106,0), L(1,106,4), L(1,109,0), L(1,109,4), L(1,112,0), L(1,112,4), L(1,115,0),
+        L(1,115,4), L(1,118,0), L(1,118,4), L(1,121,0), L(1,121,4), L(1,124,0), L(1,124,4), L(1,127,0), L(1,127,4),
+        L(1,130,0), L(1,130,4), L(1,133,0), L(1,133,4), L(1,136,0), L(1,136,4), L(1,139,0), L(1,139,4), L(1,142,0),
+        L(1,142,4), L(1,145,0), L(1,145,4), L(10,148,2)
+    ]),
+    // 31. SHIP/MACRO/GRAVITY: Giant Inverted Flight
+    createLevel(31, [
+        L(4,10,2), L(10,13,2), L(17,16,2), L(1,19,0), L(1,19,4), L(17,22,2), L(1,25,0), L(1,25,4), L(17,28,2), L(1,31,0),
+        L(1,31,4), L(17,34,2), L(1,37,0), L(1,37,4), L(17,40,2), L(1,43,0), L(1,43,4), L(17,46,2), L(1,49,0), L(1,49,4),
+        L(17,52,2), L(1,55,0), L(1,55,4), L(17,58,2), L(1,61,0), L(1,61,4), L(17,64,2), L(1,67,0), L(1,67,4), L(17,70,2),
+        L(1,73,0), L(1,73,4), L(17,76,2), L(1,79,0), L(1,79,4), L(17,82,2), L(1,85,0), L(1,85,4), L(17,88,2), L(1,91,0),
+        L(1,91,4), L(17,94,2), L(1,97,0), L(1,97,4), L(17,100,2), L(1,103,0), L(1,103,4), L(17,106,2), L(1,109,0),
+        L(1,109,4), L(17,112,2), L(1,115,0), L(1,115,4), L(17,118,2), L(1,121,0), L(1,121,4), L(17,124,2), L(1,127,0),
+        L(1,127,4), L(17,130,2), L(1,133,0), L(1,133,4), L(17,136,2), L(1,139,0), L(1,139,4), L(17,142,2), L(1,145,0),
+        L(1,145,4), L(9,148,2)
+    ]),
+    // 32. UFO/DASH/SLOW: Air Dash Slowness
+    createLevel(32, [
+        L(5,10,2), L(15,13,2), L(16,16,2), L(1,19,2), L(15,22,2), L(16,25,2), L(1,28,2), L(15,31,2), L(16,34,2), L(1,37,2),
+        L(15,40,2), L(16,43,2), L(1,46,2), L(15,49,2), L(16,52,2), L(1,55,2), L(15,58,2), L(16,61,2), L(1,64,2), L(15,67,2),
+        L(16,70,2), L(1,73,2), L(15,76,2), L(16,79,2), L(1,82,2), L(15,85,2), L(16,88,2), L(1,91,2), L(15,94,2), L(16,97,2),
+        L(1,100,2), L(15,103,2), L(16,106,2), L(1,109,2), L(15,112,2), L(16,115,2), L(1,118,2), L(15,121,2), L(16,124,2),
+        L(1,127,2), L(15,130,2), L(16,133,2), L(1,136,2), L(15,139,2), L(16,142,2), L(1,145,2), L(15,148,2)
+    ]),
+    // 33. WAVE/JUMPPAD: Wave Bounce Challenge
+    createLevel(33, [
+        L(11,10,2), L(7,13,0), L(7,16,4), L(7,19,0), L(7,22,4), L(7,25,0), L(7,28,4), L(7,31,0), L(7,34,4), L(7,37,0),
+        L(7,40,4), L(7,43,0), L(7,46,4), L(7,49,0), L(7,52,4), L(7,55,0), L(7,58,4), L(7,61,0), L(7,64,4), L(7,67,0),
+        L(7,70,4), L(7,73,0), L(7,76,4), L(7,79,0), L(7,82,4), L(7,85,0), L(7,88,4), L(7,91,0), L(7,94,4), L(7,97,0),
+        L(7,100,4), L(7,103,0), L(7,106,4), L(7,109,0), L(7,112,4), L(7,115,0), L(7,118,4), L(7,121,0), L(7,124,4),
+        L(7,127,0), L(7,130,4), L(7,133,0), L(7,136,4), L(7,139,0), L(7,142,4), L(7,145,0), L(7,148,4)
+    ]),
+    // 34. ROBOT/MINI/SLOW: Micro Slow Leaps
+    createLevel(34, [
+        L(12,10,0), L(9,13,2), L(16,16,2), L(1,19,0), L(1,21,4), L(16,24,2), L(1,27,0), L(1,29,4), L(16,32,2), L(1,35,0),
+        L(1,37,4), L(16,40,2), L(1,43,0), L(1,45,4), L(16,48,2), L(1,51,0), L(1,53,4), L(16,56,2), L(1,59,0), L(1,61,4),
+        L(16,64,2), L(1,67,0), L(1,69,4), L(16,72,2), L(1,75,0), L(1,77,4), L(16,80,2), L(1,83,0), L(1,85,4), L(16,88,2),
+        L(1,91,0), L(1,93,4), L(16,96,2), L(1,99,0), L(1,101,4), L(16,104,2), L(1,107,0), L(1,109,4), L(16,112,2),
+        L(1,115,0), L(1,117,4), L(16,120,2), L(1,123,0), L(1,125,4), L(16,128,2), L(1,131,0), L(1,133,4), L(16,136,2),
+        L(1,139,0), L(1,141,4), L(16,144,2), L(1,147,0), L(10,149,2)
+    ]),
+    // 35. SWING/MACRO/DASH: Giant Swing Dash
+    createLevel(35, [
+        L(14,10,2), L(10,13,2), L(15,16,2), L(1,19,0), L(1,19,4), L(15,22,2), L(1,25,0), L(1,25,4), L(15,28,2), L(1,31,0),
+        L(1,31,4), L(15,34,2), L(1,37,0), L(1,37,4), L(15,40,2), L(1,43,0), L(1,43,4), L(15,46,2), L(1,49,0), L(1,49,4),
+        L(15,52,2), L(1,55,0), L(1,55,4), L(15,58,2), L(1,61,0), L(1,61,4), L(15,64,2), L(1,67,0), L(1,67,4), L(15,70,2),
+        L(1,73,0), L(1,73,4), L(15,76,2), L(1,79,0), L(1,79,4), L(15,82,2), L(1,85,0), L(1,85,4), L(15,88,2), L(1,91,0),
+        L(1,91,4), L(15,94,2), L(1,97,0), L(1,97,4), L(15,100,2), L(1,103,0), L(1,103,4), L(15,106,2), L(1,109,0),
+        L(1,109,4), L(15,112,2), L(1,115,0), L(1,115,4), L(15,118,2), L(1,121,0), L(1,121,4), L(15,124,2), L(1,127,0),
+        L(1,127,4), L(15,130,2), L(1,133,0), L(1,133,4), L(15,136,2), L(1,139,0), L(1,139,4), L(15,142,2), L(1,145,0),
+        L(1,145,4), L(9,148,2)
+    ]),
+    // 36. CUBE/GRAVITY/JUMPPAD: Gravity Pad Hopping
+    createLevel(36, [
+        L(1,10,0), L(7,13,0), L(17,16,2), L(7,19,4), L(1,22,4), L(17,25,2), L(7,28,0), L(1,31,0), L(17,34,2), L(7,37,4),
+        L(1,40,4), L(17,43,2), L(7,46,0), L(1,49,0), L(17,52,2), L(7,55,4), L(1,58,4), L(17,61,2), L(7,64,0), L(1,67,0),
+        L(17,70,2), L(7,73,4), L(1,76,4), L(17,79,2), L(7,82,0), L(1,85,0), L(17,88,2), L(7,91,4), L(1,94,4), L(17,97,2),
+        L(7,100,0), L(1,103,0), L(17,106,2), L(7,109,4), L(1,112,4), L(17,115,2), L(7,118,0), L(1,121,0), L(17,124,2),
+        L(7,127,4), L(1,130,4), L(17,133,2), L(7,136,0), L(1,139,0), L(17,142,2), L(7,145,4), L(1,148,4)
+    ]),
+    // 37. SHIP/UFO/WAVE/ROBOT/SWING: Mode Rotation Marathon
+    createLevel(37, [
+        L(4,10,2), L(1,13,0), L(5,16,2), L(1,19,0), L(11,22,2), L(1,25,0), L(12,28,2), L(1,31,0), L(14,34,2), L(1,37,0),
+        L(4,40,2), L(1,43,0), L(5,46,2), L(1,49,0), L(11,52,2), L(1,55,0), L(12,58,2), L(1,61,0), L(14,64,2), L(1,67,0),
+        L(4,70,2), L(1,73,0), L(5,76,2), L(1,79,0), L(11,82,2), L(1,85,0), L(12,88,2), L(1,91,0), L(14,94,2), L(1,97,0),
+        L(4,100,2), L(1,103,0), L(5,106,2), L(1,109,0), L(11,112,2), L(1,115,0), L(12,118,2), L(1,121,0), L(14,124,2),
+        L(1,127,0), L(4,130,2), L(1,133,0), L(5,136,2), L(1,139,0), L(11,142,2), L(1,145,0), L(12,148,2)
+    ]),
+    // 38. CUBE/ALL PORTALS: Portal Gauntlet
+    createLevel(38, [
+        L(1,10,0), L(4,13,2), L(9,16,2), L(15,19,2), L(5,22,2), L(10,25,2), L(16,28,2), L(11,31,2), L(17,34,2), L(12,37,2),
+        L(1,40,0), L(14,43,2), L(4,46,2), L(9,49,2), L(15,52,2), L(5,55,2), L(10,58,2), L(16,61,2), L(11,64,2), L(17,67,2),
+        L(1,70,0), L(12,73,2), L(14,76,2), L(4,79,2), L(9,82,2), L(15,85,2), L(5,88,2), L(10,91,2), L(16,94,2), L(11,97,2),
+        L(1,100,0), L(17,103,2), L(12,106,2), L(14,109,2), L(4,112,2), L(9,115,2), L(15,118,2), L(5,121,2), L(10,124,2),
+        L(16,127,2), L(1,130,0), L(11,133,2), L(17,136,2), L(12,139,2), L(14,142,2), L(4,145,2), L(9,148,2)
+    ]),
+    // 39. SHIP/WAVE/UFO: Tight Ceiling Spikes
+    createLevel(39, [
+        L(4,10,2), L(1,13,4), L(1,14,4), L(11,17,2), L(1,20,0), L(1,21,0), L(5,24,2), L(1,27,4), L(1,28,4), L(4,31,2),
+        L(1,34,0), L(1,35,0), L(11,38,2), L(1,41,4), L(1,42,4), L(5,45,2), L(1,48,0), L(1,49,0), L(4,52,2), L(1,55,4),
+        L(1,56,4), L(11,59,2), L(1,62,0), L(1,63,0), L(5,66,2), L(1,69,4), L(1,70,4), L(4,73,2), L(1,76,0), L(1,77,0),
+        L(11,80,2), L(1,83,4), L(1,84,4), L(5,87,2), L(1,90,0), L(1,91,0), L(4,94,2), L(1,97,4), L(1,98,4), L(11,101,2),
+        L(1,104,0), L(1,105,0), L(5,108,2), L(1,111,4), L(1,112,4), L(4,115,2), L(1,118,0), L(1,119,0), L(11,122,2),
+        L(1,125,4), L(1,126,4), L(5,129,2), L(1,132,0), L(1,133,0), L(4,136,2), L(1,139,4), L(1,140,4), L(11,143,2),
+        L(1,146,0), L(1,147,0)
+    ]),
+    // 40. ROBOT/SWING/GRAVITY: Inverted Jump/Swing Combo
+    createLevel(40, [
+        L(12,10,0), L(17,13,2), L(14,16,2), L(1,19,4), L(1,22,0), L(17,25,2), L(14,28,2), L(1,31,4), L(1,34,0), L(17,37,2),
+        L(14,40,2), L(1,43,4), L(1,46,0), L(17,49,2), L(14,52,2), L(1,55,4), L(1,58,0), L(17,61,2), L(14,64,2), L(1,67,4),
+        L(1,70,0), L(17,73,2), L(14,76,2), L(1,79,4), L(1,82,0), L(17,85,2), L(14,88,2), L(1,91,4), L(1,94,0), L(17,97,2),
+        L(14,100,2), L(1,103,4), L(1,106,0), L(17,109,2), L(14,112,2), L(1,115,4), L(1,118,0), L(17,121,2), L(14,124,2),
+        L(1,127,4), L(1,130,0), L(17,133,2), L(14,136,2), L(1,139,4), L(1,142,0), L(17,145,2), L(14,148,2)
+    ]),
+    // 41. CUBE/SLOW/DASH/GRAVITY: The Ultimate Cube Test
     createLevel(41, [
-        L(1,40,0), L(15,43,2), L(16,46,2), L(8,49,2), L(2,52,4), L(15,55,2), L(16,58,2), L(8,61,2), L(2,64,0), L(15,67,2), L(16,70,2), L(8,73,2), L(2,76,4), L(15,79,2), L(16,82,2), L(8,85,2), L(2,88,0), L(15,91,2), L(16,94,2), L(8,97,2), L(2,100,4), L(15,103,2), L(16,106,2), L(8,109,2), L(2,112,0),
+        L(1,10,0), L(15,13,2), L(17,16,2), L(16,19,2), L(1,22,0), L(15,25,2), L(17,28,2), L(16,31,2), L(1,34,4), L(15,37,2),
+        L(17,40,2), L(16,43,2), L(1,46,0), L(15,49,2), L(17,52,2), L(16,55,2), L(1,58,4), L(15,61,2), L(17,64,2), L(16,67,2),
+        L(1,70,0), L(15,73,2), L(17,76,2), L(16,79,2), L(1,82,4), L(15,85,2), L(17,88,2), L(16,91,2), L(1,94,0), L(15,97,2),
+        L(17,100,2), L(16,103,2), L(1,106,4), L(15,109,2), L(17,112,2), L(16,115,2), L(1,118,0), L(15,121,2), L(17,124,2),
+        L(16,127,2), L(1,130,4), L(15,133,2), L(17,136,2), L(16,139,2), L(1,142,0), L(15,145,2), L(17,148,2)
     ]),
-    // 42. SHIP/UFO/WAVE: Triple Flying Mode
+    // 42. SHIP/MINI/MACRO: Size Change Flight
     createLevel(42, [
-        L(4,40,2), L(5,45,2), L(11,50,2), L(2,55,1), L(2,55,4), L(4,60,2), L(5,65,2), L(11,70,2), L(2,75,1), L(2,75,4), L(4,80,2), L(5,85,2), L(11,90,2), L(2,95,1), L(2,95,4), L(4,100,2), L(5,105,2), L(11,110,2), L(2,115,1), L(2,115,4),
+        L(4,10,2), L(9,13,2), L(1,16,0), L(1,16,4), L(10,19,2), L(1,22,0), L(1,22,4), L(9,25,2), L(1,28,0), L(1,28,4),
+        L(10,31,2), L(1,34,0), L(1,34,4), L(9,37,2), L(1,40,0), L(1,40,4), L(10,43,2), L(1,46,0), L(1,46,4), L(9,49,2),
+        L(1,52,0), L(1,52,4), L(10,55,2), L(1,58,0), L(1,58,4), L(9,61,2), L(1,64,0), L(1,64,4), L(10,67,2), L(1,70,0),
+        L(1,70,4), L(9,73,2), L(1,76,0), L(1,76,4), L(10,79,2), L(1,82,0), L(1,82,4), L(9,85,2), L(1,88,0), L(1,88,4),
+        L(10,91,2), L(1,94,0), L(1,94,4), L(9,97,2), L(1,100,0), L(1,100,4), L(10,103,2), L(1,106,0), L(1,106,4),
+        L(9,109,2), L(1,112,0), L(1,112,4), L(10,115,2), L(1,118,0), L(1,118,4), L(9,121,2), L(1,124,0), L(1,124,4),
+        L(10,127,2), L(1,130,0), L(1,130,4), L(9,133,2), L(1,136,0), L(1,136,4), L(10,139,2), L(1,142,0), L(1,142,4),
+        L(9,145,2), L(1,148,0), L(1,148,4)
     ]),
-    // 43. ROBOT: Speed & Gravity Mini
+    // 43. UFO/WAVE/MINI/MACRO: Flying Size Gauntlet
     createLevel(43, [
-        L(12,40,0), L(9,42,2), L(8,45,2), L(1,48,4), L(1,51,4), L(8,54,2), L(1,57,0), L(1,60,0), L(8,63,2), L(1,66,4), L(1,69,4), L(8,72,2), L(1,75,0), L(1,78,0), L(8,81,2), L(1,84,4), L(1,87,4), L(8,90,2), L(1,93,0), L(1,96,0), L(8,99,2), L(1,102,4), L(1,105,4), L(8,108,2), L(1,111,0), L(10,114,2),
+        L(5,10,2), L(9,13,2), L(11,16,2), L(10,19,2), L(5,22,2), L(9,25,2), L(11,28,2), L(10,31,2), L(5,34,2), L(9,37,2),
+        L(11,40,2), L(10,43,2), L(5,46,2), L(9,49,2), L(11,52,2), L(10,55,2), L(5,58,2), L(9,61,2), L(11,64,2), L(10,67,2),
+        L(5,70,2), L(9,73,2), L(11,76,2), L(10,79,2), L(5,82,2), L(9,85,2), L(11,88,2), L(10,91,2), L(5,94,2), L(9,97,2),
+        L(11,100,2), L(10,103,2), L(5,106,2), L(9,109,2), L(11,112,2), L(10,115,2), L(5,118,2), L(9,121,2), L(11,124,2),
+        L(10,127,2), L(5,130,2), L(9,133,2), L(11,136,2), L(10,139,2), L(5,142,2), L(9,145,2), L(11,148,2)
     ]),
-    // 44. CUBE: Jump Pad to Dash Jump
+    // 44. ROBOT/SWING/GRAVITY/DASH: Jumps and Swings on Demand
     createLevel(44, [
-        L(1,40,0), L(7,43,0), L(1,46,0), L(15,49,2), L(1,52,0), L(7,55,0), L(1,58,0), L(15,61,2), L(1,64,0), L(7,67,0), L(1,70,0), L(15,73,2), L(1,76,0), L(7,79,0), L(1,82,0), L(15,85,2), L(1,88,0), L(7,91,0), L(1,94,0), L(15,97,2), L(1,100,0), L(7,103,0), L(1,106,0), L(15,109,2), L(1,112,0),
+        L(12,10,0), L(17,13,2), L(15,16,2), L(14,19,2), L(1,22,4), L(17,25,2), L(15,28,2), L(14,31,2), L(1,34,0), L(17,37,2),
+        L(15,40,2), L(14,43,2), L(1,46,4), L(17,49,2), L(15,52,2), L(14,55,2), L(1,58,0), L(17,61,2), L(15,64,2), L(14,67,2),
+        L(1,70,4), L(17,73,2), L(15,76,2), L(14,79,2), L(1,82,0), L(17,85,2), L(15,88,2), L(14,91,2), L(1,94,4), L(17,97,2),
+        L(15,100,2), L(14,103,2), L(1,106,0), L(17,109,2), L(15,112,2), L(14,115,2), L(1,118,4), L(17,121,2), L(15,124,2),
+        L(14,127,2), L(1,130,0), L(17,133,2), L(15,136,2), L(14,139,2), L(1,142,4), L(17,145,2), L(15,148,2)
     ]),
-    // 45. UFO: Quick Gravity and Slowness
+    // 45. CUBE/ALL ABILITIES: Gravity, Dash, Slow, Size Chaos
     createLevel(45, [
-        L(5,40,2), L(16,43,2), L(8,46,2), L(16,49,2), L(8,52,2), L(16,55,2), L(8,58,2), L(16,61,2), L(8,64,2), L(16,67,2), L(8,70,2), L(16,73,2), L(8,76,2), L(16,79,2), L(8,82,2), L(16,85,2), L(8,88,2), L(16,91,2), L(8,94,2), L(16,97,2), L(8,100,2), L(16,103,2), L(8,106,2), L(16,109,2), L(8,112,2),
+        L(1,10,0), L(17,13,2), L(9,16,2), L(15,19,2), L(16,22,2), L(1,25,4), L(17,28,2), L(10,31,2), L(15,34,2), L(16,37,2),
+        L(1,40,0), L(17,43,2), L(9,46,2), L(15,49,2), L(16,52,2), L(1,55,4), L(17,58,2), L(10,61,2), L(15,64,2), L(16,67,2),
+        L(1,70,0), L(17,73,2), L(9,76,2), L(15,79,2), L(16,82,2), L(1,85,4), L(17,88,2), L(10,91,2), L(15,94,2), L(16,97,2),
+        L(1,100,0), L(17,103,2), L(9,106,2), L(15,109,2), L(16,112,2), L(1,115,4), L(17,118,2), L(10,121,2), L(15,124,2),
+        L(16,127,2), L(1,130,0), L(17,133,2), L(9,136,2), L(15,139,2), L(16,142,2), L(1,145,4), L(17,148,2)
     ]),
-    // 46. WAVE: Gravity and Mini Size Changes
+    // 46. ULTIMATE FLYING GAUNTLET
     createLevel(46, [
-        L(11,40,2), L(9,43,2), L(8,46,2), L(10,49,2), L(9,52,2), L(8,55,2), L(10,58,2), L(9,61,2), L(8,64,2), L(10,67,2), L(9,70,2), L(8,73,2), L(10,76,2), L(9,79,2), L(8,82,2), L(10,85,2), L(9,88,2), L(8,91,2), L(10,94,2), L(9,97,2), L(8,100,2), L(10,103,2), L(9,106,2), L(8,109,2), L(10,112,2),
+        L(4,10,2), L(17,13,2), L(9,16,2), L(5,19,2), L(10,22,2), L(11,25,2), L(17,28,2), L(4,31,2), L(9,34,2), L(5,37,2),
+        L(10,40,2), L(11,43,2), L(17,46,2), L(4,49,2), L(9,52,2), L(5,55,2), L(10,58,2), L(11,61,2), L(17,64,2), L(4,67,2),
+        L(9,70,2), L(5,73,2), L(10,76,2), L(11,79,2), L(17,82,2), L(4,85,2), L(9,88,2), L(5,91,2), L(10,94,2), L(11,97,2),
+        L(17,100,2), L(4,103,2), L(9,106,2), L(5,109,2), L(10,112,2), L(11,115,2), L(17,118,2), L(4,121,2), L(9,124,2),
+        L(5,127,2), L(10,130,2), L(11,133,2), L(17,136,2), L(4,139,2), L(9,142,2), L(5,145,2), L(10,148,2)
     ]),
-    // 47. SWING: Macro Swing Gauntlet
+    // 47. ULTIMATE JUMPING GAUNTLET
     createLevel(47, [
-        L(10,40,2), L(14,43,0), L(1,46,0), L(14,49,0), L(2,52,0), L(14,55,0), L(1,58,0), L(14,61,0), L(2,64,0), L(14,67,0), L(1,70,0), L(14,73,0), L(2,76,0), L(14,79,0), L(1,82,0), L(14,85,0), L(2,88,0), L(14,91,0), L(1,94,0), L(14,97,0), L(2,100,0), L(14,103,0), L(1,106,0), L(14,109,0), L(2,112,0), L(9,115,2),
+        L(12,10,0), L(17,13,2), L(9,16,2), L(14,19,2), L(10,22,2), L(12,25,0), L(17,28,2), L(9,31,2), L(14,34,2), L(10,37,2),
+        L(12,40,0), L(17,43,2), L(9,46,2), L(14,49,2), L(10,52,2), L(12,55,0), L(17,58,2), L(9,61,2), L(14,64,2), L(10,67,2),
+        L(12,70,0), L(17,73,2), L(9,76,2), L(14,79,2), L(10,82,2), L(12,85,0), L(17,88,2), L(9,91,2), L(14,94,2), L(10,97,2),
+        L(12,100,0), L(17,103,2), L(9,106,2), L(14,109,2), L(10,112,2), L(12,115,0), L(17,118,2), L(9,121,2), L(14,124,2),
+        L(10,127,2), L(12,130,0), L(17,133,2), L(9,136,2), L(14,139,2), L(10,142,2), L(12,145,0), L(17,148,2)
     ]),
-    // 48. CUBE: Final Dash and Slowness Jump
+    // 48. ULTIMATE SPEED AND PRECISION
     createLevel(48, [
-        L(1,40,0), L(15,43,2), L(16,46,2), L(7,49,0), L(15,52,2), L(16,55,2), L(7,58,0), L(15,61,2), L(16,64,2), L(7,67,0), L(15,70,2), L(16,73,2), L(7,76,0), L(15,79,2), L(16,82,2), L(7,85,0), L(15,88,2), L(16,91,2), L(7,94,0), L(15,97,2), L(16,100,2), L(7,103,0), L(15,106,2), L(16,109,2), L(7,112,0),
+        L(1,10,0), L(15,13,2), L(16,16,2), L(7,19,0), L(1,22,0), L(15,25,2), L(16,28,2), L(7,31,0), L(1,34,0), L(15,37,2),
+        L(16,40,2), L(7,43,0), L(1,46,0), L(15,49,2), L(16,52,2), L(7,55,0), L(1,58,0), L(15,61,2), L(16,64,2), L(7,67,0),
+        L(1,70,0), L(15,73,2), L(16,76,2), L(7,79,0), L(1,82,0), L(15,85,2), L(16,88,2), L(7,91,0), L(1,94,0), L(15,97,2),
+        L(16,100,2), L(7,103,0), L(1,106,0), L(15,109,2), L(16,112,2), L(7,115,0), L(1,118,0), L(15,121,2), L(16,124,2),
+        L(7,127,0), L(1,130,0), L(15,133,2), L(16,136,2), L(7,139,0), L(1,142,0), L(15,145,2), L(16,148,2)
     ]),
-    // 49. **ULTIMATE GAUNTLET:** All Modes, All Abilities, Maximum Density (Final Boss)
+    // 49. **TRUE GRAND FINALE** (All modes, high density, tight gaps, max length)
     createLevel(49, [
-        L(1,40,0), L(15,43,2), L(4,46,2), L(2,48,1), L(2,48,4), L(8,51,2), L(5,54,2), L(16,57,2), L(11,60,2), L(9,63,2), L(6,66,2), L(14,69,0), L(7,72,0), L(12,75,0), L(8,78,2), L(15,81,2), L(16,84,2), L(4,87,2), L(5,90,2), L(11,93,2), L(10,96,2), L(1,99,0), L(7,102,0), L(15,105,2), L(8,108,2), L(16,111,2), L(4,114,2), L(5,117,2), L(1,120,0),
+        L(1,10,0), L(15,13,2), L(4,16,2), L(9,19,2), L(17,22,2), L(5,25,2), L(10,28,2), L(16,31,2), L(11,34,2), L(12,37,2),
+        L(14,40,2), L(7,43,0), L(13,46,2), L(1,49,0), L(15,52,2), L(4,55,2), L(9,58,2), L(17,61,2), L(5,64,2), L(10,67,2),
+        L(16,70,2), L(11,73,2), L(12,76,2), L(14,79,2), L(7,82,0), L(13,85,2), L(1,88,0), L(15,91,2), L(4,94,2), L(9,97,2),
+        L(17,100,2), L(5,103,2), L(10,106,2), L(16,109,2), L(11,112,2), L(12,115,2), L(14,118,2), L(7,121,0), L(13,124,2),
+        L(1,127,0), L(15,130,2), L(4,133,2), L(9,136,2), L(17,139,2), L(5,142,2), L(10,145,2), L(16,148,2)
     ]),
 ];
 
@@ -708,14 +977,14 @@ const Game = {
     currLvlIdx: 0,
     pauseBtn: document.getElementById('pause-main-btn'),
     bgHue: 200, 
-    bgSat: 15,  
+    bgSat: 100,  
     isMobile: window.innerWidth <= 768, 
     goalX: 100000, 
     startPos: { x: CFG.START_X * CFG.tile, y: 0, g: CFG.g, mode: 'cube', scale: CFG.MACRO_SCALE },
     currentCheckpoint: null,
     timeScale: 1.0, 
     dashActive: false,
-    slowTimer: null, // Timer for slowness effect
+    slowTimer: null, 
 
     init: function() {
         this.resize();
@@ -728,7 +997,7 @@ const Game = {
         this.checkMobileControls();
         this.loop();
         
-        // Problem 4 Fix: Ensure back buttons are wired correctly
+        // Ensure back buttons are wired correctly
         document.getElementById('shop-back-btn').onclick = UI.home;
         document.querySelector('#menu-pause button.pink').onclick = UI.home;
     },
@@ -766,7 +1035,7 @@ const Game = {
         this.currentCheckpoint = null;
         this.startPos = { x: CFG.START_X * CFG.tile, y: 0, g: CFG.g, mode: 'cube', scale: CFG.MACRO_SCALE };
         this.timeScale = 1.0;
-        this.clearSlowTimer(); // Clear timer on level load
+        this.clearSlowTimer(); 
         this.start(theme[0]); 
     },
     start: function(bgmFreq) {
@@ -894,7 +1163,6 @@ const Game = {
         }
     },
     
-    // Problem 5 Fix: Function to apply slowness for a fixed duration
     applySlow: function() {
         if (this.slowTimer) {
             clearTimeout(this.slowTimer);
@@ -947,12 +1215,12 @@ const Game = {
         let targetY = Player.y * 0.6;
         let camY = (this.canvas.height - 150) - targetY; 
         
-        // Background grid lines (unchanged)
-        ctx.strokeStyle = `hsla(${hue}, 50%, 50%, 0.1)`;
+        // Background grid lines (vivid)
+        ctx.strokeStyle = `hsla(${hue}, 80%, 70%, 0.15)`;
         ctx.lineWidth = 2;
         let ox = -(this.camX % CFG.tile);
         for(let i=ox; i<this.canvas.width; i+=CFG.tile) {
-            ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i, this.canvas.height); ctx.stroke(); // Simplified grid lines
+            ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i, this.canvas.height); ctx.stroke();
         }
         
         // Floor drawing
@@ -961,17 +1229,17 @@ const Game = {
         ctx.fillStyle = '#111';
         ctx.fillRect(0, camY+4, this.canvas.width, 500);
 
-        // Problem 3 Fix: Add six tiles of floor spikes for flying modes
+        // Flying Mode Spike Zone
         if (Player.mode === 'ship' || Player.mode === 'ufo' || Player.mode === 'wave') {
-            const spikeYStart = camY + 4; // Right below the thin floor line
+            const spikeYStart = camY + 4; 
             const spikeYEnd = spikeYStart + CFG.SPIKE_HEIGHT * CFG.tile;
 
-            // Draw spike zone
-            ctx.fillStyle = `hsla(${hue}, 80%, 30%, 0.3)`;
+            // Draw spike zone background
+            ctx.fillStyle = `hsla(${hue}, 90%, 30%, 0.4)`;
             ctx.fillRect(0, spikeYStart, this.canvas.width, CFG.SPIKE_HEIGHT * CFG.tile);
 
             // Draw actual spikes across the bottom half of the spike zone
-            ctx.fillStyle='#f55';
+            ctx.fillStyle='#ff3333'; // Vivid Red Spikes
             for(let x=ox; x<this.canvas.width; x+=CFG.tile) {
                 // Bottom Spikes
                 ctx.beginPath(); 
@@ -995,29 +1263,29 @@ const Game = {
 
             if(dx < -CFG.tile || dx > this.canvas.width) return;
 
-            if(o.t===1) { /* Block */ ctx.fillStyle = `hsl(${hue}, 80%, 60%)`; ctx.fillRect(dx,dy,CFG.tile,CFG.tile); ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=3; ctx.strokeRect(dx,dy,CFG.tile,CFG.tile); ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(dx+5,dy+5,CFG.tile-10,CFG.tile-10); } 
-            else if (o.t===2) { /* Spike */ ctx.fillStyle='#f55'; ctx.beginPath(); if (Player.g < 0 && Game.state === 'game') { ctx.moveTo(dx+10, dy); ctx.lineTo(dx+25, dy+45); ctx.lineTo(dx+40, dy); } else { ctx.moveTo(dx+10, dy+CFG.tile); ctx.lineTo(dx+25, dy+5); ctx.lineTo(dx+40, dy+CFG.tile); } ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke(); }
-            else if (o.t===3) { /* Coin (Orb) */ ctx.fillStyle='#ff0'; ctx.beginPath(); ctx.arc(dx+25,dy+25,12,0,7); ctx.fill(); ctx.strokeStyle='#ff0'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(dx+25,dy+25,20,0,7); ctx.stroke(); }
-            else if (o.t===7) { /* Pad (Bouncer) */ ctx.fillStyle='#0ff'; ctx.fillRect(dx+5, dy+40, 40, 10); ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.strokeRect(dx+5, dy+40, 40, 10); }
+            if(o.t===1) { /* Block */ ctx.fillStyle = `hsl(${hue}, 80%, 60%)`; ctx.fillRect(dx,dy,CFG.tile,CFG.tile); ctx.strokeStyle='rgba(255,255,255,0.9)'; ctx.lineWidth=3; ctx.strokeRect(dx,dy,CFG.tile,CFG.tile); ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(dx+5,dy+5,CFG.tile-10,CFG.tile-10); } 
+            else if (o.t===2) { /* Spike */ ctx.fillStyle='#ff3333'; ctx.beginPath(); if (Player.g < 0 && Game.state === 'game') { ctx.moveTo(dx+10, dy); ctx.lineTo(dx+25, dy+45); ctx.lineTo(dx+40, dy); } else { ctx.moveTo(dx+10, dy+CFG.tile); ctx.lineTo(dx+25, dy+5); ctx.lineTo(dx+40, dy+CFG.tile); } ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke(); }
+            else if (o.t===3) { /* Coin (Orb) */ ctx.fillStyle='#ffff00'; ctx.beginPath(); ctx.arc(dx+25,dy+25,12,0,7); ctx.fill(); ctx.strokeStyle='#ff00ff'; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(dx+25,dy+25,20,0,7); ctx.stroke(); }
+            else if (o.t===7) { /* Pad (Bouncer) */ ctx.fillStyle='#00ffff'; ctx.fillRect(dx+5, dy+40, 40, 10); ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.strokeRect(dx+5, dy+40, 40, 10); }
             
-            // Problem 2 Fix: Gravity Switch (8) replaced by Upside Down Block (17)
-            else if (o.t===17) { /* Upside Down Block */ ctx.fillStyle='#f0f'; ctx.fillRect(dx, dy, CFG.tile, CFG.tile); ctx.fillStyle='#fff'; ctx.font='30px Orbitron'; ctx.textAlign='center'; ctx.fillText('G', dx+25, dy+35); }
+            // Upside Down Block
+            else if (o.t===17) { /* Upside Down Block */ ctx.fillStyle='#ff00ff'; ctx.fillRect(dx, dy, CFG.tile, CFG.tile); ctx.fillStyle='#fff'; ctx.font='30px Orbitron'; ctx.textAlign='center'; ctx.fillText('G', dx+25, dy+35); }
             
             // Mode Portals
-            else if (o.t===4) { ctx.strokeStyle='#0f0'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Ship
-            else if (o.t===5) { ctx.strokeStyle='#fa0'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // UFO
-            else if (o.t===6) { ctx.strokeStyle='#fff'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Cube
-            else if (o.t===11) { ctx.strokeStyle='#f55'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Wave
-            else if (o.t===12) { ctx.strokeStyle='#0f5'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Robot
+            else if (o.t===4) { ctx.strokeStyle='#00ff00'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Ship
+            else if (o.t===5) { ctx.strokeStyle='#ffaa00'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // UFO
+            else if (o.t===6) { ctx.strokeStyle='#ffffff'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Cube
+            else if (o.t===11) { ctx.strokeStyle='#ff0000'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Wave
+            else if (o.t===12) { ctx.strokeStyle='#00ff88'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Robot
             else if (o.t===14) { ctx.strokeStyle='#ff00ff'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Swing/Spider
             else if (o.t===15) { ctx.strokeStyle=CFG.DASH_COLOR; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Dash
-            else if (o.t===16) { ctx.strokeStyle=CFG.SLOW_COLOR; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Slow
+            else if (o.t===16) { ctx.strokeStyle='#00ff00'; ctx.lineWidth=4; ctx.strokeRect(dx,dy,40,100); } // Slow
             
             // Size Portals
-            else if (o.t===9) { /* Mini */ ctx.fillStyle='#f80'; ctx.globalAlpha=0.3; ctx.fillRect(dx, dy+15, CFG.tile, 20); ctx.globalAlpha=1; ctx.strokeStyle='#f80'; ctx.lineWidth=2; ctx.strokeRect(dx+10, dy+10, 30, 30); }
-            else if (o.t===10) { /* Macro */ ctx.fillStyle='#08f'; ctx.globalAlpha=0.3; ctx.fillRect(dx, dy+15, CFG.tile, 20); ctx.globalAlpha=1; ctx.strokeStyle='#08f'; ctx.lineWidth=2; ctx.strokeRect(dx+5, dy+5, 40, 40); }
+            else if (o.t===9) { /* Mini */ ctx.fillStyle='#ff8800'; ctx.globalAlpha=0.3; ctx.fillRect(dx, dy+15, CFG.tile, 20); ctx.globalAlpha=1; ctx.strokeStyle='#ff8800'; ctx.lineWidth=2; ctx.strokeRect(dx+10, dy+10, 30, 30); }
+            else if (o.t===10) { /* Macro */ ctx.fillStyle='#0088ff'; ctx.globalAlpha=0.3; ctx.fillRect(dx, dy+15, CFG.tile, 20); ctx.globalAlpha=1; ctx.strokeStyle='#0088ff'; ctx.lineWidth=2; ctx.strokeRect(dx+5, dy+5, 40, 40); }
             else if (o.t===13) { /* Checkpoint */ ctx.fillStyle='rgba(0, 255, 0, 0.2)'; ctx.fillRect(dx, -500, 10, 2000); ctx.strokeStyle='rgba(0, 255, 0, 0.8)'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(dx, dy+CFG.tile-5); ctx.lineTo(dx + 10, dy+CFG.tile-5); ctx.stroke(); }
-            else if (o.t===99) { /* Goal */ ctx.fillStyle='#0f0'; ctx.globalAlpha=0.3; ctx.fillRect(dx, -500, 100, 2000); ctx.globalAlpha=1; }
+            else if (o.t===99) { /* Goal */ ctx.fillStyle='#00ff00'; ctx.globalAlpha=0.3; ctx.fillRect(dx, -500, 100, 2000); ctx.globalAlpha=1; }
         });
 
         if(this.state !== 'dead') Player.draw(ctx, camY);
@@ -1042,8 +1310,8 @@ const Player = {
     mode:'cube', angle:0, onGround:false,
     g: CFG.g,
     scale: CFG.MACRO_SCALE, 
-    mainColor: '#00f0ff',
-    secondaryColor: '#ff0055',
+    mainColor: '#00ffff',
+    secondaryColor: '#ff0088',
     waveAngle: 0, 
     isSwinging: false, 
     swingBlock: null,
@@ -1174,7 +1442,7 @@ const Player = {
         
         // Calculate spike zone boundaries for flying modes
         const flyingSpikeTop = floorHeight - CFG.SPIKE_HEIGHT * CFG.tile;
-        const flyingSpikeBottom = floorHeight + 4 + CFG.SPIKE_HEIGHT * CFG.tile; // 4 is floor line height
+        const flyingSpikeBottom = floorHeight + 4 + CFG.SPIKE_HEIGHT * CFG.tile; 
 
         // Bounding box checks
         if(this.g > 0) { 
@@ -1184,10 +1452,10 @@ const Player = {
                 else { this.y = ceilingHeight + this.h; this.dy = 0; } 
             }
             
-            // Problem 3 Collision Check (Normal Gravity)
+            // Flying Collision Check (Normal Gravity)
             if (this.mode === 'ship' || this.mode === 'ufo' || this.mode === 'wave') {
-                if (this.y > floorHeight) Game.crash(); // Crash on floor
-                if (this.y - this.h < flyingSpikeTop) Game.crash(); // Crash on ceiling spikes
+                if (this.y > floorHeight) Game.crash(); 
+                if (this.y - this.h < flyingSpikeTop) Game.crash(); 
             } 
         } else { // Inverted Gravity
             if(this.y - this.h < ceilingHeight) { this.y = ceilingHeight + this.h; this.dy = 0; this.onGround = true; }
@@ -1196,10 +1464,10 @@ const Player = {
                 else { this.y = floorHeight; this.dy = 0; } 
             }
             
-            // Problem 3 Collision Check (Inverted Gravity)
+            // Flying Collision Check (Inverted Gravity)
             if (this.mode === 'ship' || this.mode === 'ufo' || this.mode === 'wave') {
-                if (this.y - this.h < ceilingHeight) Game.crash(); // Crash on ceiling
-                if (this.y > flyingSpikeBottom) Game.crash(); // Crash on floor spikes
+                if (this.y - this.h < ceilingHeight) Game.crash(); 
+                if (this.y > flyingSpikeBottom) Game.crash(); 
             }
         }
         
@@ -1255,12 +1523,12 @@ const Player = {
                     Game.level.splice(i, 1); 
                 } 
                 else if(o.t===16) { 
-                    Game.applySlow(); // Problem 5 Fix: Use new applySlow function
+                    Game.applySlow(); 
                     Game.level.splice(i, 1);
                 }
 
-                // Problem 2 Fix: Upside Down Block (t=17) now handles gravity flip
-                else if(o.t===8 || o.t===17) { 
+                // Upside Down Block (t=17) now handles gravity flip
+                else if(o.t===17) { 
                     this.g *= -1;
                     this.g = Math.abs(CFG.g * this.scale) * Math.sign(this.g); 
                     
@@ -1372,7 +1640,6 @@ const Player = {
         const halfW = this.w / 2;
         const halfH = this.h / 2;
         
-        // Problem 7 Fix: Wave drawing logic restored
         if (this.mode === 'wave') { 
             ctx.beginPath();
             ctx.moveTo(-halfW, halfH);
@@ -1401,7 +1668,7 @@ const Player = {
     }
 };
 
-// --- UI (Problem 3 & 8 Fixes) ---
+// --- UI ---
 const UI = {
     hide: () => document.querySelectorAll('.ui-layer').forEach(e => e.classList.replace('visible','hidden')),
     
@@ -1417,7 +1684,7 @@ const UI = {
         document.getElementById('menu-coins').innerText = totalCoins;
         Game.checkMobileControls();
         AUDIO.stopBGM();
-        Game.clearSlowTimer(); // Clear slow motion when returning to menu
+        Game.clearSlowTimer(); 
         UI.show('menu-main');
     },
     
@@ -1431,7 +1698,6 @@ const UI = {
         UI.renderLevelGrid();
     },
 
-    // Problem 1 Fix (Using existing improved layout)
     renderLevelGrid: () => {
         const grid = document.getElementById('lvl-grid');
         const prevBtn = document.getElementById('level-prev');
@@ -1475,7 +1741,6 @@ const UI = {
         UI.show('menu-levels');
     },
 
-    // Problem 1 Fix (Using existing improved layout)
     renderShop: function() {
         const shopContent = document.getElementById('shop-content');
         shopContent.innerHTML = '';
@@ -1539,7 +1804,7 @@ const UI = {
     }
 };
 
-// --- INPUT (unchanged from previous fix) ---
+// --- INPUT ---
 const Input = { 
     held: false, 
     mousePressed: false
