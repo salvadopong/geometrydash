@@ -668,6 +668,7 @@
             <button class="editor-btn green" onclick="LevelEditor.save()">SAVE</button>
             <button class="editor-btn pink" onclick="LevelEditor.exportLevel()">EXPORT</button>
             <button class="editor-btn" onclick="LevelEditor.importLevel()">IMPORT</button>
+            <button class="editor-btn green" onclick="LevelEditor.testLevel()">TEST</button>
             <button class="editor-btn" onclick="LevelEditor.clearLevel()">CLEAR</button>
             <button class="editor-btn" onclick="LevelEditor.exitEditor()">EXIT</button>
         </div>
@@ -1665,32 +1666,39 @@ const Game = {
         }
     },
 
-    retry: function(e) { 
-        if(e) e.preventDefault(); 
-        if (this.state === 'game' || this.state === 'dead' || this.state === 'win') {
-            this.state = 'game';
-            
-            Player.reset(this.currentCheckpoint); 
+retry: function(e) { 
+    if(e) e.preventDefault(); 
+    
+    // If testing a custom level, return to editor
+    if (Game.currLvlIdx === -1 && Game.state !== 'editor') {
+        LevelEditor.exitTestMode();
+        return;
+    }
+    
+    if (this.state === 'game' || this.state === 'dead' || this.state === 'win') {
+        this.state = 'game';
+        
+        Player.reset(this.currentCheckpoint); 
 
-            this.att++;
-            document.getElementById('att').innerText = this.att;
-            UI.hide();
-            document.getElementById('tutorial-msg').style.display = 'none';
-            this.checkMobileControls(); 
-            this.timeScale = 1.0;
-            Game.dashActive = false;
-            this.clearSlowTimer();
-            
-            if(!this.currentCheckpoint) {
-                this.level = JSON.parse(JSON.stringify(LEVELS[this.currLvlIdx]));
-            } else {
-                this.level = this.currentCheckpoint.levelState;
-            }
-            
-            const goalObject = this.level.find(o => o.t === 99);
-            this.goalX = goalObject ? goalObject.x * CFG.tile : 100000;
+        this.att++;
+        document.getElementById('att').innerText = this.att;
+        UI.hide();
+        document.getElementById('tutorial-msg').style.display = 'none';
+        this.checkMobileControls(); 
+        this.timeScale = 1.0;
+        Game.dashActive = false;
+        this.clearSlowTimer();
+        
+        if(!this.currentCheckpoint) {
+            this.level = JSON.parse(JSON.stringify(LEVELS[this.currLvlIdx]));
+        } else {
+            this.level = this.currentCheckpoint.levelState;
         }
-    },
+        
+        const goalObject = this.level.find(o => o.t === 99);
+        this.goalX = goalObject ? goalObject.x * CFG.tile : 100000;
+    }
+},
 
     setCheckpoint: function(x, y, g, mode, scale) {
         this.currentCheckpoint = {
@@ -2442,8 +2450,7 @@ const UI = {
     }
 };
 
-// --- LEVEL EDITOR ---
-// --- LEVEL EDITOR ---
+// --- LEVEL EDITOR ---`
 const LevelEditor = {
     isActive: false,
     currentTool: 1,
@@ -2497,30 +2504,40 @@ const LevelEditor = {
         });
 
         // Keyboard controls for camera movement in editor
-        window.addEventListener('keydown', (e) => {
-            if (!this.isActive) return;
-            
-            switch(e.code) {
-                case 'ArrowLeft':
-                    Game.camX -= 50;
-                    e.preventDefault();
-                    break;
-                case 'ArrowRight':
-                    Game.camX += 50;
-                    e.preventDefault();
-                    break;
-                case 'ArrowUp':
-                    Game.camX = 0; // Reset to start
-                    e.preventDefault();
-                    break;
-                case 'Delete':
-                case 'Backspace':
-                    this.deleteAtCursor();
-                    e.preventDefault();
-                    break;
+window.addEventListener('keydown', (e) => {
+    if (!this.isActive) return;
+    
+    switch(e.code) {
+        case 'ArrowLeft':
+            Game.camX -= 50;
+            e.preventDefault();
+            break;
+        case 'ArrowRight':
+            Game.camX += 50;
+            e.preventDefault();
+            break;
+        case 'ArrowUp':
+            if (e.shiftKey) {
+                // Shift+Up for vertical camera movement up
+                Game.floorY -= 30;
+            } else {
+                // Regular Up arrow to reset to start
+                Game.camX = 0;
             }
-        });
-    },
+            e.preventDefault();
+            break;
+        case 'ArrowDown':
+            // Move camera vertically down
+            Game.floorY += 30;
+            e.preventDefault();
+            break;
+        case 'Delete':
+        case 'Backspace':
+            this.deleteAtCursor();
+            e.preventDefault();
+            break;
+    }
+});
 
     startNew: function() {
         this.isActive = true;
@@ -2634,6 +2651,61 @@ const LevelEditor = {
         };
         input.click();
     },
+
+    testLevel: function() {
+    if (this.levelData.length === 0) {
+        alert("Can't test an empty level! Add some blocks first.");
+        return;
+    }
+
+        exitTestMode: function() {
+    // Return to editor mode
+    this.isActive = true;
+    document.getElementById('editor-tools').style.display = 'flex';
+    Game.state = 'editor';
+    document.getElementById('hud').style.display = 'none';
+    
+    // Reload the level data
+    this.loadIntoGame();
+    
+    // Stop any game audio
+    AUDIO.stopBGM();
+    
+    Game.showTutorialMessage("Back to Editor", 2000);
+},
+    
+    // Save the current editor state
+    this.save();
+    
+    // Switch to game mode with the custom level
+    this.isActive = false;
+    document.getElementById('editor-tools').style.display = 'none';
+    
+    // Load the custom level into the game
+    Game.level = JSON.parse(JSON.stringify(this.levelData));
+    Game.level.push(L(99, 250, 0)); // Add goal
+    
+    // Set up game state
+    Game.state = 'game';
+    Game.currLvlIdx = -1; // Mark as custom level
+    Game.camX = 0;
+    Game.att = 1;
+    document.getElementById('att').innerText = Game.att;
+    document.getElementById('hud').style.display = 'block';
+    
+    // Reset player
+    Player.reset();
+    
+    // Set goal position
+    const goalObject = Game.level.find(o => o.t === 99);
+    Game.goalX = goalObject ? goalObject.x * CFG.tile : 100000;
+    
+    // Start background music
+    AUDIO.startBGM('C4');
+    
+    // Show test mode message
+    Game.showTutorialMessage("Testing Level - Press R to return to editor", 3000);
+},
 
     clearLevel: function() {
         if (confirm('Clear the entire level?')) {
