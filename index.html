@@ -2613,7 +2613,7 @@ const Game = {
         }
     },
 
-    retry: function(e) { 
+        retry: function(e) { 
         if(e) e.preventDefault(); 
         if (this.state === 'game' || this.state === 'dead' || this.state === 'win') {
             this.state = 'game';
@@ -2629,9 +2629,30 @@ const Game = {
             Game.dashActive = false;
             this.clearSlowTimer();
             
-            if(!this.currentCheckpoint) {
-                this.level = JSON.parse(JSON.stringify(LEVELS[this.currLvlIdx]));
+            // FIX: Check if we're in editor mode or regular game mode
+            if (LevelEditor.isActive && Game.exitToEditor) {
+                // We're in editor test mode - reload the editor level
+                try {
+                    this.level = JSON.parse(JSON.stringify(Game.originalEditorState));
+                } catch (error) {
+                    console.error("Failed to reload editor level on retry:", error);
+                    // Fallback to basic level
+                    this.level = [
+                        {t: 1, x: 10, y: 0}, {t: 1, x: 14, y: 0}, {t: 1, x: 18, y: 0},
+                        {t: 99, x: 50, y: 0}
+                    ];
+                }
+            } else if(!this.currentCheckpoint) {
+                // Regular game mode - reload from LEVELS array
+                try {
+                    this.level = JSON.parse(JSON.stringify(LEVELS[this.currLvlIdx]));
+                } catch (error) {
+                    console.error("Failed to reload level on retry:", error);
+                    // Load first level as fallback
+                    this.level = JSON.parse(JSON.stringify(LEVELS[0]));
+                }
             } else {
+                // We have a checkpoint - use it
                 this.level = this.currentCheckpoint.levelState;
             }
             
@@ -2654,6 +2675,13 @@ const Game = {
     },
 
     win: function() {
+
+                if (LevelEditor.isActive && Game.exitToEditor) {
+            // In editor mode - show different win message and return to editor
+            alert('Level test completed successfully! Returning to editor.');
+            Game.exitToEditor();
+            return;
+        }
         if (this.state === 'game') {
             this.state = 'win';
             AUDIO.win();
